@@ -13,10 +13,11 @@ Backend API for online course Lazuardy Mobile Apps. build by Laravel 12.
 ## Quick Start
 1. composer install
 2. cp .env.example .env
-3. php artisan serve
+3. php artisan migrate --seed
+4. php artisan serve
 
 ## Role
-**Admin**
-**Student**
-**Tutor**
-**Parent**
+- **Admin**
+- **Student**
+- **Tutor**
+- **Parent**

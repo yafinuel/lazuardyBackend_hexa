@@ -15,11 +15,13 @@ Kami menggunakan model percabangan (branching) berikut:
 3. Lakukan commit dengan pesan yang jelas (Lihat aturan commit di bawah).
 
 ## 3. Aturan Pesan Commit
-Kami mengikuti standar [Conventional Commits](https://www.conventionalcommits.org/):
+Kami mengikuti standar [Conventional Commits](https://www.conventionalcommits.org/), commit dapat dilakukan menggunakan Bahasa Indonesia maupun Bahasa Inggris:
 * `feat:` untuk fitur baru (Contoh: `feat: add login with google`)
 * `fix:` untuk perbaikan bug (Contoh: `fix: resolve null pointer on user profile`)
 * `docs:` untuk perubahan dokumentasi.
 * `refactor:` untuk perubahan kode yang tidak mengubah fungsi.
+Perubahan dan commit harus diusahakan merujuk pada hal yang spesifik. Apabila sudah terlanjur maka gunakan and pada commit, seperti pada dibawah ini.
+* `feat and fix: add new feature and resolve a problem`
 
 ## 4. Standar Kode (Coding Standards)
 * **Bahasa**: Semua variabel dan fungsi menggunakan **Bahasa Inggris**.

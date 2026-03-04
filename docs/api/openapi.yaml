@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: Lazuardy API Documentation
+  description: Dokumentasi API untuk backend Lazuardy
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api
+    description: Local Server
+
+paths:
+  /auth/{provider}/redirect:
+    get: 
+      summary: Redirect ke Authentikasi OAuth
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          description: google, facebook
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Berhasil redirect ke OAuth (Tidak mengembalikan api apapun ke backend)
+
+  /auth/{provider}/callback:
+    get:
+      summary: Callback dari OAuth
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          description: google, facebook
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Berhasil callback
+          content:
+            application/json:
+              example:
+                status: "Success"
+                data: 
+                  - status: "Success"
+                    access_token: "{token}"
+                    token_type: "Bearer"
+                    user: {
+                      "id": 1,
+                      "name": "user",
+                      "email": "user@example.com",
+                      "google_id": "1092837",
+                      "facebook_id": "1233245",
+                      "email_verified_at": "2026-03-05T00:00:00.000000Z",
+                      "created_at": "2026-03-05T00:00:00.000000Z",
+                      "updated_at": "2026-03-05T00:00:00.000000Z"
+                    }
+        '401':
+          description: Gagal callback
+          content:
+            application/json:
+              example:
+                status: "Failed"
+                data: 
+                  - status: "error"
+                    message: "dwadb"

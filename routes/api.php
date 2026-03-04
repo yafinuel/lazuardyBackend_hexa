@@ -8,5 +8,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// Authentication
 Route::get('auth/{provider}/redirect', [SocialiteController::class, 'redirect']);
 Route::get('auth/{provider}/callback', [SocialiteController::class, 'callback']);
