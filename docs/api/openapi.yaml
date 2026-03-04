@@ -8,9 +8,15 @@ servers:
   - url: http://localhost:8000/api
     description: Local Server
 
+tags:
+  - name: Authentication
+    description: Endpoint untuk Login, Register, dan OAuth
+
 paths:
   /auth/{provider}/redirect:
     get: 
+      tags:
+        - Authentication
       summary: Redirect ke Authentikasi OAuth
       parameters:
         - name: provider
@@ -25,6 +31,8 @@ paths:
 
   /auth/{provider}/callback:
     get:
+      tags:
+        - Authentication
       summary: Callback dari OAuth
       parameters:
         - name: provider
@@ -42,7 +50,7 @@ paths:
                 status: "Success"
                 data: 
                   - status: "Success"
-                    access_token: "{token}"
+                    access_token: "1|wdadubwab..."
                     token_type: "Bearer"
                     user: {
                       "id": 1,
@@ -63,3 +71,59 @@ paths:
                 data: 
                   - status: "error"
                     message: "dwadb"
+
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Login secara manual
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              email: "user@example.com"
+              password: "password123"
+      responses:
+        '200':
+          description: Berhasil login
+          content:
+            application/json:
+              example:
+                status: "success"
+                message: "Login berhasil"
+                data:
+                  token: "1|wdadubwab..."
+                  user:
+                    id: 1
+                    name: "user"
+                    email: "user@example.com"
+                    google_id: "1092837"
+                    facebook_id: "1233245"
+                    email_verified_at: "2026-03-05T00:00:00.000000Z"
+                    created_at: "2026-03-05T00:00:00.000000Z"
+                    updated_at: "2026-03-05T00:00:00.000000Z"
+        '422':
+          $ref: '#/components/responses/ValidationError' # Menggunakan referensi agar rapi
+
+components:
+  responses:
+    ValidationError:
+      description: Validasi Gagal
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              errors:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+          example:
+            message: "Kresidensial yang diberikan salah"
+            errors:
+              email: ["Kresidensial yang diberikan salah"]
