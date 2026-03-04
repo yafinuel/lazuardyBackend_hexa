@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
-class AuthenticationManualAction
+class LoginManualAction
 {
     /**
      * Create a new class instance.
