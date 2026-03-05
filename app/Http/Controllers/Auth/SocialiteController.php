@@ -21,13 +21,10 @@ class SocialiteController extends Controller
     {
         try {
             $socialUser = Socialite::driver($provider)->stateless()->user();
-            $user = $action->execute($socialUser, $provider);
-            $token = $user->createToken('api_auth_token')->plainTextToken;
+            $data = $action->execute($socialUser, $provider);
             return response()->json([
                 'status' => 'success',
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $user
+                'data' => $data
             ]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 401);

@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Shared\Enums\ReligionEnum;
+use App\Shared\Enums\RoleEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -11,25 +15,36 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Kolom yang bisa diisi mass assignment.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
+        'email_verified_at',
         'password',
+        'role',
+        'telephone_number',
         'google_id',
         'facebook_id',
+        'profile_photo_url',
+        'date_of_birth',
+        'gender',
+        'religion',
+        'home_address',
+        'latitude',
+        'longitude',
+        'platform',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Kolom yang harus disembunyikan saat serialisasi.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -37,7 +52,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Casting atribut ke tipe tertentu.
      *
      * @return array<string, string>
      */
@@ -46,6 +61,74 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'home_address' => 'array',
+            'date_of_birth' => 'date',
+            'role' => RoleEnum::class,
+            'religion' => ReligionEnum::class,
+            'rekening' => 'string'
         ];
+    }
+
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    public function tutor(): HasOne
+    {
+        return $this->hasOne(Tutor::class);
+    }
+
+    // public function schedules(): HasMany
+    // {
+    //     return $this->hasMany(ScheduleTutor::class);
+    // }
+
+    // public function takenSchedules(): HasMany
+    // {
+    //     return $this->hasMany(TakenSchedule::class);
+    // }
+    
+    public function subjects(): BelongsToMany {
+        return $this->belongsToMany(Subject::class, 'tutor_subjects', 'user_id', 'subject_id');
+    }
+    
+    // public function files(): HasMany {
+    //     return $this->hasMany(File::class);
+    // }
+
+    // public function payments(): HasMany
+    // {
+    //     return $this->hasMany(Payment::class);
+    // }
+    
+    // public function orders(): HasMany
+    // {
+    //     return $this->hasMany(Order::class);
+    // }
+
+    // public function studentPackageTutors(): HasMany
+    // {
+    //     return $this->hasMany(StudentPackage::class, 'tutor_user_id');
+    // }
+
+    // public function studentPackageStudents(): HasMany
+    // {
+    //     return $this->hasMany(StudentPackage::class, 'student_user_id');
+    // }
+
+    // public function reviewStudents():HasMany
+    // {
+    //     return $this->hasMany(Review::class, 'from_user_id');
+    // }
+
+    // public function reviewTutors():HasMany
+    // {
+    //     return $this->hasMany(Review::class, 'to_user_id');
+    // }
+    
+    public function scopeGetUserByEmail($query, $email)
+    {
+        return $query->where('email', $email)->first();
     }
 }

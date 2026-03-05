@@ -43,34 +43,46 @@ paths:
             type: string
       responses:
         '200':
-          description: Berhasil callback
+          description: Berhasil callback (Dua skema data)
           content:
             application/json:
-              example:
-                status: "Success"
-                data: 
-                  - status: "Success"
-                    access_token: "1|wdadubwab..."
-                    token_type: "Bearer"
-                    user: {
-                      "id": 1,
-                      "name": "user",
-                      "email": "user@example.com",
-                      "google_id": "1092837",
-                      "facebook_id": "1233245",
-                      "email_verified_at": "2026-03-05T00:00:00.000000Z",
-                      "created_at": "2026-03-05T00:00:00.000000Z",
-                      "updated_at": "2026-03-05T00:00:00.000000Z"
-                    }
+              schema:
+                oneOf:
+                
+                  # SKEMA 1: User lama/Terdaftar (Lengkap dengan Token)
+                  - type: object
+                    properties:
+                      status: { type: string, example: "success" }
+                      data:
+                        type: object
+                        properties:
+                          message: { type: string, example: "Authorized" }
+                          access_token: { type: string, example: "1|wdadubwab..." }
+                          token_type: { type: string, example: "Bearer" }
+                          user: 
+                            $ref: '#/components/schemas/User'
+
+                  # SKEMA 2: User baru (Hanya data dasar dari Google/FB)
+                  - type: object
+                    properties:
+                      status: { type: string, example: "success" }
+                      data: 
+                        type: object
+                        properties:
+                          message: { type: string, example: "Unauthorized" }
+                          name: { type: string, example: "user" }
+                          email: { type: string, example: "user@example.com" }
+                          provider_id: { type: string, example: "1092837" }
+                          email_verified_at: { type: string, format: date-time, nullable: true }
+
+                  
         '401':
           description: Gagal callback
           content:
             application/json:
               example:
-                status: "Failed"
-                data: 
-                  - status: "error"
-                    message: "dwadb"
+                status: "error"
+                message: "dwadb"
 
   /login:
     post:
@@ -91,18 +103,16 @@ paths:
             application/json:
               example:
                 status: "success"
-                message: "Login berhasil"
-                data:
-                  token: "1|wdadubwab..."
-                  user:
-                    id: 1
-                    name: "user"
-                    email: "user@example.com"
-                    google_id: "1092837"
-                    facebook_id: "1233245"
-                    email_verified_at: "2026-03-05T00:00:00.000000Z"
-                    created_at: "2026-03-05T00:00:00.000000Z"
-                    updated_at: "2026-03-05T00:00:00.000000Z"
+                token: "1|wdadubwab..."
+                user:
+                  id: 1
+                  name: "user"
+                  email: "user@example.com"
+                  google_id: "1092837"
+                  facebook_id: "1233245"
+                  email_verified_at: "2026-03-05T00:00:00.000000Z"
+                  created_at: "2026-03-05T00:00:00.000000Z"
+                  updated_at: "2026-03-05T00:00:00.000000Z"
         '422':
           $ref: '#/components/responses/ValidationError' # Menggunakan referensi agar rapi
 
@@ -127,3 +137,69 @@ components:
             message: "Kresidensial yang diberikan salah"
             errors:
               email: ["Kresidensial yang diberikan salah"]
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "user"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        email_verified_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2026-03-05T00:00:00.000000Z"
+        role:
+          type: string
+          example: "student"
+        telephone_number:
+          type: string
+          nullable: true
+          example: "085..."
+        google_id:
+          type: string
+          nullable: true
+        facebook_id:
+          type: string
+          nullable: true
+        profile_photo_url:
+          type: string
+          nullable: true
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          example: "2000-01-01"
+        gender:
+          type: string
+          nullable: true
+        religion:
+          type: string
+          nullable: true
+        home_address:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          format: float
+          nullable: true
+          example: 11.2231
+        longitude:
+          type: number
+          format: float
+          nullable: true
+          example: 21.2231
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time

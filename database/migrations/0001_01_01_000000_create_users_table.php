@@ -1,5 +1,8 @@
 <?php
 
+use App\Shared\Enums\GenderEnum;
+use App\Shared\Enums\ReligionEnum;
+use App\Shared\Enums\RoleEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,7 +14,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        $roles = RoleEnum::list();
+        $genders = GenderEnum::list();
+        $religions = ReligionEnum::list();
+
+        Schema::create('users', function (Blueprint $table) use ($roles, $genders, $religions) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
@@ -19,6 +26,16 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('google_id')->nullable();
             $table->string('facebook_id')->nullable();
+            $table->enum('role', $roles)->nullable();
+            $table->string('telephone_number', 15)->nullable();
+            $table->timestamp('telephone_verified_at')->nullable();
+            $table->string('profile_photo_url')->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->enum('gender', $genders)->nullable();
+            $table->enum('religion', $religions)->nullable();
+            $table->json('home_address')->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -10,7 +10,9 @@ use Illuminate\Validation\ValidationException;
 class LoginManualAction
 {
     /**
-     * Create a new class instance.
+     * Sistemnya login
+     * 1. Cek apakah email terdaftar dan apakah password telah benar
+     * 2. Bisa login
      */
     public function __construct(protected UserRepositoryInterface $repository)
     {}
