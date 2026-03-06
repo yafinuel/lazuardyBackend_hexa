@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Domains\Authentication\Infrastructure\EloquentUserRepository;
+use App\Domains\Authentication\Infrastructure\Repository\EloquentUserRepository;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 

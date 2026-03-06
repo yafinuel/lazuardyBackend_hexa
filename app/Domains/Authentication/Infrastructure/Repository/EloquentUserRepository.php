@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Authentication\Infrastructure;
+namespace App\Domains\Authentication\Infrastructure\Repository;
 
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
 use App\Models\Student;

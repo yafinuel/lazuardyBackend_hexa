@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Domains\Authentication\Actions\LoginManualAction;
+use App\Domains\Authentication\Actions\SendOtpAction;
 use App\Http\Controllers\Controller;
+use App\Shared\Enums\OtpIdentifierEnum;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -37,5 +39,26 @@ class AuthController extends Controller
     public function register(Request $request, )
     {
         
+    }
+
+    public function requestOtpEmail(Request $request, SendOtpAction $action)
+    {
+        $request->validate([
+            "email" => ['required', 'email']
+        ]);
+        
+        try {
+            $otp = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, 'register');
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Kode OTP berhasil dikirim ke ' . $request->email
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage() // Pesan dari throw di Action tadi
+            ], 500);
+        }
     }
 }

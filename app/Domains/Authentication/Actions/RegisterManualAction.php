@@ -9,7 +9,7 @@ class RegisterManualAction
     /**
      * Create a new class instance.
      */
-    public function __construct(UserRepositoryInterface $repository)
+    public function __construct(protected UserRepositoryInterface $repository)
     {}
 
     public function execute()
