@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Domains\Authentication\Actions\LoginManualAction;
 use App\Domains\Authentication\Actions\SendOtpAction;
+use App\Domains\Authentication\Actions\VerifyOtpAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\OtpIdentifierEnum;
+use App\Shared\Enums\OtpVerificationTypeEnum;
+use Exception;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -17,14 +20,14 @@ class AuthController extends Controller
             'password' => ['required']
         ]);
 
-        $user = $action->execute($request->email, $request->pasword);
+        $user = $action->execute($request->email, $request->password);
         $token = $user->createToken('manual_auth_token')->plainTextToken;
 
         return response()->json([
             'status' => 'success',
             'token' => $token,
             'user' => $user
-        ]);
+        ], 200);
     }
 
     public function logout(Request $request)
@@ -33,7 +36,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-        ]);
+        ], 200);
     }
 
     public function register(Request $request, )
@@ -44,21 +47,42 @@ class AuthController extends Controller
     public function requestOtpEmail(Request $request, SendOtpAction $action)
     {
         $request->validate([
-            "email" => ['required', 'email']
+            "email" => ['required', 'email'],
         ]);
         
         try {
-            $otp = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, 'register');
+            $otp = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::REGISTER->value);
 
             return response()->json([
-                'status' => 'success',
-                'message' => 'Kode OTP berhasil dikirim ke ' . $request->email
-            ]);
+                'status' => 'success'
+            ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage() // Pesan dari throw di Action tadi
             ], 500);
         }
+    }
+
+    public function verifyOtpEmail(Request $request, VerifyOtpAction $action)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'otp' => ['required', 'string']
+        ]);
+
+        try {
+            $result = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::REGISTER->value, $request->otp);
+            
+            return response()->json([
+                'status' => $result['status'],
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 404);
+        }
+        
     }
 }

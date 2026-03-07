@@ -21,9 +21,13 @@ class LoginManualAction
     {
         $user = $this->repository->findByEmail($email);
 
-        if (!$user || !Hash::check($password, $user->password)){
+        if (!$user){
             throw ValidationException::withMessages([
-                'email' => ['Kresidensial yang diberikan salah']
+                'email' => ['User tidak ditemukan']
+            ]);
+        } else if (!Hash::check($password, $user->password)){
+            throw ValidationException::withMessages([
+                'email' => ['Password salah']
             ]);
         }
 

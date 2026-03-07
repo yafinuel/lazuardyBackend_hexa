@@ -4,9 +4,11 @@ namespace App\Domains\Authentication\Actions;
 
 use App\Domains\Authentication\Ports\MailerInterface;
 use App\Domains\Authentication\Ports\OtpRepositoryInterface;
+use App\Mail\OtpEmail;
 use App\Shared\Enums\OtpIdentifierEnum;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class SendOtpAction
@@ -18,22 +20,23 @@ class SendOtpAction
      */
     public function __construct(protected OtpRepositoryInterface $repository, protected MailerInterface $mailer)
     {
-        $length = 6;
-        $expiryMinutes = 30;
+        $this->length = 6;
+        $this->expiryMinutes = 30;
     }
 
-    public function execute(string $identifier, string $identifierType, string $verificationType)
+    public function execute(string $identifier, string $identifierType, string $verificationType): string
     {
-        $otp = str_pad(random_int(0, pow(10, $this->length) - 1), $this->length, '0', STR_PAD_LEFT);
+        $code = str_pad(random_int(0, pow(10, $this->length) - 1), $this->length, '0', STR_PAD_LEFT);
         $expiredAt = Carbon::now()->addMinutes($this->expiryMinutes);
 
         try {
-            $this->repository->storeOtp($identifier, $identifierType, $otp, $verificationType, $expiredAt);
-    
+            $this->repository->storeOtp($identifier, $identifierType, $code, $verificationType, $expiredAt);
+            
             if($identifierType == OtpIdentifierEnum::EMAIL->value){
-                $this->mailer->sendOtp($identifier, $otp);
+                $this->mailer->sendOtp($identifier, $code);
             }
-            return $otp;
+            return $code;
+            
         } catch (TransportExceptionInterface $e) {
             // Error koneksi ke Gmail (misal internet server mati atau diblokir Google)
             throw new \Exception("Gagal mengirim email. Pastikan koneksi internet stabil.");

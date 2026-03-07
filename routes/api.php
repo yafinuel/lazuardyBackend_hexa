@@ -10,6 +10,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // Authentication
-Route::get('auth/{provider}/redirect', [SocialiteController::class, 'redirect']);
-Route::get('auth/{provider}/callback', [SocialiteController::class, 'callback']);
-Route::post('login', [AuthController::class, 'login']);
+Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect']);
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/requestOtpEmail', [AuthController::class, 'requestOtpEmail']);
+Route::post('/verifyOtpEmail', [AuthController::class, 'verifyOtpEmail']);

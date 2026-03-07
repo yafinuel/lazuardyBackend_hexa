@@ -116,6 +116,58 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError' # Menggunakan referensi agar rapi
 
+  /requestOtpEmail:
+    post:
+      tags:
+        - Authentication
+      summary: Meminta OTP untuk email
+      requestBody: 
+        required: true
+        content: 
+          application/json:
+            example:
+              email: "user@gmail.com"
+      responses:
+        '201':
+          description: "Berhasil mengirim OTP ke email"
+          content:
+            application/json:
+              example:
+                status: success
+        '500':
+          description: "Gagal mengirim OTP ke email"
+          content:
+            application/json:
+              example:
+                status: error
+                message: pesan error
+  /verifyOtpEmail:
+    post:
+      tags:
+        - Authentication
+      summary: Verifikasi OTP email dari user
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            example:
+              email: user@gmail.com
+              otp: "032398"
+      responses: 
+        '200':
+          description: Berhasil verifikasi OTP email
+          content:
+            application/json:
+              example:
+                status: 'success/failed'
+        '404':
+          description: OTP untuk email tidak ditemukan
+          content:
+            application/json:
+              example:
+                status: error
+                message: error message
+
 components:
   responses:
     ValidationError:
