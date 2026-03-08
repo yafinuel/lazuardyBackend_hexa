@@ -20,13 +20,12 @@ class AuthController extends Controller
             'password' => ['required']
         ]);
 
-        $user = $action->execute($request->email, $request->password);
-        $token = $user->createToken('manual_auth_token')->plainTextToken;
+        $result = $action->execute($request->email, $request->password);
 
         return response()->json([
             'status' => 'success',
-            'token' => $token,
-            'user' => $user
+            'access_token' => $result['token'],
+            'token_type' => 'Bearer'
         ], 200);
     }
 

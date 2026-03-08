@@ -22,16 +22,15 @@ class AuthenticateSocialAction
         $user = $this->repository->findByEmail($socialUser->getEmail());
 
         if ($user) {
-            if (!$user->provider_id) {
+            if (!$user->$provider + '_id') {
                 // provider without "_id".
                 $this->repository->updateSocialId($user->id, $provider, $socialUser->getId());
             }
-            $token = $user->createToken('oauth_token')->plainTextToken;
+            $token = $this->repository->getToken($user->id);
             return [
                 'message' => 'Authorized',
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'user' => $user
             ];
         }
 

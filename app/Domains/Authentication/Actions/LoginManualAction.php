@@ -3,7 +3,6 @@
 namespace App\Domains\Authentication\Actions;
 
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -17,7 +16,7 @@ class LoginManualAction
     public function __construct(protected UserRepositoryInterface $repository)
     {}
     
-    public function execute(string $email, string $password): User
+    public function execute(string $email, string $password): array
     {
         $user = $this->repository->findByEmail($email);
 
@@ -31,6 +30,8 @@ class LoginManualAction
             ]);
         }
 
-        return $user;
+        $token = $this->repository->getToken($user->id);
+
+        return ["token" => $token];
     }
 }

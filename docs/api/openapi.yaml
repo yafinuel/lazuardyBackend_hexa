@@ -59,8 +59,6 @@ paths:
                           message: { type: string, example: "Authorized" }
                           access_token: { type: string, example: "1|wdadubwab..." }
                           token_type: { type: string, example: "Bearer" }
-                          user: 
-                            $ref: '#/components/schemas/User'
 
                   # SKEMA 2: User baru (Hanya data dasar dari Google/FB)
                   - type: object
@@ -103,16 +101,9 @@ paths:
             application/json:
               example:
                 status: "success"
-                token: "1|wdadubwab..."
-                user:
-                  id: 1
-                  name: "user"
-                  email: "user@example.com"
-                  google_id: "1092837"
-                  facebook_id: "1233245"
-                  email_verified_at: "2026-03-05T00:00:00.000000Z"
-                  created_at: "2026-03-05T00:00:00.000000Z"
-                  updated_at: "2026-03-05T00:00:00.000000Z"
+                access_token: "1|wdadubwab..."
+                token_type: "Bearer"
+                
         '422':
           $ref: '#/components/responses/ValidationError' # Menggunakan referensi agar rapi
 

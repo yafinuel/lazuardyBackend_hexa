@@ -20,7 +20,7 @@ class SendOtpAction
      */
     public function __construct(protected OtpRepositoryInterface $repository, protected MailerInterface $mailer)
     {
-        $this->length = 6;
+        $this->length = 4;
         $this->expiryMinutes = 30;
     }
 

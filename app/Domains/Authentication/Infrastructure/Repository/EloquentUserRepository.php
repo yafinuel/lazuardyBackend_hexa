@@ -2,6 +2,7 @@
 
 namespace App\Domains\Authentication\Infrastructure\Repository;
 
+use App\Domains\Authentication\Entities\UserAuthEntity;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
 use App\Models\Student;
 use App\Models\Tutor;
@@ -9,41 +10,58 @@ use App\Models\User;
 
 class EloquentUserRepository implements UserRepositoryInterface
 {
-    public function findByEmail(string $email): ?User
+    public function findByEmail(string $email): ?UserAuthEntity
     {
-        return User::where('email', $email)->first();
+        $user = User::where('email', $email)->first();
+        
+        if(!$user) return null;
+        
+        return new UserAuthEntity(
+            id: $user->id,
+            email: $user->email,
+            emailVerifiedAt: $user->email_verified_at,
+            password: $user->password,
+            google_id: $user->google_id,
+            facebook_id: $user->facebook_id,
+        );
+    }
+
+    public function getToken(int $id): string
+    {
+        $user = User::findOrFail($id);
+        $token = $user->createToken('manual_auth_token')->plainTextToken;
+
+        return $token;
     }
 
     /**
      * Create user data
      */
-    public function create(array $data): User
+    public function create(array $data): void
     {
-        return User::create($data);
+        $user = User::create($data);
     }
 
     
     /**
      * Create user and student data.
      */
-    public function createStudentData(array $userData, array $studentData): User
+    public function createStudentData(array $userData, array $studentData): void
     {
         $user = User::create($userData);
         $studentData['user_id'] = $user->id;
         Student::create($studentData);
-        return $user;
     }
 
     
     /**
      * Create user and tutor data.
      */
-    public function createTutorData(array $userData, array $tutorData): User
+    public function createTutorData(array $userData, array $tutorData): void
     {
         $user = User::create($userData);
         $tutorData['user_id'] = $user->id;
         Tutor::create($tutorData);
-        return $user;
     }
 
     
