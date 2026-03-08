@@ -70,8 +70,9 @@ paths:
                           message: { type: string, example: "Unauthorized" }
                           name: { type: string, example: "user" }
                           email: { type: string, example: "user@example.com" }
-                          provider_id: { type: string, example: "1092837" }
-                          email_verified_at: { type: string, format: date-time, nullable: true }
+                          password: { type: string, example: "password123" }
+                          google_id: { type: string, example: "1092837" }
+                          facebook_id: { type: string, example: "1092837" }
 
                   
         '401':

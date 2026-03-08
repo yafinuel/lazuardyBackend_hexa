@@ -3,6 +3,7 @@
 namespace App\Domains\Authentication\Actions;
 
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
+use Illuminate\Support\Str;
 
 use function Symfony\Component\Clock\now;
 
@@ -34,14 +35,25 @@ class AuthenticateSocialAction
             ];
         }
 
-        return [
-            'message' => 'Unauthorized',
-            'name' => $socialUser->getName() ?? $socialUser->getNickname(),
-            'email' => $socialUser->getEmail(),
-            $provider . '_id' => $socialUser->getId(),
-            'password' => null,
-            'email_verified_at' => now()
-        ];
+        if ($provider == 'google'){
+            return [
+                'message' => 'Unauthorized',
+                'name' => $socialUser->getName() ?? $socialUser->getNickname(),
+                'email' => $socialUser->getEmail(),
+                'google_id' => $socialUser->getId(),
+                'facebook_id' => null,
+                'password' => Str::random(16),
+            ];
+        } else if ($provider == "facebook"){
+            return [
+                'message' => 'Unauthorized',
+                'name' => $socialUser->getName() ?? $socialUser->getNickname(),
+                'email' => $socialUser->getEmail(),
+                'google_id' => null,
+                'facebook_id' => $socialUser->getId(),
+                'password' => Str::random(16),
+            ];
+        }
     }
 
 }
