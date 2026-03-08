@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Domains\Authentication\Actions\LoginManualAction;
 use App\Domains\Authentication\Actions\SendOtpAction;
+use App\Domains\Authentication\Actions\StudentRegisterAction;
 use App\Domains\Authentication\Actions\VerifyOtpAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\OtpIdentifierEnum;
@@ -36,11 +37,6 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
         ], 200);
-    }
-
-    public function register(Request $request, )
-    {
-        
     }
 
     public function requestOtpEmail(Request $request, SendOtpAction $action)
@@ -82,6 +78,38 @@ class AuthController extends Controller
                 'message' => $e->getMessage(),
             ], 404);
         }
+    }
+
+    
+    public function studentRegister(Request $request, StudentRegisterAction $action)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8'],
+            'name' => ['required', 'string'],
+            'class_id' => ['required', 'integer'],
+            'gender' => ['required', 'in:male,female'],
+            'date_of_birth' => ['required', 'date'],
+            'telephone_number' => ['required', 'string'],
+            'province' => ['required', 'string'],
+            'regency' => ['required', 'string'],
+            'district' => ['required', 'string'],
+            'subdistrict' => ['required', 'string'],
+            'google_id' => ['nullable', 'string'],
+            'facebook_id' => ['nullable', 'string'],
+        ]);
+
+        $token = $action->execute($data);
+
+        return response()->json([
+            'status' => 'success',
+            'access_token' => $token,
+            'token_type' => 'Bearer'
+        ], 200);
+    }
+
+    public function tutorRegister(Request $request, )
+    {
         
     }
 }

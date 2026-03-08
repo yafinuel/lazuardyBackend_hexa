@@ -15,7 +15,6 @@ return new class extends Migration
         {
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('class_id')->constrained('classes');
-            $table->foreignId('curriculum_id')->constrained('curriculums');
             $table->string('school')->nullable();
             $table->string('parent')->nullable();
             $table->string('parent_telephone_number', 15)->nullable();

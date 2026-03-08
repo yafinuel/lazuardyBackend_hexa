@@ -15,3 +15,8 @@ Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback']
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/requestOtpEmail', [AuthController::class, 'requestOtpEmail']);
 Route::post('/verifyOtpEmail', [AuthController::class, 'verifyOtpEmail']);
+Route::post('/studentRegister', [AuthController::class, 'studentRegister']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+});

@@ -106,6 +106,18 @@ paths:
                 
         '422':
           $ref: '#/components/responses/ValidationError' # Menggunakan referensi agar rapi
+  /logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout akun
+      responses: 
+        '200':
+          description: "berhasil logout"
+          content:
+            application/json:
+              example:
+                status: success
 
   /requestOtpEmail:
     post:
@@ -158,6 +170,50 @@ paths:
               example:
                 status: error
                 message: error message
+
+  /studentRegister:
+    post:
+      tags:
+        - Authentication
+      summary: Mendaftarkan user siswa baru
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, name, class, gender, date_of_birth, telephone_number, province, regency, district, subdistrict]
+              properties:
+                email: { type: string, format: email, example: "lazuardy.tester@example.com" }
+                password: { type: string, format: password, example: "password123" }
+                name: { type: string, example: "Lazuardy Developer" }
+                class_id: { type: integer, example: 12 }
+                gender: { type: string, enum: [Laki-laki, Perempuan], example: "Laki-laki" }
+                date_of_birth: { type: string, format: date, example: "2005-08-17" }
+                telephone_number: { type: string, example: "081234567890" }
+                province: { type: string, example: "Jawa Timur" }
+                regency: { type: string, example: "Malang" }
+                district: { type: string, example: "Lowokwaru" }
+                subdistrict: { type: string, example: "Tulusrejo" }
+                google_id: { type: string, nullable: true, example: null }
+                facebook_id: { type: string, nullable: true, example: null }
+      responses:
+        '201':
+          description: Berhasil mendaftar
+          content:
+            application/json:
+              example:
+                status: success
+                access_token: 2|A2fWUPOSpp425YJHftCcnMcSYVNVD8CbLrNhoZr79a0046d6
+                token_type: "Bearer" 
+        '500':
+          description: Terjadi kesalahan internal server (Database error, dsb)
+          content:
+            application/json:
+              example:
+                status: "error"
+                message: "Gagal melakukan registrasi, silakan cek kembali data Anda."
+          
 
 components:
   responses:
