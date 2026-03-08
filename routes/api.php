@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\Finance\PaymentGatewayController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/requestOtpEmail', [AuthController::class, 'requestOtpEmail']);
 Route::post('/verifyOtpEmail', [AuthController::class, 'verifyOtpEmail']);
 Route::post('/studentRegister', [AuthController::class, 'studentRegister']);
+
+// Finance
+Route::get('/getBankList', [PaymentGatewayController::class, 'getBankList']);
+Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateBankAccount']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

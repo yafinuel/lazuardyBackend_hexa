@@ -8,6 +8,8 @@ use App\Domains\Authentication\Infrastructure\Repository\EloquentUserRepository;
 use App\Domains\Authentication\Ports\MailerInterface;
 use App\Domains\Authentication\Ports\OtpRepositoryInterface;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
+use App\Domains\Finance\Infrastructure\XenditBankAdapter;
+use App\Domains\Finance\Ports\BankValidatorInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,6 +32,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             MailerInterface::class,
             LaravelMailer::class
+        );
+
+        $this->app->bind(
+            BankValidatorInterface::class,
+            XenditBankAdapter::class
         );
     }
 

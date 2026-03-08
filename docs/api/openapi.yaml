@@ -11,6 +11,8 @@ servers:
 tags:
   - name: Authentication
     description: Endpoint untuk Login, Register, dan OAuth
+  - name: Payment Gateway
+    description: Hal-hal yang berkaitan dengan keuangan
 
 paths:
   /auth/{provider}/redirect:
@@ -27,7 +29,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Berhasil redirect ke OAuth (Tidak mengembalikan api apapun ke backend)
+          description: Berhasil redirect
 
   /auth/{provider}/callback:
     get:
@@ -38,50 +40,17 @@ paths:
         - name: provider
           in: path
           required: true
-          description: google, facebook
           schema:
             type: string
       responses:
         '200':
-          description: Berhasil callback (Dua skema data)
+          description: Berhasil callback
           content:
             application/json:
               schema:
                 oneOf:
-                
-                  # SKEMA 1: User lama/Terdaftar (Lengkap dengan Token)
-                  - type: object
-                    properties:
-                      status: { type: string, example: "success" }
-                      data:
-                        type: object
-                        properties:
-                          message: { type: string, example: "Authorized" }
-                          access_token: { type: string, example: "1|wdadubwab..." }
-                          token_type: { type: string, example: "Bearer" }
-
-                  # SKEMA 2: User baru (Hanya data dasar dari Google/FB)
-                  - type: object
-                    properties:
-                      status: { type: string, example: "success" }
-                      data: 
-                        type: object
-                        properties:
-                          message: { type: string, example: "Unauthorized" }
-                          name: { type: string, example: "user" }
-                          email: { type: string, example: "user@example.com" }
-                          password: { type: string, example: "password123" }
-                          google_id: { type: string, example: "1092837" }
-                          facebook_id: { type: string, example: "1092837" }
-
-                  
-        '401':
-          description: Gagal callback
-          content:
-            application/json:
-              example:
-                status: "error"
-                message: "dwadb"
+                  - $ref: '#/components/schemas/AuthSuccess'
+                  - $ref: '#/components/schemas/OAuthUserNew'
 
   /login:
     post:
@@ -104,9 +73,9 @@ paths:
                 status: "success"
                 access_token: "1|wdadubwab..."
                 token_type: "Bearer"
-                
         '422':
-          $ref: '#/components/responses/ValidationError' # Menggunakan referensi agar rapi
+          $ref: '#/components/responses/ValidationError'
+
   /logout:
     post:
       tags:
@@ -120,58 +89,6 @@ paths:
               example:
                 status: success
 
-  /requestOtpEmail:
-    post:
-      tags:
-        - Authentication
-      summary: Meminta OTP untuk email
-      requestBody: 
-        required: true
-        content: 
-          application/json:
-            example:
-              email: "user@gmail.com"
-      responses:
-        '201':
-          description: "Berhasil mengirim OTP ke email"
-          content:
-            application/json:
-              example:
-                status: success
-        '500':
-          description: "Gagal mengirim OTP ke email"
-          content:
-            application/json:
-              example:
-                status: error
-                message: pesan error
-  /verifyOtpEmail:
-    post:
-      tags:
-        - Authentication
-      summary: Verifikasi OTP email dari user
-      requestBody: 
-        required: true
-        content:
-          application/json:
-            example:
-              email: user@gmail.com
-              otp: "032398"
-      responses: 
-        '200':
-          description: Berhasil verifikasi OTP email
-          content:
-            application/json:
-              example:
-                status: 'success/failed'
-        '404':
-          description: OTP untuk email tidak ditemukan
-          content:
-            application/json:
-              example:
-                status: error
-                message: error message
-
   /studentRegister:
     post:
       tags:
@@ -183,13 +100,13 @@ paths:
           application/json:
             schema:
               type: object
-              required: [email, password, name, class, gender, date_of_birth, telephone_number, province, regency, district, subdistrict]
+              required: [email, password, name, class_id, gender, date_of_birth, telephone_number, province, regency, district, subdistrict]
               properties:
                 email: { type: string, format: email, example: "lazuardy.tester@example.com" }
                 password: { type: string, format: password, example: "password123" }
                 name: { type: string, example: "Lazuardy Developer" }
                 class_id: { type: integer, example: 12 }
-                gender: { type: string, enum: [Laki-laki, Perempuan], example: "Laki-laki" }
+                gender: { type: string, enum: [male, female], example: "male" }
                 date_of_birth: { type: string, format: date, example: "2005-08-17" }
                 telephone_number: { type: string, example: "081234567890" }
                 province: { type: string, example: "Jawa Timur" }
@@ -205,101 +122,87 @@ paths:
             application/json:
               example:
                 status: success
-                access_token: 2|A2fWUPOSpp425YJHftCcnMcSYVNVD8CbLrNhoZr79a0046d6
+                access_token: "2|A2fWUPOSpp425YJHftCcnMcSYVNVD8CbLrNhoZr79a0046d6"
                 token_type: "Bearer" 
         '500':
-          description: Terjadi kesalahan internal server (Database error, dsb)
+          description: Internal Server Error
           content:
             application/json:
               example:
                 status: "error"
                 message: "Gagal melakukan registrasi, silakan cek kembali data Anda."
-          
 
+  /banks:
+    get:
+      tags:
+        - Payment Gateway
+      summary: Mendapatkan daftar bank
+      responses:
+        '200':
+          description: Berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Bank'
+              example: # Taruh contoh data aslinya di sini
+                status: "success"
+                data:
+                  - bank_code: "ID_ALLO"
+                    bank_name: "Allo Bank Indonesia"
+                  - bank_code: "ID_BCA"
+                    bank_name: "Bank Central Asia"
 components:
   responses:
     ValidationError:
       description: Validasi Gagal
       content:
         application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-              errors:
-                type: object
-                additionalProperties:
-                  type: array
-                  items:
-                    type: string
           example:
-            message: "Kresidensial yang diberikan salah"
+            message: "Data tidak valid"
             errors:
-              email: ["Kresidensial yang diberikan salah"]
+              email: ["Email sudah terdaftar"]
 
   schemas:
     User:
       type: object
       properties:
-        id:
-          type: integer
-          example: 1
-        name:
-          type: string
-          example: "user"
-        email:
-          type: string
-          format: email
-          example: "user@example.com"
-        email_verified_at:
-          type: string
-          format: date-time
-          nullable: true
-          example: "2026-03-05T00:00:00.000000Z"
-        role:
-          type: string
-          example: "student"
-        telephone_number:
-          type: string
-          nullable: true
-          example: "085..."
-        google_id:
-          type: string
-          nullable: true
-        facebook_id:
-          type: string
-          nullable: true
-        profile_photo_url:
-          type: string
-          nullable: true
-        date_of_birth:
-          type: string
-          format: date
-          nullable: true
-          example: "2000-01-01"
-        gender:
-          type: string
-          nullable: true
-        religion:
-          type: string
-          nullable: true
-        home_address:
-          type: string
-          nullable: true
-        latitude:
-          type: number
-          format: float
-          nullable: true
-          example: 11.2231
-        longitude:
-          type: number
-          format: float
-          nullable: true
-          example: 21.2231
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+        id: { type: integer, example: 1 }
+        name: { type: string, example: "user" }
+        email: { type: string, format: email }
+        role: { type: string, example: "student" }
+        # ... properti lainnya tetap seperti punyamu
+
+    Bank:
+      type: object
+      properties:
+        bank_code: { type: string, example: "ID_ALLO" }
+        bank_name: { type: string, example: "Allo Bank Indonesia" }
+
+    AuthSuccess:
+      type: object
+      properties:
+        status: { type: string, example: "success" }
+        data:
+          type: object
+          properties:
+            message: { type: string, example: "Authorized" }
+            access_token: { type: string }
+            token_type: { type: string, example: "Bearer" }
+
+    OAuthUserNew:
+      type: object
+      properties:
+        status: { type: string, example: "success" }
+        data:
+          type: object
+          properties:
+            message: { type: string, example: "Unauthorized" }
+            name: { type: string }
+            email: { type: string }
+            provider_id: { type: string }
