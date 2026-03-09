@@ -157,6 +157,50 @@ paths:
                     bank_name: "Allo Bank Indonesia"
                   - bank_code: "ID_BCA"
                     bank_name: "Bank Central Asia"
+  /validateBankAccount:
+    post:
+      tags:
+        - Payment Gateway
+      summary: Memvalidasi nomor rekening
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bank_code, account_number]
+              properties:
+                bank_code: { type: string, example: "ID_BSI" }
+                account_number: { type: string, example: "1234567890" }
+      responses:
+        '200':
+          description: Ada 4 skema ouput 1 berhasil 3 gagal
+          content:
+            application/json: 
+              examples:
+                SuccessCondition:
+                  summary: Kondisi rekening user benar tidak ada masalah
+                  value:
+                    status: success
+                    account_holder_name: "FETCH_HOLDER_NAME"
+                ValidationFailed:
+                  summary: Kondisi gagal memverifikasi rekening
+                  value:
+                    status: error
+                    message: Gagal memverifikasi rekening
+                    error_code: 'API_ERROR'
+                OwnerNotFound:
+                  summary: Kondisi nama pemilik tidak ditemukan
+                  value:
+                    status: error
+                    message: Nama pemilik tidak ditemukan
+                SystemError:
+                  summary: Kondisi terjadi kesalahan sistem
+                  value:
+                    status: error
+                    message: Terjadi kesalahan sistem
+
+
 components:
   responses:
     ValidationError:
