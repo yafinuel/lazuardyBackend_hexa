@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('class_id')->constrained('classes');
+            $table->string('name');
+            $table->string('icon_image_url')->nullable();
             $table->timestamps();
         });
     }

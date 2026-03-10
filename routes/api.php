@@ -17,6 +17,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/requestOtpEmail', [AuthController::class, 'requestOtpEmail']);
 Route::post('/verifyOtpEmail', [AuthController::class, 'verifyOtpEmail']);
 Route::post('/studentRegister', [AuthController::class, 'studentRegister']);
+Route::post('/tutorRegister', [AuthController::class, 'tutorRegister']);
 
 // Finance
 Route::get('/getBankList', [PaymentGatewayController::class, 'getBankList']);

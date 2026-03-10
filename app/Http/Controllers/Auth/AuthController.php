@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Auth;
 use App\Domains\Authentication\Actions\LoginManualAction;
 use App\Domains\Authentication\Actions\SendOtpAction;
 use App\Domains\Authentication\Actions\StudentRegisterAction;
+use App\Domains\Authentication\Actions\TutorRegisterAction;
 use App\Domains\Authentication\Actions\VerifyOtpAction;
 use App\Http\Controllers\Controller;
+use App\Shared\Enums\GenderEnum;
 use App\Shared\Enums\OtpIdentifierEnum;
 use App\Shared\Enums\OtpVerificationTypeEnum;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class AuthController extends Controller
 {
@@ -88,7 +91,7 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
             'name' => ['required', 'string'],
             'class_id' => ['required', 'integer'],
-            'gender' => ['required', 'in:male,female'],
+            'gender' => ['required', new Enum(GenderEnum::class)],
             'date_of_birth' => ['required', 'date'],
             'telephone_number' => ['required', 'string'],
             'province' => ['required', 'string'],
@@ -108,8 +111,44 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function tutorRegister(Request $request, )
+    public function tutorRegister(Request $request, TutorRegisterAction $action)
     {
+        $data = $request->validate([
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'string'],
+            'name' => ['required', 'string'],
+            'gender' => ['required', new Enum(GenderEnum::class)],
+            'description' => ['required', 'string'],
+            'date_of_birth' => ['required', 'date'],
+            'telephone_number' => ['required', 'string'],
+            'bank_code' => ['required', 'string'],
+            'account_number' => ['required', 'string'],
+            'province' => ['required', 'string'],
+            'regency' => ['required', 'string'],
+            'district' => ['required', 'string'],
+            'subdistrict' => ['required', 'string'],
+            'google_id' => ['nullable', 'string'],
+            'facebook_id' => ['nullable', 'string'],
+            'subject_id' => ['required', 'exists:subjects,id'],
+            'learning_method' => ['required', 'array'],
+            'schedules' => ['required', 'array'],
+            'schedules.*.day' => ['required', 'string'],
+            'schedules.*.time' => ['required', 'date_format:H:i'],
+            'curriculum_vitae' => ['required', 'file', 'mimes:pdf'],
+            'id_card' => ['required', 'file', 'mimes:pdf,jpg,png'],   
+            'certificate' => ['required', 'file', 'mimes:pdf'],
+        ]);
+
+        try {
+            $token = $action->execute($data);
+        } catch (Exception $e) {
+            throw new Exception("Detail Error: " . $e->getMessage(), 500);
+        }
         
+        return response()->json([
+            'status' => 'success',
+            'access_token' => $token,
+            'token_type' => 'Bearer'
+        ], 200);
     }
 }

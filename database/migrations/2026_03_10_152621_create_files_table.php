@@ -1,5 +1,6 @@
 <?php
 
+use App\Shared\Enums\FileTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,13 +12,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('students', function (Blueprint $table) 
-        {
+        $fileTypes = FileTypeEnum::list();
+
+        Schema::create('files', function (Blueprint $table) use ($fileTypes) {
+            $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('class_id')->constrained('classes');
+            $table->string('name');
+            $table->enum('type', $fileTypes);
+            $table->string('path');
+            $table->string('status');
             $table->timestamps();
-            
-            $table->primary('user_id');
         });
     }
 
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('students');
+        Schema::dropIfExists('files');
     }
 };

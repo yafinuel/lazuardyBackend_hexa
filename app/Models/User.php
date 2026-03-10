@@ -79,11 +79,6 @@ class User extends Authenticatable
         return $this->hasOne(Tutor::class);
     }
 
-    // public function schedules(): HasMany
-    // {
-    //     return $this->hasMany(ScheduleTutor::class);
-    // }
-
     // public function takenSchedules(): HasMany
     // {
     //     return $this->hasMany(TakenSchedule::class);
@@ -93,9 +88,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Subject::class, 'tutor_subjects', 'user_id', 'subject_id');
     }
     
-    // public function files(): HasMany {
-    //     return $this->hasMany(File::class);
-    // }
+    public function files(): HasMany {
+        return $this->hasMany(File::class);
+    }
 
     // public function payments(): HasMany
     // {

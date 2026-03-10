@@ -15,10 +15,31 @@ class ClassSeeder extends Seeder
     {
         $classes = [];
 
-        for ($i=1; $i<=12; $i++){
-            $classes[] = ['name' => 'kelas ' . $i];
+        for ($i=1; $i<=6; $i++){
+            $classes[] = [
+                'name' => 'kelas ' . $i, 
+                'jenjang' => 'SD'
+            ];
         }
-        $classes[] = ['umum' => 'umum'];
+        for ($i=0; $i<3; $i++){
+            $n = $i + 7;
+            $classes[] = [
+                'name' => 'kelas ' . $n, 
+                'jenjang' => 'SMP'
+            ];
+        }
+        for ($i=0; $i<3; $i++){
+            $n = $i + 10;
+            $classes[] = [
+                'name' => 'kelas ' . $n, 
+                'jenjang' => 'SMA'
+            ];
+        }
+        
+        $classes[] = [
+            'name' => 'umum',
+            'jenjang' => 'umum'
+        ];
 
         ClassModel::insert($classes);
     }

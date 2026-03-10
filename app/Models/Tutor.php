@@ -25,21 +25,18 @@ class Tutor extends Model
         'salary',
         'price',
         'description',
-        'experience',
-        'organization',
         'learning_method',
-        'qualification',
-        'course_mode',
         'status',
-        'badge',
-        'sanction_amount',
+        'sanction',
+        'bank_code',
+        'account_number',
     ];
     
     protected $casts = [
         'qualification' => 'array',
         'organization' => 'array',
         'education' => 'array',
-        'course_mode' => CourseModeEnum::class,
+        'learning_method' => 'array',
         'status' => TutorStatusEnum::class,
     ];
 
@@ -50,7 +47,12 @@ class Tutor extends Model
 
     public function subjects(): BelongsToMany
     {
-        return $this->belongsToMany(Subject::class, 'tutor_subjects', 'user_id', 'subject_id');
+        return $this->belongsToMany(Subject::class, 'tutor_subjects', 'tutor_id', 'subject_id');
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(ScheduleTutor::class, 'tutor_id', 'user_id');
     }
     
 }

@@ -10,6 +10,12 @@ use App\Domains\Authentication\Ports\OtpRepositoryInterface;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
 use App\Domains\Finance\Infrastructure\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
+use App\Shared\Infrastructure\Queues\LaravelTaskQueue;
+use App\Shared\Infrastructure\Repository\EloquentFileRepository;
+use App\Shared\Infrastructure\Storage\LaravelFileStorage;
+use App\Shared\Ports\FileRepositoryInterface;
+use App\Shared\Ports\FileStorageInterface;
+use App\Shared\Ports\TaskQueueInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,6 +43,21 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             BankValidatorInterface::class,
             XenditBankAdapter::class
+        );
+        
+        $this->app->bind(
+            FileStorageInterface::class,
+            LaravelFileStorage::class
+        );
+
+        $this->app->bind(
+            FileRepositoryInterface::class,
+            EloquentFileRepository::class
+        );
+
+        $this->app->bind(
+            TaskQueueInterface::class,
+            LaravelTaskQueue::class
         );
     }
 

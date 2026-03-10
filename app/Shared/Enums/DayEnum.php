@@ -1,18 +1,28 @@
 <?php
 
-namespace App\Shared\Enums;
+namespace App\shared\enums;
 
-enum CourseModeEnum: string
+enum DayEnum: string
 {
-    case ONLINE = 'online';
-    case OFFLINE = 'offline';
+    case SUNDAY = 'sunday';
+    case MONDAY = 'monday';
+    case TUESDAY = 'tuesday';
+    case WEDNESDAY = 'wednesday';
+    case THURSDAY = 'thursday';
+    case FRIDAY = 'friday';
+    case SATURDAY = 'saturday';
 
     public function displayName() : string 
     {
         return match($this) 
         {
-            self::ONLINE => 'Online',
-            self::OFFLINE => 'Offline',
+            self::SUNDAY => 'Minggu',
+            self::MONDAY => 'Senin',
+            self::TUESDAY => 'Selasa',
+            self::WEDNESDAY => 'Rabu',
+            self::THURSDAY => 'Kamis',
+            self::FRIDAY => 'Jumat',
+            self::SATURDAY => 'Sabtu'
         };
     }
     
