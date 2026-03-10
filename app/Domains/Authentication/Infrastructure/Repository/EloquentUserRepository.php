@@ -81,7 +81,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             DB::rollBack();
 
             Log::error("Message: " . $e->getMessage());
-            throw new Exception("Gagal melakukan registrasi, silakan cek kembali data Anda.", 500);
+            throw new Exception("Gagal melakukan registrasi, silakan cek kembali data Anda.");
         }
     }
     
@@ -156,7 +156,7 @@ class EloquentUserRepository implements UserRepositoryInterface
         } catch (Exception $e) {
             DB::rollBack();
             Log::error("Message: " . $e->getMessage());
-            throw new Exception("Detail Error: " . $e->getMessage(), 500);
+            throw new Exception("Terjadi kesalahan saat menyimpan data ke sistem.");
         }
     }
 

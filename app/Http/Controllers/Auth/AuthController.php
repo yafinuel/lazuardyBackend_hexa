@@ -102,13 +102,24 @@ class AuthController extends Controller
             'facebook_id' => ['nullable', 'string'],
         ]);
 
-        $token = $action->execute($data);
+        try {
 
-        return response()->json([
-            'status' => 'success',
-            'access_token' => $token,
-            'token_type' => 'Bearer'
-        ], 200);
+            $token = $action->execute($data);
+
+            return response()->json([
+                'status' => 'success',
+                'access_token' => $token,
+                'token_type' => 'Bearer'
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal melakukan registrasi siswa.',
+                'debug_error' => $e->getMessage(),
+            ], 500);
+        }
+
     }
 
     public function tutorRegister(Request $request, TutorRegisterAction $action)
@@ -140,15 +151,20 @@ class AuthController extends Controller
         ]);
 
         try {
+
             $token = $action->execute($data);
+            
+            return response()->json([
+                'status' => 'success',
+                'access_token' => $token,
+                'token_type' => 'Bearer'
+            ], 200);
         } catch (Exception $e) {
-            throw new Exception("Detail Error: " . $e->getMessage(), 500);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal melakukan registrasi tentor.',
+                'debug_error' => $e->getMessage(),
+            ], 500);
         }
-        
-        return response()->json([
-            'status' => 'success',
-            'access_token' => $token,
-            'token_type' => 'Bearer'
-        ], 200);
     }
 }

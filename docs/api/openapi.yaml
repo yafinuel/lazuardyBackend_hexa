@@ -104,7 +104,7 @@ paths:
               properties:
                 email: { type: string, format: email, example: "lazuardy.tester@example.com" }
                 password: { type: string, format: password, example: "password123" }
-                name: { type: string, example: "Lazuardy Developer" }
+                name: { type: string, example: "Lazuardy Student" }
                 class_id: { type: integer, example: 12 }
                 gender: { type: string, enum: [male, female], example: "male" }
                 date_of_birth: { type: string, format: date, example: "2005-08-17" }
@@ -123,14 +123,101 @@ paths:
               example:
                 status: success
                 access_token: "2|A2fWUPOSpp425YJHftCcnMcSYVNVD8CbLrNhoZr79a0046d6"
-                token_type: "Bearer" 
+                token_type: "Bearer"
         '500':
-          description: Internal Server Error
+          description: Gagal Mendaftarkan
           content:
             application/json:
-              example:
-                status: "error"
-                message: "Gagal melakukan registrasi, silakan cek kembali data Anda."
+              schema:
+                type: object
+                properties:
+                  status: {type: string, example: error}
+                  message: {type: string, example: Gagal melakukan registrasi siswa.}
+
+  /tutorRegister:
+    post:
+      tags:
+        - Authentication
+      summary: Mendaftarkan user tutor baru (dengan upload file)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data: # Menggunakan multipart karena ada file
+            schema:
+              type: object
+              required: 
+                - email
+                - password
+                - name
+                - gender
+                - description
+                - date_of_birth
+                - telephone_number
+                - bank_code
+                - account_number
+                - province
+                - regency
+                - district
+                - subdistrict
+                - subject_id
+                - learning_method
+                - schedules
+                - curriculum_vitae
+                - id_card
+                - certificate
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+                name: { type: string }
+                gender: { type: string, enum: [male, female] }
+                description: { type: string, description: "Bio singkat tutor" }
+                date_of_birth: { type: string, format: date }
+                telephone_number: { type: string }
+                bank_code: { type: string }
+                account_number: { type: string }
+                province: { type: string }
+                regency: { type: string }
+                district: { type: string }
+                subdistrict: { type: string }
+                google_id: { type: string, nullable: true }
+                facebook_id: { type: string, nullable: true }
+                subject_id: { type: integer, description: "ID dari mata pelajaran" }
+                learning_method: 
+                  type: array
+                  items: { type: string }
+                  example: ["online", "offline"]
+                schedules:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      day: { type: string, example: "Monday" }
+                      time: { type: string, example: "14:00" }
+                curriculum_vitae: { type: string, format: binary, description: "File PDF" }
+                id_card: { type: string, format: binary, description: "File PDF/JPG/PNG" }
+                certificate: { type: string, format: binary, description: "File PDF" }
+      responses:
+        '201':
+          description: Berhasil mendaftar
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string, example: success}
+                  access_token: {type: string, example: 1|2TWUJufoTJOoGuCepg4s5MNiwAFd1pWTOV7da5JP7761d325}
+                  token_type: {type: string, example: Bearer}
+        '500':
+          description: Gagal Mendaftarkan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string, example: error}
+                  message: {type: string, example: Gagal melakukan registrasi tutor.}
+        '422':
+          $ref: '#/components/responses/ValidationError'
 
   /banks:
     get:
@@ -150,13 +237,7 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Bank'
-              example: # Taruh contoh data aslinya di sini
-                status: "success"
-                data:
-                  - bank_code: "ID_ALLO"
-                    bank_name: "Allo Bank Indonesia"
-                  - bank_code: "ID_BCA"
-                    bank_name: "Bank Central Asia"
+
   /validateBankAccount:
     post:
       tags:
@@ -174,32 +255,14 @@ paths:
                 account_number: { type: string, example: "1234567890" }
       responses:
         '200':
-          description: Ada 4 skema ouput 1 berhasil 3 gagal
+          description: Validasi rekening berhasil/gagal
           content:
             application/json: 
               examples:
                 SuccessCondition:
-                  summary: Kondisi rekening user benar tidak ada masalah
-                  value:
-                    status: success
-                    account_holder_name: "FETCH_HOLDER_NAME"
+                  value: { status: "success", account_holder_name: "FETCH_HOLDER_NAME" }
                 ValidationFailed:
-                  summary: Kondisi gagal memverifikasi rekening
-                  value:
-                    status: error
-                    message: Gagal memverifikasi rekening
-                    error_code: 'API_ERROR'
-                OwnerNotFound:
-                  summary: Kondisi nama pemilik tidak ditemukan
-                  value:
-                    status: error
-                    message: Nama pemilik tidak ditemukan
-                SystemError:
-                  summary: Kondisi terjadi kesalahan sistem
-                  value:
-                    status: error
-                    message: Terjadi kesalahan sistem
-
+                  value: { status: "error", message: "Gagal memverifikasi rekening", error_code: "API_ERROR" }
 
 components:
   responses:
@@ -213,15 +276,6 @@ components:
               email: ["Email sudah terdaftar"]
 
   schemas:
-    User:
-      type: object
-      properties:
-        id: { type: integer, example: 1 }
-        name: { type: string, example: "user" }
-        email: { type: string, format: email }
-        role: { type: string, example: "student" }
-        # ... properti lainnya tetap seperti punyamu
-
     Bank:
       type: object
       properties:
