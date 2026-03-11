@@ -106,8 +106,17 @@ paths:
       responses:
         '200':
           description: Verifikasi berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string, example: success}
+                  reset_token: {type: string, example: PmBbJbJTiub0IbNe}
         '404':
           description: OTP salah
+        '500':
+          description: 
   /forgotPasswordResetPassword:
     post:
       tags:
@@ -403,6 +412,8 @@ components:
         regency: { type: string }
         district: { type: string }
         subdistrict: { type: string }
+        google_id: {type: string, example: nullable}
+        facebook_id: {type: string, example: nullable}
 
     Bank:
       type: object
