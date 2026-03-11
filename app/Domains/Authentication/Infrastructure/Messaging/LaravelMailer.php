@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Mail;
 
 class LaravelMailer implements MailerInterface
 {
-    public function sendOtp($email, $otp): void {
-        Mail::to($email)->send(new OtpEmail($otp));
+    public function sendOtp(string $email, string $otp, string $subject, string $title): void {
+        Mail::to($email)->send(new OtpEmail($otp, $subject, $title));
     }
 }

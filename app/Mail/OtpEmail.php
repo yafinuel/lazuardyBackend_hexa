@@ -16,8 +16,11 @@ class OtpEmail extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $otp)
-    {}
+    public function __construct(
+        public string $otp,
+        public string $customSubject,
+        public string $title
+    ) {}
 
     /**
      * Get the message envelope.
@@ -25,7 +28,7 @@ class OtpEmail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Kode Verifikasi OTP Lazuardy App',
+            subject: $this->customSubject,
         );
     }
 
@@ -36,6 +39,10 @@ class OtpEmail extends Mailable implements ShouldQueue
     {
         return new Content(
             view: 'emails.otp',
+            with: [
+                'otp' => $this->otp,
+                'title' => $this->title,
+            ]
         );
     }
 

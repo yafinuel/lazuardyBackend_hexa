@@ -54,11 +54,6 @@ class EloquentOtpRepository implements OtpRepositoryInterface
         );
     }
 
-    public function verifyOtp(string $identifier, string $identifierType, string $code): void
-    {
-        throw new \Exception('Not implemented');
-    }
-
     public function markAsUsed(OtpEntity $otpEntity): ?OtpEntity
     {
         $otpEntity->is_used = true;

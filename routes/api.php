@@ -14,8 +14,11 @@ Route::get('/user', function (Request $request) {
 Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect']);
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/requestOtpEmail', [AuthController::class, 'requestOtpEmail']);
-Route::post('/verifyOtpEmail', [AuthController::class, 'verifyOtpEmail']);
+Route::post('/registerOtpEmail', [AuthController::class, 'registerOtpEmail']);
+Route::post('/verifyOtpRegisterEmail', [AuthController::class, 'verifyOtpRegisterEmail']);
+Route::post('/forgotPasswordOtpEmail', [AuthController::class, 'forgotPasswordOtpEmail']);
+Route::post('/forgotPasswordVerifyOtpEmail', [AuthController::class, 'forgotPasswordVerifyOtpEmail']);
+Route::post('/forgotPasswordResetPassword', [AuthController::class, 'forgotPasswordResetPassword']);
 Route::post('/studentRegister', [AuthController::class, 'studentRegister']);
 Route::post('/tutorRegister', [AuthController::class, 'tutorRegister']);
 

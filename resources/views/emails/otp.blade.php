@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Verifikasi Akun</title>
+    <title>{{ $title }}</title>
 </head>
 <body>
     <h2>Halo!</h2>

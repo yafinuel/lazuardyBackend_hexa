@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Domains\Authentication\Actions\LoginManualAction;
+use App\Domains\Authentication\Actions\ResetPasswordAction;
 use App\Domains\Authentication\Actions\SendOtpAction;
 use App\Domains\Authentication\Actions\StudentRegisterAction;
 use App\Domains\Authentication\Actions\TutorRegisterAction;
@@ -21,7 +22,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required']
+            'password' => ['required', 'string']
         ]);
 
         $result = $action->execute($request->email, $request->password);
@@ -42,14 +43,14 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function requestOtpEmail(Request $request, SendOtpAction $action)
+    public function registerOtpEmail(Request $request, SendOtpAction $action)
     {
         $request->validate([
             "email" => ['required', 'email'],
         ]);
         
         try {
-            $otp = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::REGISTER->value);
+            $otp = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::REGISTER->value, "Kode Verifikasi OTP Lazuardy App", "Verifikasi Akun");
 
             return response()->json([
                 'status' => 'success'
@@ -57,12 +58,34 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage() // Pesan dari throw di Action tadi
-            ], 500);
+                'message' => "Gagal mengirim OTP",
+                'debug_error' => $e->getMessage(),
+            ], $e->getCode()?: 500);
         }
     }
 
-    public function verifyOtpEmail(Request $request, VerifyOtpAction $action)
+    public function forgotPasswordOtpEmail(Request $request, SendOtpAction $action)
+    {
+        $request->validate([
+            "email" => ['required', 'email'],
+        ]);
+        
+        try {
+            $otp = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::FORGOT_PASSWORD->value, "Kode OTP Lupa Password Lazuardy App", "Forgot Password");
+
+            return response()->json([
+                'status' => 'success'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Gagal mengirim OTP",
+                'debug_error' => $e->getMessage(),
+            ], $e->getCode()?: 500);
+        }
+    }
+
+    public function verifyOtpRegisterEmail(Request $request, VerifyOtpAction $action)
     {
         $request->validate([
             'email' => ['required', 'email'],
@@ -70,19 +93,63 @@ class AuthController extends Controller
         ]);
 
         try {
-            $result = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::REGISTER->value, $request->otp);
+            $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::REGISTER->value, $request->otp);
             
             return response()->json([
-                'status' => $result['status'],
+                'status' => 'success',
             ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
-            ], 404);
+                'message' => "Gagal memverifikasi OTP",
+                'debug_error' => $e->getMessage(),
+            ], $e->getCode()?: 500);
         }
     }
 
+    public function forgotPasswordVerifyOtpEmail(Request $request, VerifyOtpAction $action)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'otp' => ['required', 'string']
+        ]);
+
+        try {
+            $resetToken = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::FORGOT_PASSWORD->value, $request->otp);
+            
+            return response()->json([
+                'status' => 'success',
+                'reset_token' => $resetToken,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Gagal memverifikasi OTP",
+                'debug_error' => $e->getMessage(),
+            ], $e->getCode()?: 500);
+        }
+    }
+
+    public function forgotPasswordResetPassword(Request $request, ResetPasswordAction $action)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string', 'min:8'],
+            'reset_token' => ['required', 'string'],
+        ]);
+
+        try {
+            $action->execute($request['email'], $request['password'], $request['reset_token']);
+            return response()->json([
+                'status' => 'success'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'debug_error' => $e->getMessage(),
+            ], $e->getCode() ?: 400);
+        }
+    }
     
     public function studentRegister(Request $request, StudentRegisterAction $action)
     {
@@ -126,7 +193,7 @@ class AuthController extends Controller
     {
         $data = $request->validate([
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8'],
             'name' => ['required', 'string'],
             'gender' => ['required', new Enum(GenderEnum::class)],
             'description' => ['required', 'string'],

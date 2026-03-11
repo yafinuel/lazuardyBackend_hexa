@@ -159,7 +159,18 @@ class EloquentUserRepository implements UserRepositoryInterface
             throw new Exception("Terjadi kesalahan saat menyimpan data ke sistem.");
         }
     }
+    
+    public function resetPassword(string $email, string $password): void
+    {
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            throw new Exception("User dengan email tersebut tidak ditemukan.", 404);
+        }
 
+        $user->update([
+            'password' => Hash::make($password)
+        ]);
+    }
     
     /**
      * update social_id if email exists.
