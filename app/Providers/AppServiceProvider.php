@@ -8,7 +8,7 @@ use App\Domains\Authentication\Infrastructure\Repository\EloquentUserRepository;
 use App\Domains\Authentication\Ports\MailerInterface;
 use App\Domains\Authentication\Ports\OtpRepositoryInterface;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
-use App\Domains\Finance\Infrastructure\XenditBankAdapter;
+use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
 use App\Shared\Infrastructure\Queues\LaravelTaskQueue;
 use App\Shared\Infrastructure\Repository\EloquentFileRepository;

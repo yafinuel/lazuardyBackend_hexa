@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Finance\Infrastructure;
+namespace App\Domains\Finance\Infrastructure\External;
 
 use App\Domains\Finance\Ports\BankValidatorInterface;
 use Exception;

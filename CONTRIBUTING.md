@@ -1,54 +1,68 @@
 # Panduan Kontribusi (Contributing Guide)
 
+Untuk menjaga kualitas kode dan konsistensi arsitektur, harap ikuti panduan berikut.
+
+---
+
 ## 1. Persiapan Lingkungan (Setup)
-Pastikan Anda sudah mengikuti langkah-langkah di [README.md](./README.md) untuk menjalankan aplikasi secara lokal.
+Pastikan Anda sudah mengikuti langkah-langkah di [README.md](./README.md) untuk menjalankan aplikasi secara lokal, termasuk instalasi dependensi dan konfigurasi environment.
 
 ## 2. Alur Git (Gitflow)
-Kami menggunakan model percabangan (branching) berikut:
+Kami menggunakan model percabangan (branching) sederhana untuk menjaga stabilitas kode:
 * **`main`**: Kode stabil yang siap untuk produksi.
 * **`feature/nama-fitur`**: Untuk pengembangan fitur baru.
 * **`hotfix/nama-bug`**: Untuk perbaikan bug mendesak di produksi.
 
-**Langkah-langkah:**
-1. Lakukan `git pull origin main` untuk mendapatkan kode terbaru.
+**Langkah-langkah kerja:**
+1. Lakukan `git pull origin main` untuk sinkronisasi kode terbaru.
 2. Buat branch baru: `git checkout -b feature/nama-fitur-anda`.
-3. Lakukan commit dengan pesan yang jelas (Lihat aturan commit di bawah).
+3. Lakukan commit secara berkala.
 
 ## 3. Aturan Pesan Commit
-Kami mengikuti standar [Conventional Commits](https://www.conventionalcommits.org/), commit dapat dilakukan menggunakan Bahasa Indonesia maupun Bahasa Inggris:
-* `feat:` untuk fitur baru (Contoh: `feat: add login with google`)
-* `fix:` untuk perbaikan bug (Contoh: `fix: resolve null pointer on user profile`)
-* `docs:` untuk perubahan dokumentasi.
-* `refactor:` untuk perubahan kode yang tidak mengubah fungsi.
-Perubahan dan commit harus diusahakan merujuk pada hal yang spesifik. Apabila sudah terlanjur maka gunakan and pada commit, seperti pada dibawah ini.
-* `feat and fix: add new feature and resolve a problem`
+Kami mengikuti standar [Conventional Commits](https://www.conventionalcommits.org/). Pesan commit harus spesifik dan bisa menggunakan Bahasa Indonesia atau Inggris.
+
+* `feat:` Fitur baru (Contoh: `feat: add login with google`)
+* `fix:` Perbaikan bug (Contoh: `fix: resolve null pointer on user profile`)
+* `docs:` Perubahan dokumentasi.
+* `refactor:` Perubahan kode tanpa mengubah fungsi (pembersihan kode).
+* `feat and fix:` Gunakan `and` jika terpaksa menggabungkan dua hal (Contoh: `feat and fix: add otp and resolve mailer bug`).
 
 ## 4. Standar Kode (Coding Standards)
-* **Bahasa**: Semua variabel dan fungsi menggunakan **Bahasa Inggris**.
+* **Bahasa**: Penamaan fungsi, variabel, dan file wajib menggunakan **Bahasa Inggris**.
 * **Naming Convention**:
-    * Fungsi & Variabel: `camelCase` (Contoh: `getUserData`)
-    * Class: `PascalCase` (Contoh: `UserController`)
-    * Database: `snake_case` (Contoh: `user_id`)
+    * **Fungsi & Variabel**: `camelCase` (Contoh: `getUserData`)
+    * **Class & Interface**: `PascalCase` (Contoh: `TutorRepositoryInterface`)
+    * **Database (Tabel & Kolom)**: `snake_case` (Contoh: `telephone_number`)
+    * **Constants/Enums**: `UPPER_SNAKE_CASE` (Contoh: `FILE_TYPE_CV`)
 
 ## 5. Proses Pull Request (PR)
-Sebelum PR Anda disetujui (merged), pastikan:
-1. Dokumentasi API di `openapi.yaml` sudah diperbarui jika ada perubahan endpoint.
-2. Tidak ada *conflict* dengan branch tujuan.
+Sebelum PR diajukan, pastikan:
+1. Dokumentasi API di `openapi.yaml` sudah diperbarui (jika ada perubahan endpoint).
+2. Kode sudah melalui pengujian lokal dan tidak ada *conflict* dengan branch `main`.
 
 ## 6. Architecture & Struktur Folder
-Arsitektur perangkat lunak yang kami gunakan adalah Hexagonal Architecture dengan menerapkan Domains partition. Sehingga peletakan folder dan file dalam struktur kita kita adalah sebagai berikut.
+Proyek ini menggunakan **Hexagonal Architecture** dengan pemisahan berbasis **Domains**. Struktur direktori diatur agar logika bisnis tidak tercampur dengan detail teknis.
+
+```text
 app/
 ├── Domains/
-│   └── Ordering/           <-- Fokus ke satu urusan bisnis
-│       ├── Actions/        # (Logic) Contoh: CreateOrderAction.php
-│       ├── Models/         # (Data) Entity atau Eloquent khusus domain ini
-│       ├── Ports/          # (Kontrak) OrderRepositoryInterface.php
-│       ├── ValueObjects/   # (Aturan) OrderStatus.php, Price.php
-│       └── Infrastructure/ # (Alat) EloquentOrderRepository.php
+│   └── Ordering/                   <-- Fokus ke satu konteks bisnis
+│       ├── Actions/                # (Logic) Alur proses bisnis tunggal
+│       ├── Entities/               # (Data) Objek data murni (Plain PHP)
+│       ├── Ports/                  # (Kontrak) Interface untuk Repository/Service
+│       ├── ValueObjects/           # (Aturan) Objek dengan validasi internal
+│       └── Infrastructure/         # (Detail Teknis / Adapter)
+│           ├── Delivery/
+│           │   └── Http/           <-- Entry Point (Driving Adapters)
+│           │       ├── Controllers # Menangkap Request API
+│           │       └── Requests    # Validasi Form Request
+│           ├── Persistence/        <-- Database (Driven Adapters)
+│           │   └── Eloquent/       # Model & Implementasi Repository
+│           └── External/           <-- Integrasi Pihak Ketiga (API Luar)
 │
-├── Shared/                 <-- Tempat hal-hal yang dipakai barengan
-│   └── ValueObjects/       # Email.php, UUID.php (yang aturannya pasti sama)
-│
-├── Http/                   <-- Delivery Layer (Bawaan Laravel)
-│   ├── Controllers/        # Menangkap Request API
-│   └── Resources/          # Mengubah format JSON Response
+├── Shared/                         <-- Komponen yang digunakan lintas domain
+│   ├── Actions/                    # Logic umum (misal: UploadFile)
+│   ├── Enums/                      # Enum global (Gender, FileType)
+│   ├── Infrastructure/             # Implementasi alat (Mail, Queue, Storage)
+│   ├── Ports/                      # Interface global
+│   └── ValueObjects/               # Email.php, Address.php (Aturan standar)
