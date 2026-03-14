@@ -56,8 +56,6 @@ app/
 │           │   └── Http/           <-- Entry Point (Driving Adapters)
 │           │       ├── Controllers # Menangkap Request API
 │           │       └── Requests    # Validasi Form Request
-│           ├── Persistence/        <-- Database (Driven Adapters)
-│           │   └── Eloquent/       # Model & Implementasi Repository
 │           └── External/           <-- Integrasi Pihak Ketiga (API Luar)
 │
 ├── Shared/                         <-- Komponen yang digunakan lintas domain
@@ -66,3 +64,5 @@ app/
 │   ├── Infrastructure/             # Implementasi alat (Mail, Queue, Storage)
 │   ├── Ports/                      # Interface global
 │   └── ValueObjects/               # Email.php, Address.php (Aturan standar)
+|
+├── Models/                         <-- Model eloquent

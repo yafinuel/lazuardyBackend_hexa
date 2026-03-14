@@ -13,6 +13,8 @@ tags:
     description: Endpoint untuk Login, Register, dan OAuth
   - name: Payment Gateway
     description: Hal-hal yang berkaitan dengan keuangan
+  - name: User Profile
+    description: Endpoint untuk profil pengguna
 
 paths:  
   /registerOtpEmail:
@@ -378,7 +380,49 @@ paths:
                   value: { status: "success", account_holder_name: "FETCH_HOLDER_NAME" }
                 ValidationFailed:
                   value: { status: "error", message: "Gagal memverifikasi rekening", error_code: "API_ERROR" }
+
+  /studentBiodata:
+    get:
+      tags:
+        - User Profile
+      summary: Mengambil biodata siswa
+      description: Endpoint untuk mendapatkan biodata siswa yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Berhasil mengambil biodata siswa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: '#/components/schemas/StudentEntity'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: "Unauthenticated."
+        '500':
+          description: Gagal mengambil biodata siswa
+          content:
+            application/json:
+              example:
+                status: "failed"
+                message: "Gagal mengambil biodata siswa"
+                debug_error: "Error message"
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   responses:
     ValidationError:
       description: Validasi Gagal
@@ -443,3 +487,72 @@ components:
             name: { type: string }
             email: { type: string }
             provider_id: { type: string }
+
+    StudentEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        emailVerifiedAt:
+          type: string
+          nullable: true
+        googleId:
+          type: string
+          nullable: true
+        facebookId:
+          type: string
+          nullable: true
+        role:
+          type: string
+          nullable: true
+        telephoneNumber:
+          type: string
+          nullable: true
+        telephoneVerifiedAt:
+          type: string
+          nullable: true
+        profilePhotoPath:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        religion:
+          type: string
+          nullable: true
+        homeAddress:
+          type: object
+          nullable: true
+          properties:
+            province:
+              type: string
+            regency:
+              type: string
+            district:
+              type: string
+            subdistrict:
+              type: string
+        latitude:
+          type: number
+          format: float
+          nullable: true
+        longitude:
+          type: number
+          format: float
+          nullable: true
+        session:
+          type: integer
+          nullable: true
+        classId:
+          type: integer
+          nullable: true

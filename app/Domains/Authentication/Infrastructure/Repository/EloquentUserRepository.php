@@ -54,6 +54,7 @@ class EloquentUserRepository implements UserRepositoryInterface
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'email_verified_at' => $data['email_verified_at'],
+                'role' => 'student',
                 'password' => Hash::make($data['password']),
                 'google_id' => $data['google_id'],
                 'facebook_id' => $data['facebook_id'],

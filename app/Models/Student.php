@@ -17,10 +17,7 @@ class Student extends Model
     [
         'user_id',
         'class_id',
-        'curriculum_id',
-        'school',
-        'parent',
-        'parent_telephone_number',
+        'session',
     ];
 
     public function user(): BelongsTo

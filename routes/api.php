@@ -3,12 +3,12 @@
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\AuthController;
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\SocialiteController;
 use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
-use Illuminate\Http\Request;
+use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
 
 // Authentication
 Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect']);
@@ -28,4 +28,5 @@ Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateB
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/studentBiodata', [StudentProfileController::class, 'studentBiodata']);
 });

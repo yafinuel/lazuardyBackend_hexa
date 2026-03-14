@@ -10,6 +10,8 @@ use App\Domains\Authentication\Ports\OtpRepositoryInterface;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
 use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
+use App\Domains\UserProfile\Student\Infrastructure\Repository\EloquentStudentRepository;
+use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
 use App\Shared\Infrastructure\Queues\LaravelTaskQueue;
 use App\Shared\Infrastructure\Repository\EloquentFileRepository;
 use App\Shared\Infrastructure\Storage\LaravelFileStorage;
@@ -58,6 +60,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             TaskQueueInterface::class,
             LaravelTaskQueue::class
+        );
+
+        $this->app->bind(
+            StudentRepositoryInterface::class,
+            EloquentStudentRepository::class
         );
     }
 
