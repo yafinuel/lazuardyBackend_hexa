@@ -2,8 +2,8 @@
 
 namespace App\Domains\Authentication\Infrastructure\Messaging;
 
+use App\Domains\Authentication\Infrastructure\Mail\OtpEmail;
 use App\Domains\Authentication\Ports\MailerInterface;
-use App\Mail\OtpEmail;
 use Illuminate\Support\Facades\Mail;
 
 class LaravelMailer implements MailerInterface

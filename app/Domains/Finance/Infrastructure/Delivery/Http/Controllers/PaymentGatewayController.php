@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Finance;
+namespace App\Domains\Finance\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Finance\Actions\GetBankListAction;
 use App\Domains\Finance\Actions\ValidateAccountAction;

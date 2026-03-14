@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\Finance\PaymentGatewayController;
+use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\AuthController;
+use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\SocialiteController;
+use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

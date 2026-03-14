@@ -3,8 +3,8 @@
 namespace App\Domains\Authentication\Infrastructure\Repository;
 
 use App\Domains\Authentication\Entities\OtpEntity;
-use App\Domains\Authentication\Models\Otp as OtpEloquent;
 use App\Domains\Authentication\Ports\OtpRepositoryInterface;
+use App\Models\Otp as OtpEloquent;
 use Carbon\Carbon;
 
 class EloquentOtpRepository implements OtpRepositoryInterface

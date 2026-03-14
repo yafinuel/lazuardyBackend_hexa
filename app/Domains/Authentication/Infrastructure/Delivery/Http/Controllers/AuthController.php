@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Authentication\Actions\LoginManualAction;
 use App\Domains\Authentication\Actions\ResetPasswordAction;
