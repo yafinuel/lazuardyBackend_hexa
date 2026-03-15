@@ -29,4 +29,5 @@ Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateB
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/studentBiodata', [StudentProfileController::class, 'studentBiodata']);
+    Route::patch('/updateStudentBiodata', [StudentProfileController::class, 'updateStudentBiodata']);
 });

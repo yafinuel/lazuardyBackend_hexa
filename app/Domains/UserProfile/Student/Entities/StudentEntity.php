@@ -19,7 +19,7 @@ class StudentEntity
         public readonly ?string $role,
         public ?string $telephoneNumber,
         public ?string $telephoneVerifiedAt,
-        public ?string $profilePhotoPath,
+        public ?string $profilePhotoUrl,
         public ?string $dateOfBirth,
         public ?string $gender,
         public ?string $religion,

@@ -417,6 +417,44 @@ paths:
                 message: "Gagal mengambil biodata siswa"
                 debug_error: "Error message"
 
+  /updateStudentBiodata:
+    patch:
+      tags:
+        - User Profile
+      summary: Memperbarui biodata siswa
+      description: Endpoint untuk memperbarui biodata siswa yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStudentBiodataRequest'
+      responses:
+        '200':
+          description: Berhasil memperbarui biodata siswa
+          content:
+            application/json:
+              example:
+                status: "success"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: "Unauthenticated."
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          description: Gagal memperbarui biodata siswa
+          content:
+            application/json:
+              example:
+                status: "failed"
+                message: "Gagal memperbarui biodata siswa"
+                debug_error: "Error message"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -556,3 +594,47 @@ components:
         classId:
           type: integer
           nullable: true
+
+    UpdateStudentBiodataRequest:
+      type: object
+      required: [province, regency, district, subdistrict]
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "John Doe"
+        date_of_birth:
+          type: string
+          format: date
+          example: "2000-05-15"
+        gender:
+          type: string
+          enum: [male, female]
+          example: "male"
+        religion:
+          type: string
+          enum: [islam, kristen, katolik, hindu, buddha, konghucu]
+          example: "islam"
+        province:
+          type: string
+          example: "DKI Jakarta"
+        regency:
+          type: string
+          example: "Jakarta Pusat"
+        district:
+          type: string
+          example: "Tanah Abang"
+        subdistrict:
+          type: string
+          example: "Bendungan Hilir"
+        class_id:
+          type: integer
+          example: 1
+        latitude:
+          type: number
+          format: float
+          example: -6.2088
+        longitude:
+          type: number
+          format: float
+          example: 106.8456

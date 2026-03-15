@@ -7,6 +7,16 @@ use Illuminate\Support\Facades\Storage;
 
 class LaravelFileStorage implements FileStorageInterface
 {
+    public function getMedia(?string $path): ?string
+    {
+        if (!$path) {
+            return null; 
+        }
+
+        $media = Storage::url($path);
+        return asset($media) ? $media : null;
+    }
+
     public function uploadToTemp ($file): string
     {
         $extension = $file->getClientOriginalExtension();
