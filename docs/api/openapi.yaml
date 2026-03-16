@@ -455,6 +455,80 @@ paths:
                 message: "Gagal memperbarui biodata siswa"
                 debug_error: "Error message"
 
+  /tutorBiodata:
+    get:
+      tags:
+        - User Profile
+      summary: Mengambil biodata tutor
+      description: Endpoint untuk mendapatkan biodata tutor yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Berhasil mengambil biodata tutor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: '#/components/schemas/TutorEntity'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: "Unauthenticated."
+        '500':
+          description: Gagal mengambil biodata tutor
+          content:
+            application/json:
+              example:
+                status: "failed"
+                message: "Gagal mengambil biodata tutor"
+                debug_error: "Error message"
+
+  /updateTutorBiodata:
+    patch:
+      tags:
+        - User Profile
+      summary: Memperbarui biodata tutor
+      description: Endpoint untuk memperbarui biodata tutor yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTutorBiodataRequest'
+      responses:
+        '200':
+          description: Berhasil memperbarui biodata tutor
+          content:
+            application/json:
+              example:
+                status: "success"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: "Unauthenticated."
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          description: Gagal memperbarui biodata tutor
+          content:
+            application/json:
+              example:
+                status: "failed"
+                message: "Gagal memperbarui biodata tutor"
+                debug_error: "Error message"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -556,7 +630,7 @@ components:
         telephoneVerifiedAt:
           type: string
           nullable: true
-        profilePhotoPath:
+        profilePhotoUrl:
           type: string
           nullable: true
         dateOfBirth:
@@ -594,6 +668,144 @@ components:
         classId:
           type: integer
           nullable: true
+
+    TutorEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        emailVerifiedAt:
+          type: string
+          nullable: true
+        telephoneNumber:
+          type: string
+          nullable: true
+        telephoneVerifiedAt:
+          type: string
+          nullable: true
+        profilePhotoUrl:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        religion:
+          type: string
+          nullable: true
+        homeAddress:
+          type: object
+          nullable: true
+          properties:
+            province:
+              type: string
+            regency:
+              type: string
+            district:
+              type: string
+            subdistrict:
+              type: string
+        latitude:
+          type: number
+          format: float
+          nullable: true
+        longitude:
+          type: number
+          format: float
+          nullable: true
+        education:
+          type: string
+          nullable: true
+        salary:
+          type: integer
+          nullable: true
+        price:
+          type: integer
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        bankCode:
+          type: string
+          nullable: true
+        accountNumber:
+          type: string
+          nullable: true
+        learningMethod:
+          type: array
+          nullable: true
+          items:
+            type: string
+        sanction:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+
+    UpdateTutorBiodataRequest:
+      type: object
+      required: [province, regency, district, subdistrict]
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "John Doe"
+        date_of_birth:
+          type: string
+          format: date
+          example: "2000-05-15"
+        gender:
+          type: string
+          enum: [male, female]
+          example: "male"
+        religion:
+          type: string
+          enum: [islam, kristen, katolik, hindu, buddha, konghucu]
+          example: "islam"
+        province:
+          type: string
+          example: "DKI Jakarta"
+        regency:
+          type: string
+          example: "Jakarta Pusat"
+        district:
+          type: string
+          example: "Tanah Abang"
+        subdistrict:
+          type: string
+          example: "Bendungan Hilir"
+        education:
+          type: array
+          items:
+            type: string
+          example: ["S1", "S2"]
+        description:
+          type: string
+          example: "Tutor matematika berpengalaman"
+        bankCode:
+          type: string
+          example: "ID_BSI"
+        accountNumber:
+          type: string
+          example: "7123456789"
+        learningMethod:
+          type: array
+          items:
+            type: string
+          example: ["online", "offline"]
+        status:
+          type: string
+          example: "active"
 
     UpdateStudentBiodataRequest:
       type: object

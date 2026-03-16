@@ -11,7 +11,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 
-class StudentProfileController extends Controller
+class StudentController extends Controller
 {
     public function biodata(Request $request, StudentBiodataAction $action)
     {

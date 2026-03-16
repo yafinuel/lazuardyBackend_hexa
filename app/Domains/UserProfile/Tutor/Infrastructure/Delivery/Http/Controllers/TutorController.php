@@ -3,6 +3,7 @@
 namespace App\Domains\UserProfile\Tutor\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\UserProfile\Tutor\Actions\TutorBiodataAction;
+use App\Domains\UserProfile\Tutor\Actions\UpdateTutorProfileAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\GenderEnum;
 use App\Shared\Enums\ReligionEnum;
@@ -31,7 +32,7 @@ class TutorController extends Controller
         }
     }
 
-    public function updateBiodata(Request $request)
+    public function updateBiodata(Request $request, UpdateTutorProfileAction $action)
     {
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
@@ -42,17 +43,26 @@ class TutorController extends Controller
             'regency' => ['required', 'string'],
             'district' => ['required', 'string'],
             'subdistrict' => ['required', 'string'],
-            'latitude' => ['sometimes', 'numeric'],
-            'longitude' => ['sometimes', 'numeric'],
+
             'education' => ['sometimes', 'array'],
             'description' => ['sometimes', 'string'],
             'bankCode' => ['sometimes', 'string'],
             'accountNumber' => ['sometimes', 'string'],
             'learningMethod' => ['sometimes', 'array'],
-            'sanction' => ['sometimes', 'integer', 'min:0'],
             'status' => ['sometimes', 'string'],
         ]);
+        try {
+            $action->execute($request->user()->id, $data);
 
-        
+            return response()->json([
+                'status' => 'success',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Gagal memperbarui biodata tutor',
+                'debug_error' => $e->getMessage(),
+            ]);
+        }
     }
 }

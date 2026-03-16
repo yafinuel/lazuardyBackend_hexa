@@ -3,7 +3,7 @@
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\AuthController;
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\SocialiteController;
 use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
-use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentProfileController;
+use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
 use App\Domains\UserProfile\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,7 +29,8 @@ Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateB
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/studentBiodata', [StudentProfileController::class, 'biodata']);
-    Route::patch('/updateStudentBiodata', [StudentProfileController::class, 'updateBiodata']);
+    Route::get('/studentBiodata', [StudentController::class, 'biodata']);
+    Route::patch('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
     Route::get('/tutorBiodata', [TutorController::class, 'biodata']);
+    Route::patch('/updateTutorBiodata', [TutorController::class, 'updateBiodata']);
 });
