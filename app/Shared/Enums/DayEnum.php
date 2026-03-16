@@ -1,6 +1,6 @@
 <?php
 
-namespace App\shared\enums;
+namespace App\Shared\Enums;
 
 enum DayEnum: string
 {

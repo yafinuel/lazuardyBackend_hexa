@@ -12,6 +12,8 @@ use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
 use App\Domains\UserProfile\Student\Infrastructure\Repository\EloquentStudentRepository;
 use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
+use App\Domains\UserProfile\Tutor\Infrastructure\Repository\EloquentTutorRepository;
+use App\Domains\UserProfile\Tutor\Ports\TutorRepositoryInterface;
 use App\Shared\Infrastructure\Queues\LaravelTaskQueue;
 use App\Shared\Infrastructure\Repository\EloquentFileRepository;
 use App\Shared\Infrastructure\Storage\LaravelFileStorage;
@@ -65,6 +67,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             StudentRepositoryInterface::class,
             EloquentStudentRepository::class
+        );
+
+        $this->app->bind(
+            TutorRepositoryInterface::class,
+            EloquentTutorRepository::class
         );
     }
 

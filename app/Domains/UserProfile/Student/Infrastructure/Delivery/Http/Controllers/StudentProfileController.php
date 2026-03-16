@@ -13,7 +13,7 @@ use Illuminate\Validation\Rules\Enum;
 
 class StudentProfileController extends Controller
 {
-    public function studentBiodata(Request $request, StudentBiodataAction $action)
+    public function biodata(Request $request, StudentBiodataAction $action)
     {
         try {
             $user = $request->user();
@@ -32,7 +32,7 @@ class StudentProfileController extends Controller
         }
     }
 
-    public function updateStudentBiodata(Request $request, UpdateStudentProfileAction $action)
+    public function updateBiodata(Request $request, UpdateStudentProfileAction $action)
     {
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
