@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Shared\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,13 @@ class File extends Model
         'path',
         'status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'type' => FileTypeEnum::class,
+        ];
+    }
 
     public function user(): BelongsTo
     {

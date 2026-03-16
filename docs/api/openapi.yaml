@@ -529,6 +529,89 @@ paths:
                 message: "Gagal memperbarui biodata tutor"
                 debug_error: "Error message"
 
+  /getTutorFile:
+    get:
+      tags:
+        - User Profile
+      summary: Mengambil file tutor
+      description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Berhasil mengambil file tutor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FileEntity'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: "Unauthenticated."
+        '500':
+          description: Gagal mengambil file tutor
+          content:
+            application/json:
+              example:
+                status: "failed"
+                message: "Gagal mengambil file tutor"
+                debug_error: "Error message"
+
+  /updateProfilePhoto:
+    patch:
+      tags:
+        - User Profile
+      summary: Memperbarui foto profil pengguna
+      description: Endpoint untuk mengunggah foto profil pengguna yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - profile_picture
+              properties:
+                profile_picture:
+                  type: string
+                  format: binary
+                  description: "File gambar untuk foto profil"
+      responses:
+        '200':
+          description: Foto profil berhasil diperbarui
+          content:
+            application/json:
+              example:
+                status: "success"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: "Unauthenticated."
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          description: Gagal memperbarui foto profil
+          content:
+            application/json:
+              example:
+                status: "failed"
+                message: "Gagal memperbarui foto profil"
+                debug_error: "Error message"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -850,3 +933,25 @@ components:
           type: number
           format: float
           example: 106.8456
+
+    FileEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        userId:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        type:
+          type: string
+          nullable: true
+        url:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true

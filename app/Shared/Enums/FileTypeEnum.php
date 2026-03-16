@@ -4,7 +4,7 @@ namespace App\Shared\Enums;
 
 enum FileTypeEnum: string
 {
-    case ID_CARD = 'id card';
+    case ID_CARD = 'id_card';
     case CV = 'cv';
     case CERTIFICATE = 'cerfiticate';
 

@@ -14,6 +14,8 @@ use App\Domains\UserProfile\Student\Infrastructure\Repository\EloquentStudentRep
 use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
 use App\Domains\UserProfile\Tutor\Infrastructure\Repository\EloquentTutorRepository;
 use App\Domains\UserProfile\Tutor\Ports\TutorRepositoryInterface;
+use App\Domains\UserProfile\User\Infrastructure\Repository\EloquentUserRepository as EloquentUserProfileRepository;
+use App\Domains\UserProfile\User\Ports\UserRepositoryInterface as UserProfileRepositoryInterface;
 use App\Shared\Infrastructure\Queues\LaravelTaskQueue;
 use App\Shared\Infrastructure\Repository\EloquentFileRepository;
 use App\Shared\Infrastructure\Storage\LaravelFileStorage;
@@ -72,6 +74,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             TutorRepositoryInterface::class,
             EloquentTutorRepository::class
+        );
+
+        $this->app->bind(
+            UserProfileRepositoryInterface::class,
+            EloquentUserProfileRepository::class
         );
     }
 

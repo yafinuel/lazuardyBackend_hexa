@@ -2,6 +2,7 @@
 
 namespace App\Domains\UserProfile\Tutor\Infrastructure\Delivery\Http\Controllers;
 
+use App\Domains\UserProfile\Tutor\Actions\GetTutorFileAction;
 use App\Domains\UserProfile\Tutor\Actions\TutorBiodataAction;
 use App\Domains\UserProfile\Tutor\Actions\UpdateTutorProfileAction;
 use App\Http\Controllers\Controller;
@@ -61,6 +62,25 @@ class TutorController extends Controller
             return response()->json([
                 'status' => 'failed',
                 'message' => 'Gagal memperbarui biodata tutor',
+                'debug_error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getTutorFile(Request $request, GetTutorFileAction $action)
+    {
+        try {
+            $tutorId = $request->user()->id;
+            $files = $action->execute($tutorId);
+    
+            return response()->json([
+                'status' => 'success',
+                'data' => $files,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Gagal mengambil file tutor',
                 'debug_error' => $e->getMessage(),
             ]);
         }

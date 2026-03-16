@@ -3,6 +3,7 @@
 namespace App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\UserProfile\Student\Actions\StudentBiodataAction;
+use App\Domains\UserProfile\Student\Actions\UpdateProfilePictureAction;
 use App\Domains\UserProfile\Student\Actions\UpdateStudentProfileAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\GenderEnum;
