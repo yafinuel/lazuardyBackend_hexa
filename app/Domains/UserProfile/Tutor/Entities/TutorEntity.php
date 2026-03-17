@@ -25,7 +25,7 @@ class TutorEntity
         public ?string $longitude,
 
         // Tutor attributes
-        public ?string $education,
+        public ?array $education,
         public ?int $salary,
         public ?int $price,
         public ?string $description,
