@@ -52,6 +52,9 @@ class EloquentTutorRepository implements TutorRepositoryInterface
                 'gender' => $data['gender'] ?? $user->gender,
                 'religion' => $data['religion'] ?? $user->religion,
                 'home_address' => $data['home_address'] ?? $user->home_address,
+                'telephone_number' => $data['telephone_number'] ?? $user->telephone_number,
+                'latitude' => $data['latitude'] ?? $user->latitude,
+                'longitude' => $data['longitude'] ?? $user->longitude,
             ]);
 
             $user->tutor()->update([

@@ -40,6 +40,10 @@ class TutorController extends Controller
             'date_of_birth' => ['sometimes', 'date'],
             'gender' => ['sometimes', new Enum(GenderEnum::class)],
             'religion' => ['sometimes', new Enum(ReligionEnum::class)],
+            'telephone_number' => ['sometimes', 'string', 'max:20'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
+
             'province' => ['required', 'string'],
             'regency' => ['required', 'string'],
             'district' => ['required', 'string'],

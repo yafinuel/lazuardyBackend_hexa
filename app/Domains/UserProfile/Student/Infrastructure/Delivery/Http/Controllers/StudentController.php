@@ -37,6 +37,7 @@ class StudentController extends Controller
     {
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
+            'telephone_number' => ['sometimes', 'string', 'max:20'],
             'date_of_birth' => ['sometimes', 'date'],
             'gender' => ['sometimes', new Enum(GenderEnum::class)],
             'religion' => ['sometimes', new Enum(ReligionEnum::class)],
@@ -45,8 +46,8 @@ class StudentController extends Controller
             'district' => ['required', 'string'],
             'subdistrict' => ['required', 'string'],
             'class_id' => ['sometimes', 'integer', 'exists:classes,id'],
-            'latitude' => ['sometimes', 'numeric'],
-            'longitude' => ['sometimes', 'numeric'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
         ]);
 
         try {
