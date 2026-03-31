@@ -13,6 +13,8 @@ tags:
     description: Endpoint untuk Login, Register, dan OAuth
   - name: Payment Gateway
     description: Hal-hal yang berkaitan dengan keuangan
+  - name: Package
+    description: Endpoint untuk daftar paket belajar
   - name: User Profile
     description: Endpoint untuk profil pengguna
 
@@ -381,6 +383,30 @@ paths:
                 ValidationFailed:
                   value: { status: "error", message: "Gagal memverifikasi rekening", error_code: "API_ERROR" }
 
+  /getPackages:
+    get:
+      tags:
+        - Package
+      summary: Mendapatkan daftar paket belajar
+      description: Endpoint untuk mendapatkan daftar paket belajar dengan informasi harga akhir dan metadata pagination. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Berhasil mendapatkan daftar paket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPackagesResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: "Unauthenticated."
+        '500':
+          $ref: '#/components/responses/ServerError'
+
   /studentBiodata:
     get:
       tags:
@@ -667,6 +693,66 @@ components:
       properties:
         bank_code: { type: string }
         bank_name: { type: string }
+
+    PackageItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        package_name:
+          type: string
+          example: "Paket Reguler"
+        total_session:
+          type: string
+          example: "12 Sesi"
+        base_price:
+          type: number
+          format: float
+          example: 1500000
+        discount_rate:
+          type: number
+          format: float
+          example: 0.1
+        final_price:
+          type: number
+          format: float
+          example: 1350000
+        info:
+          type: string
+          nullable: true
+          example: "Paket belajar 3 bulan"
+        image_url:
+          type: string
+          format: uri
+          nullable: true
+          example: "http://localhost:8000/storage/packages/package-1.jpg"
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        last_page:
+          type: integer
+          example: 3
+        per_page:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 25
+
+    GetPackagesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageItem'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
 
     AuthSuccess:
       type: object

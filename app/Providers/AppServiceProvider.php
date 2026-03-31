@@ -10,12 +10,15 @@ use App\Domains\Authentication\Ports\OtpRepositoryInterface;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
 use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
+use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
+use App\Domains\Package\Ports\PackageRepositoryInterface;
 use App\Domains\UserProfile\Student\Infrastructure\Repository\EloquentStudentRepository;
 use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
 use App\Domains\UserProfile\Tutor\Infrastructure\Repository\EloquentTutorRepository;
 use App\Domains\UserProfile\Tutor\Ports\TutorRepositoryInterface;
 use App\Domains\UserProfile\User\Infrastructure\Repository\EloquentUserRepository as EloquentUserProfileRepository;
 use App\Domains\UserProfile\User\Ports\UserRepositoryInterface as UserProfileRepositoryInterface;
+use App\Models\Package;
 use App\Shared\Infrastructure\Queues\LaravelTaskQueue;
 use App\Shared\Infrastructure\Repository\EloquentFileRepository;
 use App\Shared\Infrastructure\Storage\LaravelFileStorage;
@@ -79,6 +82,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             UserProfileRepositoryInterface::class,
             EloquentUserProfileRepository::class
+        );
+
+        $this->app->bind(
+            PackageRepositoryInterface::class,
+            EloquentPackageRepository::class
         );
     }
 
