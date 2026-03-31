@@ -53,7 +53,8 @@ Sistem ini mendukung Multi-Role Authentication untuk tipe pengguna berikut:
 
 ## 📄 Documentation
 * **Panduan Kontribusi**: Lihat [CONTRIBUTING.md](./CONTRIBUTING.md) untuk standar kode dan alur kerja Git.
-* **API Specs**: Dokumentasi endpoint tersedia melalui file `openapi.yaml` atau akses `/api/documentation` (jika terpasang Swagger).
+* **API Specs**: Dokumentasi endpoint tersedia melalui `docs/api/openapi.yaml`.
+* **Panduan Edit API Docs**: Lihat [docs/api/apiDocGuide.md](./docs/api/README.md) untuk alur edit dokumentasi modular, lint, dan generate bundle.
 
 ---
 *Maintained by Lazuardy Dev Team*

@@ -1,0 +1,1214 @@
+openapi: 3.0.0
+info:
+  title: Lazuardy API Documentation
+  description: Dokumentasi API untuk backend Lazuardy
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+    description: Local Server
+tags:
+  - name: Authentication
+    description: Endpoint untuk Login, Register, dan OAuth
+  - name: Payment Gateway
+    description: Hal-hal yang berkaitan dengan keuangan
+  - name: Package
+    description: Endpoint untuk daftar paket belajar
+  - name: User Profile
+    description: Endpoint untuk profil pengguna
+paths:
+  /registerOtpEmail:
+    post:
+      tags:
+        - Authentication
+      security: []
+      summary: Mengirim OTP untuk Registrasi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+      responses:
+        '201':
+          description: OTP Berhasil dikirim
+          content:
+            application/json:
+              example:
+                status: success
+        '500':
+          description: Gagal mengirim OTP
+          content:
+            application/json:
+              example:
+                status: error
+                message: Gagal mengirim OTP
+                debug_error: SMTP Error...
+  /verifyOtpRegisterEmail:
+    post:
+      tags:
+        - Authentication
+      security: []
+      summary: Verifikasi OTP untuk Registrasi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - otp
+              properties:
+                email:
+                  type: string
+                  format: email
+                otp:
+                  type: string
+                  example: '123456'
+      responses:
+        '200':
+          description: Verifikasi berhasil/selesai
+          content:
+            application/json:
+              example:
+                status: verified
+        '404':
+          description: OTP tidak valid atau kadaluwarsa
+          content:
+            application/json:
+              example:
+                status: error
+                message: Gagal memverifikasi OTP
+                debug_error: OTP mismatch
+  /forgotPasswordOtpEmail:
+    post:
+      tags:
+        - Authentication
+      security: []
+      summary: Mengirim OTP untuk Lupa Password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '201':
+          description: OTP Berhasil dikirim
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /forgotPasswordVerifyOtpEmail:
+    post:
+      tags:
+        - Authentication
+      security: []
+      summary: Verifikasi OTP untuk Lupa Password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - otp
+              properties:
+                email:
+                  type: string
+                  format: email
+                otp:
+                  type: string
+      responses:
+        '200':
+          description: Verifikasi berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  reset_token:
+                    type: string
+                    example: PmBbJbJTiub0IbNe
+        '404':
+          description: OTP salah
+        '500':
+          description: Internal Server Error
+  /forgotPasswordResetPassword:
+    post:
+      tags:
+        - Authentication
+      security: []
+      summary: Reset password menggunakan token hasil verifikasi OTP
+      description: |
+        Endpoint ini digunakan untuk memperbarui password user setelah berhasil memverifikasi OTP.
+        Token yang digunakan harus sesuai dengan yang disimpan di Cache pada tahap verifikasi.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - reset_token
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  description: Password baru minimal 8 karakter
+                  minLength: 8
+                  example: passwordBaru123
+                reset_token:
+                  type: string
+                  description: Token unik yang didapat dari response verifyOtpRegisterEmail
+                  example: aB1cD2eF3gH4iJ5k
+      responses:
+        '200':
+          description: Password berhasil diperbarui
+          content:
+            application/json:
+              example:
+                status: success
+        '400':
+          description: Bad Request - Kesalahan umum lainnya
+          content:
+            application/json:
+              example:
+                status: error
+                debug_error: User tidak ditemukan.
+        '403':
+          description: Forbidden - Token tidak valid atau sudah kedaluwarsa
+          content:
+            application/json:
+              example:
+                status: error
+                debug_error: Token reset tidak valid atau sudah kedaluwarsa.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /auth/{provider}/redirect:
+    get:
+      tags:
+        - Authentication
+      security: []
+      summary: Redirect ke Authentikasi OAuth
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Berhasil redirect
+  /auth/{provider}/callback:
+    get:
+      tags:
+        - Authentication
+      security: []
+      summary: Callback dari OAuth
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Berhasil callback
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/AuthSuccess'
+                  - $ref: '#/components/schemas/OAuthUserNew'
+  /login:
+    post:
+      tags:
+        - Authentication
+      security: []
+      summary: Login secara manual
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              email: user@example.com
+              password: password123
+      responses:
+        '200':
+          description: Berhasil login
+          content:
+            application/json:
+              example:
+                status: success
+                access_token: 1|...
+                token_type: Bearer
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /studentRegister:
+    post:
+      tags:
+        - Authentication
+      security: []
+      summary: Mendaftarkan user siswa baru
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentRegisterRequest'
+      responses:
+        '201':
+          description: Berhasil mendaftar
+        '500':
+          description: Gagal mendaftar
+  /tutorRegister:
+    post:
+      tags:
+        - Authentication
+      security: []
+      summary: Mendaftarkan user tutor baru (dengan upload file)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+                - gender
+                - description
+                - date_of_birth
+                - telephone_number
+                - bank_code
+                - account_number
+                - province
+                - regency
+                - district
+                - subdistrict
+                - subject_id
+                - learning_method
+                - schedules
+                - curriculum_vitae
+                - id_card
+                - certificate
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: tutor@example.com
+                password:
+                  type: string
+                  format: password
+                  example: password123
+                name:
+                  type: string
+                  example: Lazuardy Tutor
+                gender:
+                  type: string
+                  enum:
+                    - male
+                    - female
+                  example: male
+                description:
+                  type: string
+                  example: Saya adalah guru matematika berpengalaman.
+                date_of_birth:
+                  type: string
+                  format: date
+                  example: '1995-01-01'
+                telephone_number:
+                  type: string
+                  example: '08123456789'
+                bank_code:
+                  type: string
+                  example: ID_BSI
+                account_number:
+                  type: string
+                  example: '7123456789'
+                province:
+                  type: string
+                  example: Jawa Timur
+                regency:
+                  type: string
+                  example: Malang
+                district:
+                  type: string
+                  example: Lowokwaru
+                subdistrict:
+                  type: string
+                  example: Tulusrejo
+                google_id:
+                  type: string
+                  nullable: true
+                facebook_id:
+                  type: string
+                  nullable: true
+                subject_id:
+                  type: integer
+                  example: 1
+                learning_method:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - online
+                    - offline
+                schedules:
+                  type: array
+                  description: Kirim sebagai array of objects
+                  items:
+                    type: object
+                    properties:
+                      day:
+                        type: string
+                        example: Monday
+                      time:
+                        type: string
+                        example: '14:00'
+                curriculum_vitae:
+                  type: string
+                  format: binary
+                  description: Upload file PDF
+                id_card:
+                  type: string
+                  format: binary
+                  description: Upload file PDF/JPG/PNG
+                certificate:
+                  type: string
+                  format: binary
+                  description: Upload file PDF
+      responses:
+        '201':
+          description: Berhasil mendaftar
+          content:
+            application/json:
+              example:
+                status: success
+                access_token: 1|...
+                token_type: Bearer
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          description: Gagal melakukan registrasi tutor.
+          content:
+            application/json:
+              example:
+                status: error
+                message: Gagal melakukan registrasi tutor.
+  /banks:
+    get:
+      tags:
+        - Payment Gateway
+      security: []
+      summary: Mendapatkan daftar bank
+      responses:
+        '200':
+          description: Berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Bank'
+  /validateBankAccount:
+    post:
+      tags:
+        - Payment Gateway
+      security: []
+      summary: Memvalidasi nomor rekening
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bank_code
+                - account_number
+              properties:
+                bank_code:
+                  type: string
+                  example: ID_BSI
+                account_number:
+                  type: string
+                  example: '1234567890'
+      responses:
+        '200':
+          description: Validasi rekening berhasil/gagal
+          content:
+            application/json:
+              examples:
+                SuccessCondition:
+                  value:
+                    status: success
+                    account_holder_name: FETCH_HOLDER_NAME
+                ValidationFailed:
+                  value:
+                    status: error
+                    message: Gagal memverifikasi rekening
+                    error_code: API_ERROR
+  /getPackages:
+    get:
+      tags:
+        - Package
+      summary: Mendapatkan daftar paket belajar
+      description: Endpoint untuk mendapatkan daftar paket belajar dengan informasi harga akhir dan metadata pagination. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Berhasil mendapatkan daftar paket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPackagesResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /studentBiodata:
+    get:
+      tags:
+        - User Profile
+      summary: Mengambil biodata siswa
+      description: Endpoint untuk mendapatkan biodata siswa yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Berhasil mengambil biodata siswa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    $ref: '#/components/schemas/StudentEntity'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '500':
+          description: Gagal mengambil biodata siswa
+          content:
+            application/json:
+              example:
+                status: failed
+                message: Gagal mengambil biodata siswa
+                debug_error: Error message
+  /updateStudentBiodata:
+    patch:
+      tags:
+        - User Profile
+      summary: Memperbarui biodata siswa
+      description: Endpoint untuk memperbarui biodata siswa yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateStudentBiodata'
+      responses:
+        '200':
+          description: Berhasil memperbarui biodata siswa
+          content:
+            application/json:
+              example:
+                status: success
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          description: Gagal memperbarui biodata siswa
+          content:
+            application/json:
+              example:
+                status: failed
+                message: Gagal memperbarui biodata siswa
+                debug_error: Error message
+  /tutorBiodata:
+    get:
+      tags:
+        - User Profile
+      summary: Mengambil biodata tutor
+      description: Endpoint untuk mendapatkan biodata tutor yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Berhasil mengambil biodata tutor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    $ref: '#/components/schemas/TutorEntity'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '500':
+          description: Gagal mengambil biodata tutor
+          content:
+            application/json:
+              example:
+                status: failed
+                message: Gagal mengambil biodata tutor
+                debug_error: Error message
+  /updateTutorBiodata:
+    patch:
+      tags:
+        - User Profile
+      summary: Memperbarui biodata tutor
+      description: Endpoint untuk memperbarui biodata tutor yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateTutorBiodata'
+      responses:
+        '200':
+          description: Berhasil memperbarui biodata tutor
+          content:
+            application/json:
+              example:
+                status: success
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          description: Gagal memperbarui biodata tutor
+          content:
+            application/json:
+              example:
+                status: failed
+                message: Gagal memperbarui biodata tutor
+                debug_error: Error message
+  /getTutorFile:
+    get:
+      tags:
+        - User Profile
+      summary: Mengambil file tutor
+      description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Berhasil mengambil file tutor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FileEntity'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '500':
+          description: Gagal mengambil file tutor
+          content:
+            application/json:
+              example:
+                status: failed
+                message: Gagal mengambil file tutor
+                debug_error: Error message
+  /updateProfilePhoto:
+    patch:
+      tags:
+        - User Profile
+      summary: Memperbarui foto profil pengguna
+      description: Endpoint untuk mengunggah foto profil pengguna yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - profile_picture
+              properties:
+                profile_picture:
+                  type: string
+                  format: binary
+                  description: File gambar untuk foto profil
+      responses:
+        '200':
+          description: Foto profil berhasil diperbarui
+          content:
+            application/json:
+              example:
+                status: success
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          description: Gagal memperbarui foto profil
+          content:
+            application/json:
+              example:
+                status: failed
+                message: Gagal memperbarui foto profil
+                debug_error: Error message
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    ValidationError:
+      description: Validasi Gagal
+      content:
+        application/json:
+          example:
+            message: Data tidak valid
+            errors:
+              email:
+                - Email sudah terdaftar
+    ServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          example:
+            status: error
+            message: Terjadi kesalahan pada server
+  requestBodies:
+    UpdateStudentBiodata:
+      description: Payload untuk memperbarui biodata siswa
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateStudentBiodataRequest'
+    UpdateTutorBiodata:
+      description: Payload untuk memperbarui biodata tutor
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateTutorBiodataRequest'
+  schemas:
+    StudentRegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - name
+        - class_id
+        - gender
+        - date_of_birth
+        - telephone_number
+        - province
+        - regency
+        - district
+        - subdistrict
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        name:
+          type: string
+        class_id:
+          type: integer
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+        date_of_birth:
+          type: string
+          format: date
+        telephone_number:
+          type: string
+        province:
+          type: string
+        regency:
+          type: string
+        district:
+          type: string
+        subdistrict:
+          type: string
+        google_id:
+          type: string
+          example: nullable
+        facebook_id:
+          type: string
+          example: nullable
+    Bank:
+      type: object
+      properties:
+        bank_code:
+          type: string
+        bank_name:
+          type: string
+    PackageItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        package_name:
+          type: string
+          example: Paket Reguler
+        total_session:
+          type: string
+          example: 12 Sesi
+        base_price:
+          type: number
+          format: float
+          example: 1500000
+        discount_rate:
+          type: number
+          format: float
+          example: 0.1
+        final_price:
+          type: number
+          format: float
+          example: 1350000
+        info:
+          type: string
+          nullable: true
+          example: Paket belajar 3 bulan
+        image_url:
+          type: string
+          format: uri
+          nullable: true
+          example: http://localhost:8000/storage/packages/package-1.jpg
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        last_page:
+          type: integer
+          example: 3
+        per_page:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 25
+    GetPackagesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageItem'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    AuthSuccess:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+            access_token:
+              type: string
+            token_type:
+              type: string
+    OAuthUserNew:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+            name:
+              type: string
+            email:
+              type: string
+            provider_id:
+              type: string
+    GenderEnum:
+      type: string
+      enum:
+        - male
+        - female
+      description: Nilai yang valid untuk jenis kelamin
+    ReligionEnum:
+      type: string
+      enum:
+        - islam
+        - kristen
+        - katolik
+        - hindu
+        - buddha
+        - konghucu
+      description: Nilai yang valid untuk agama
+    StudentEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        emailVerifiedAt:
+          type: string
+          nullable: true
+        googleId:
+          type: string
+          nullable: true
+        facebookId:
+          type: string
+          nullable: true
+        role:
+          type: string
+          nullable: true
+        telephoneNumber:
+          type: string
+          nullable: true
+        telephoneVerifiedAt:
+          type: string
+          nullable: true
+        profilePhotoUrl:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        religion:
+          type: string
+          nullable: true
+        homeAddress:
+          type: object
+          nullable: true
+          properties:
+            province:
+              type: string
+            regency:
+              type: string
+            district:
+              type: string
+            subdistrict:
+              type: string
+        latitude:
+          type: number
+          format: float
+          nullable: true
+        longitude:
+          type: number
+          format: float
+          nullable: true
+        session:
+          type: integer
+          nullable: true
+        classId:
+          type: integer
+          nullable: true
+    TutorEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        emailVerifiedAt:
+          type: string
+          nullable: true
+        telephoneNumber:
+          type: string
+          nullable: true
+        telephoneVerifiedAt:
+          type: string
+          nullable: true
+        profilePhotoUrl:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        religion:
+          type: string
+          nullable: true
+        homeAddress:
+          type: object
+          nullable: true
+          properties:
+            province:
+              type: string
+            regency:
+              type: string
+            district:
+              type: string
+            subdistrict:
+              type: string
+        latitude:
+          type: number
+          format: float
+          nullable: true
+        longitude:
+          type: number
+          format: float
+          nullable: true
+        education:
+          type: string
+          nullable: true
+        salary:
+          type: integer
+          nullable: true
+        price:
+          type: integer
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        bankCode:
+          type: string
+          nullable: true
+        accountNumber:
+          type: string
+          nullable: true
+        learningMethod:
+          type: array
+          nullable: true
+          items:
+            type: string
+        sanction:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+    UpdateTutorBiodataRequest:
+      type: object
+      required:
+        - province
+        - regency
+        - district
+        - subdistrict
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: John Doe
+        date_of_birth:
+          type: string
+          format: date
+          example: '2000-05-15'
+        gender:
+          allOf:
+            - $ref: '#/components/schemas/GenderEnum'
+          example: male
+        religion:
+          allOf:
+            - $ref: '#/components/schemas/ReligionEnum'
+          example: islam
+        telephone_number:
+          type: string
+          example: '081234567890'
+        province:
+          type: string
+          example: DKI Jakarta
+        regency:
+          type: string
+          example: Jakarta Pusat
+        district:
+          type: string
+          example: Tanah Abang
+        subdistrict:
+          type: string
+          example: Bendungan Hilir
+        latitude:
+          type: number
+          format: float
+          example: -6.2088
+        longitude:
+          type: number
+          format: float
+          example: 106.8456
+        education:
+          type: array
+          items:
+            type: string
+          example:
+            - S1
+            - S2
+        description:
+          type: string
+          example: Tutor matematika berpengalaman
+        bankCode:
+          type: string
+          example: ID_BSI
+        accountNumber:
+          type: string
+          example: '7123456789'
+        learningMethod:
+          type: array
+          items:
+            type: string
+          example:
+            - online
+            - offline
+        status:
+          type: string
+          example: active
+    UpdateStudentBiodataRequest:
+      type: object
+      required:
+        - province
+        - regency
+        - district
+        - subdistrict
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: John Doe
+        telephone_number:
+          type: string
+          maxLength: 20
+          example: '081234567890'
+        date_of_birth:
+          type: string
+          format: date
+          example: '2000-05-15'
+        gender:
+          allOf:
+            - $ref: '#/components/schemas/GenderEnum'
+          example: male
+        religion:
+          allOf:
+            - $ref: '#/components/schemas/ReligionEnum'
+          example: islam
+        province:
+          type: string
+          example: DKI Jakarta
+        regency:
+          type: string
+          example: Jakarta Pusat
+        district:
+          type: string
+          example: Tanah Abang
+        subdistrict:
+          type: string
+          example: Bendungan Hilir
+        class_id:
+          type: integer
+          example: 1
+        latitude:
+          type: number
+          format: float
+          example: -6.2088
+        longitude:
+          type: number
+          format: float
+          example: 106.8456
+    FileEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        userId:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        type:
+          type: string
+          nullable: true
+        url:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true

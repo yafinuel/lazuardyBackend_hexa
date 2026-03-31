@@ -1,0 +1,222 @@
+studentBiodata:
+  get:
+    tags:
+      - User Profile
+    summary: Mengambil biodata siswa
+    description: Endpoint untuk mendapatkan biodata siswa yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Berhasil mengambil biodata siswa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: "success"
+                data:
+                  $ref: '../components/schemas.yaml#/StudentEntity'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '500':
+        description: Gagal mengambil biodata siswa
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal mengambil biodata siswa"
+              debug_error: "Error message"
+
+updateStudentBiodata:
+  patch:
+    tags:
+      - User Profile
+    summary: Memperbarui biodata siswa
+    description: Endpoint untuk memperbarui biodata siswa yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    requestBody:
+      $ref: '../components/request-bodies.yaml#/UpdateStudentBiodata'
+    responses:
+      '200':
+        description: Berhasil memperbarui biodata siswa
+        content:
+          application/json:
+            example:
+              status: "success"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        description: Gagal memperbarui biodata siswa
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal memperbarui biodata siswa"
+              debug_error: "Error message"
+
+tutorBiodata:
+  get:
+    tags:
+      - User Profile
+    summary: Mengambil biodata tutor
+    description: Endpoint untuk mendapatkan biodata tutor yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Berhasil mengambil biodata tutor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: "success"
+                data:
+                  $ref: '../components/schemas.yaml#/TutorEntity'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '500':
+        description: Gagal mengambil biodata tutor
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal mengambil biodata tutor"
+              debug_error: "Error message"
+
+updateTutorBiodata:
+  patch:
+    tags:
+      - User Profile
+    summary: Memperbarui biodata tutor
+    description: Endpoint untuk memperbarui biodata tutor yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    requestBody:
+      $ref: '../components/request-bodies.yaml#/UpdateTutorBiodata'
+    responses:
+      '200':
+        description: Berhasil memperbarui biodata tutor
+        content:
+          application/json:
+            example:
+              status: "success"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        description: Gagal memperbarui biodata tutor
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal memperbarui biodata tutor"
+              debug_error: "Error message"
+
+getTutorFile:
+  get:
+    tags:
+      - User Profile
+    summary: Mengambil file tutor
+    description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Berhasil mengambil file tutor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: "success"
+                data:
+                  type: array
+                  items:
+                    $ref: '../components/schemas.yaml#/FileEntity'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '500':
+        description: Gagal mengambil file tutor
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal mengambil file tutor"
+              debug_error: "Error message"
+
+updateProfilePhoto:
+  patch:
+    tags:
+      - User Profile
+    summary: Memperbarui foto profil pengguna
+    description: Endpoint untuk mengunggah foto profil pengguna yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - profile_picture
+            properties:
+              profile_picture:
+                type: string
+                format: binary
+                description: "File gambar untuk foto profil"
+    responses:
+      '200':
+        description: Foto profil berhasil diperbarui
+        content:
+          application/json:
+            example:
+              status: "success"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        description: Gagal memperbarui foto profil
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal memperbarui foto profil"
+              debug_error: "Error message"

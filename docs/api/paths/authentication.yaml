@@ -1,0 +1,328 @@
+registerOtpEmail:
+  post:
+    tags:
+      - Authentication
+    security: []
+    summary: Mengirim OTP untuk Registrasi
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [email]
+            properties:
+              email: { type: string, format: email, example: "user@example.com" }
+    responses:
+      '201':
+        description: OTP Berhasil dikirim
+        content:
+          application/json:
+            example: { status: "success" }
+      '500':
+        description: Gagal mengirim OTP
+        content:
+          application/json:
+            example: { status: "error", message: "Gagal mengirim OTP", debug_error: "SMTP Error..." }
+
+verifyOtpRegisterEmail:
+  post:
+    tags:
+      - Authentication
+    security: []
+    summary: Verifikasi OTP untuk Registrasi
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [email, otp]
+            properties:
+              email: { type: string, format: email }
+              otp: { type: string, example: "123456" }
+    responses:
+      '200':
+        description: Verifikasi berhasil/selesai
+        content:
+          application/json:
+            example: { status: "verified" }
+      '404':
+        description: OTP tidak valid atau kadaluwarsa
+        content:
+          application/json:
+            example: { status: "error", message: "Gagal memverifikasi OTP", debug_error: "OTP mismatch" }
+
+forgotPasswordOtpEmail:
+  post:
+    tags:
+      - Authentication
+    security: []
+    summary: Mengirim OTP untuk Lupa Password
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [email]
+            properties:
+              email: { type: string, format: email }
+    responses:
+      '201':
+        description: OTP Berhasil dikirim
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+forgotPasswordVerifyOtpEmail:
+  post:
+    tags:
+      - Authentication
+    security: []
+    summary: Verifikasi OTP untuk Lupa Password
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [email, otp]
+            properties:
+              email: { type: string, format: email }
+              otp: { type: string }
+    responses:
+      '200':
+        description: Verifikasi berhasil
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string, example: success }
+                reset_token: { type: string, example: PmBbJbJTiub0IbNe }
+      '404':
+        description: OTP salah
+      '500':
+        description: Internal Server Error
+
+forgotPasswordResetPassword:
+  post:
+    tags:
+      - Authentication
+    security: []
+    summary: Reset password menggunakan token hasil verifikasi OTP
+    description: |
+      Endpoint ini digunakan untuk memperbarui password user setelah berhasil memverifikasi OTP.
+      Token yang digunakan harus sesuai dengan yang disimpan di Cache pada tahap verifikasi.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+              - reset_token
+            properties:
+              email:
+                type: string
+                format: email
+                example: "user@example.com"
+              password:
+                type: string
+                format: password
+                description: "Password baru minimal 8 karakter"
+                minLength: 8
+                example: "passwordBaru123"
+              reset_token:
+                type: string
+                description: "Token unik yang didapat dari response verifyOtpRegisterEmail"
+                example: "aB1cD2eF3gH4iJ5k"
+    responses:
+      '200':
+        description: Password berhasil diperbarui
+        content:
+          application/json:
+            example:
+              status: "success"
+      '403':
+        description: Forbidden - Token tidak valid atau sudah kedaluwarsa
+        content:
+          application/json:
+            example:
+              status: "error"
+              debug_error: "Token reset tidak valid atau sudah kedaluwarsa."
+      '400':
+        description: Bad Request - Kesalahan umum lainnya
+        content:
+          application/json:
+            example:
+              status: "error"
+              debug_error: "User tidak ditemukan."
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+authProviderRedirect:
+  get:
+    tags: [Authentication]
+    security: []
+    summary: Redirect ke Authentikasi OAuth
+    parameters:
+      - name: provider
+        in: path
+        required: true
+        schema: { type: string }
+    responses:
+      '200': { description: Berhasil redirect }
+
+authProviderCallback:
+  get:
+    tags: [Authentication]
+    security: []
+    summary: Callback dari OAuth
+    parameters:
+      - name: provider
+        in: path
+        required: true
+        schema: { type: string }
+    responses:
+      '200':
+        description: Berhasil callback
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '../components/schemas.yaml#/AuthSuccess'
+                - $ref: '../components/schemas.yaml#/OAuthUserNew'
+
+login:
+  post:
+    tags: [Authentication]
+    security: []
+    summary: Login secara manual
+    requestBody:
+      required: true
+      content:
+        application/json:
+          example:
+            email: "user@example.com"
+            password: "password123"
+    responses:
+      '200':
+        description: Berhasil login
+        content:
+          application/json:
+            example:
+              status: "success"
+              access_token: "1|..."
+              token_type: "Bearer"
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+studentRegister:
+  post:
+    tags: [Authentication]
+    security: []
+    summary: Mendaftarkan user siswa baru
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/StudentRegisterRequest'
+    responses:
+      '201': { description: Berhasil mendaftar }
+      '500': { description: Gagal mendaftar }
+
+tutorRegister:
+  post:
+    tags:
+      - Authentication
+    security: []
+    summary: Mendaftarkan user tutor baru (dengan upload file)
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+              - name
+              - gender
+              - description
+              - date_of_birth
+              - telephone_number
+              - bank_code
+              - account_number
+              - province
+              - regency
+              - district
+              - subdistrict
+              - subject_id
+              - learning_method
+              - schedules
+              - curriculum_vitae
+              - id_card
+              - certificate
+            properties:
+              email: { type: string, format: email, example: "tutor@example.com" }
+              password: { type: string, format: password, example: "password123" }
+              name: { type: string, example: "Lazuardy Tutor" }
+              gender: { type: string, enum: [male, female], example: "male" }
+              description: { type: string, example: "Saya adalah guru matematika berpengalaman." }
+              date_of_birth: { type: string, format: date, example: "1995-01-01" }
+              telephone_number: { type: string, example: "08123456789" }
+              bank_code: { type: string, example: "ID_BSI" }
+              account_number: { type: string, example: "7123456789" }
+              province: { type: string, example: "Jawa Timur" }
+              regency: { type: string, example: "Malang" }
+              district: { type: string, example: "Lowokwaru" }
+              subdistrict: { type: string, example: "Tulusrejo" }
+              google_id: { type: string, nullable: true }
+              facebook_id: { type: string, nullable: true }
+              subject_id: { type: integer, example: 1 }
+              learning_method:
+                type: array
+                items: { type: string }
+                example: ["online", "offline"]
+              schedules:
+                type: array
+                description: "Kirim sebagai array of objects"
+                items:
+                  type: object
+                  properties:
+                    day: { type: string, example: "Monday" }
+                    time: { type: string, example: "14:00" }
+              curriculum_vitae:
+                type: string
+                format: binary
+                description: "Upload file PDF"
+              id_card:
+                type: string
+                format: binary
+                description: "Upload file PDF/JPG/PNG"
+              certificate:
+                type: string
+                format: binary
+                description: "Upload file PDF"
+    responses:
+      '201':
+        description: Berhasil mendaftar
+        content:
+          application/json:
+            example:
+              status: "success"
+              access_token: "1|..."
+              token_type: "Bearer"
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        description: Gagal melakukan registrasi tutor.
+        content:
+          application/json:
+            example:
+              status: "error"
+              message: "Gagal melakukan registrasi tutor."

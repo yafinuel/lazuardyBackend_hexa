@@ -1,0 +1,404 @@
+StudentRegisterRequest:
+  type: object
+  required: [email, password, name, class_id, gender, date_of_birth, telephone_number, province, regency, district, subdistrict]
+  properties:
+    email: { type: string, format: email }
+    password: { type: string, format: password }
+    name: { type: string }
+    class_id: { type: integer }
+    gender: { type: string, enum: [male, female] }
+    date_of_birth: { type: string, format: date }
+    telephone_number: { type: string }
+    province: { type: string }
+    regency: { type: string }
+    district: { type: string }
+    subdistrict: { type: string }
+    google_id: { type: string, example: nullable }
+    facebook_id: { type: string, example: nullable }
+
+Bank:
+  type: object
+  properties:
+    bank_code: { type: string }
+    bank_name: { type: string }
+
+PackageItem:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    package_name:
+      type: string
+      example: "Paket Reguler"
+    total_session:
+      type: string
+      example: "12 Sesi"
+    base_price:
+      type: number
+      format: float
+      example: 1500000
+    discount_rate:
+      type: number
+      format: float
+      example: 0.1
+    final_price:
+      type: number
+      format: float
+      example: 1350000
+    info:
+      type: string
+      nullable: true
+      example: "Paket belajar 3 bulan"
+    image_url:
+      type: string
+      format: uri
+      nullable: true
+      example: "http://localhost:8000/storage/packages/package-1.jpg"
+
+PaginationMeta:
+  type: object
+  properties:
+    current_page:
+      type: integer
+      example: 1
+    last_page:
+      type: integer
+      example: 3
+    per_page:
+      type: integer
+      example: 10
+    total:
+      type: integer
+      example: 25
+
+GetPackagesResponse:
+  type: object
+  properties:
+    data:
+      type: array
+      items:
+        $ref: '#/PackageItem'
+    meta:
+      $ref: '#/PaginationMeta'
+
+AuthSuccess:
+  type: object
+  properties:
+    status: { type: string, example: "success" }
+    data:
+      type: object
+      properties:
+        message: { type: string }
+        access_token: { type: string }
+        token_type: { type: string }
+
+OAuthUserNew:
+  type: object
+  properties:
+    status: { type: string, example: "success" }
+    data:
+      type: object
+      properties:
+        message: { type: string }
+        name: { type: string }
+        email: { type: string }
+        provider_id: { type: string }
+
+GenderEnum:
+  type: string
+  enum: [male, female]
+  description: "Nilai yang valid untuk jenis kelamin"
+
+ReligionEnum:
+  type: string
+  enum: [islam, kristen, katolik, hindu, buddha, konghucu]
+  description: "Nilai yang valid untuk agama"
+
+StudentEntity:
+  type: object
+  properties:
+    id:
+      type: string
+      nullable: true
+    name:
+      type: string
+      nullable: true
+    email:
+      type: string
+      nullable: true
+    emailVerifiedAt:
+      type: string
+      nullable: true
+    googleId:
+      type: string
+      nullable: true
+    facebookId:
+      type: string
+      nullable: true
+    role:
+      type: string
+      nullable: true
+    telephoneNumber:
+      type: string
+      nullable: true
+    telephoneVerifiedAt:
+      type: string
+      nullable: true
+    profilePhotoUrl:
+      type: string
+      nullable: true
+    dateOfBirth:
+      type: string
+      nullable: true
+    gender:
+      type: string
+      nullable: true
+    religion:
+      type: string
+      nullable: true
+    homeAddress:
+      type: object
+      nullable: true
+      properties:
+        province:
+          type: string
+        regency:
+          type: string
+        district:
+          type: string
+        subdistrict:
+          type: string
+    latitude:
+      type: number
+      format: float
+      nullable: true
+    longitude:
+      type: number
+      format: float
+      nullable: true
+    session:
+      type: integer
+      nullable: true
+    classId:
+      type: integer
+      nullable: true
+
+TutorEntity:
+  type: object
+  properties:
+    id:
+      type: string
+      nullable: true
+    name:
+      type: string
+      nullable: true
+    email:
+      type: string
+      nullable: true
+    emailVerifiedAt:
+      type: string
+      nullable: true
+    telephoneNumber:
+      type: string
+      nullable: true
+    telephoneVerifiedAt:
+      type: string
+      nullable: true
+    profilePhotoUrl:
+      type: string
+      nullable: true
+    dateOfBirth:
+      type: string
+      nullable: true
+    gender:
+      type: string
+      nullable: true
+    religion:
+      type: string
+      nullable: true
+    homeAddress:
+      type: object
+      nullable: true
+      properties:
+        province:
+          type: string
+        regency:
+          type: string
+        district:
+          type: string
+        subdistrict:
+          type: string
+    latitude:
+      type: number
+      format: float
+      nullable: true
+    longitude:
+      type: number
+      format: float
+      nullable: true
+    education:
+      type: string
+      nullable: true
+    salary:
+      type: integer
+      nullable: true
+    price:
+      type: integer
+      nullable: true
+    description:
+      type: string
+      nullable: true
+    bankCode:
+      type: string
+      nullable: true
+    accountNumber:
+      type: string
+      nullable: true
+    learningMethod:
+      type: array
+      nullable: true
+      items:
+        type: string
+    sanction:
+      type: string
+      nullable: true
+    status:
+      type: string
+      nullable: true
+
+UpdateTutorBiodataRequest:
+  type: object
+  required: [province, regency, district, subdistrict]
+  properties:
+    name:
+      type: string
+      maxLength: 255
+      example: "John Doe"
+    date_of_birth:
+      type: string
+      format: date
+      example: "2000-05-15"
+    gender:
+      allOf:
+        - $ref: '#/GenderEnum'
+      example: "male"
+    religion:
+      allOf:
+        - $ref: '#/ReligionEnum'
+      example: "islam"
+    telephone_number:
+      type: string
+      example: "081234567890"
+    province:
+      type: string
+      example: "DKI Jakarta"
+    regency:
+      type: string
+      example: "Jakarta Pusat"
+    district:
+      type: string
+      example: "Tanah Abang"
+    subdistrict:
+      type: string
+      example: "Bendungan Hilir"
+    latitude:
+      type: number
+      format: float
+      example: -6.2088
+    longitude:
+      type: number
+      format: float
+      example: 106.8456
+    education:
+      type: array
+      items:
+        type: string
+      example: ["S1", "S2"]
+    description:
+      type: string
+      example: "Tutor matematika berpengalaman"
+    bankCode:
+      type: string
+      example: "ID_BSI"
+    accountNumber:
+      type: string
+      example: "7123456789"
+    learningMethod:
+      type: array
+      items:
+        type: string
+      example: ["online", "offline"]
+    status:
+      type: string
+      example: "active"
+
+UpdateStudentBiodataRequest:
+  type: object
+  required: [province, regency, district, subdistrict]
+  properties:
+    name:
+      type: string
+      maxLength: 255
+      example: "John Doe"
+    telephone_number:
+      type: string
+      maxLength: 20
+      example: "081234567890"
+    date_of_birth:
+      type: string
+      format: date
+      example: "2000-05-15"
+    gender:
+      allOf:
+        - $ref: '#/GenderEnum'
+      example: "male"
+    religion:
+      allOf:
+        - $ref: '#/ReligionEnum'
+      example: "islam"
+    province:
+      type: string
+      example: "DKI Jakarta"
+    regency:
+      type: string
+      example: "Jakarta Pusat"
+    district:
+      type: string
+      example: "Tanah Abang"
+    subdistrict:
+      type: string
+      example: "Bendungan Hilir"
+    class_id:
+      type: integer
+      example: 1
+    latitude:
+      type: number
+      format: float
+      example: -6.2088
+    longitude:
+      type: number
+      format: float
+      example: 106.8456
+
+FileEntity:
+  type: object
+  properties:
+    id:
+      type: string
+      nullable: true
+    userId:
+      type: string
+      nullable: true
+    name:
+      type: string
+      nullable: true
+    type:
+      type: string
+      nullable: true
+    url:
+      type: string
+      nullable: true
+    status:
+      type: string
+      nullable: true

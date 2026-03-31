@@ -1,0 +1,15 @@
+UpdateStudentBiodata:
+  description: "Payload untuk memperbarui biodata siswa"
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/UpdateStudentBiodataRequest'
+
+UpdateTutorBiodata:
+  description: "Payload untuk memperbarui biodata tutor"
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/UpdateTutorBiodataRequest'

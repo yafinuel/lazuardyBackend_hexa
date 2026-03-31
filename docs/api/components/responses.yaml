@@ -1,0 +1,16 @@
+ValidationError:
+  description: Validasi Gagal
+  content:
+    application/json:
+      example:
+        message: "Data tidak valid"
+        errors:
+          email: ["Email sudah terdaftar"]
+
+ServerError:
+  description: Internal Server Error
+  content:
+    application/json:
+      example:
+        status: "error"
+        message: "Terjadi kesalahan pada server"

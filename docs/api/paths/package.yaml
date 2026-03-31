@@ -1,0 +1,23 @@
+getPackages:
+  get:
+    tags:
+      - Package
+    summary: Mendapatkan daftar paket belajar
+    description: Endpoint untuk mendapatkan daftar paket belajar dengan informasi harga akhir dan metadata pagination. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Berhasil mendapatkan daftar paket
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/GetPackagesResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

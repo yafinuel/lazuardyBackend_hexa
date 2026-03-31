@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "docs:api:lint": "npx --yes @redocly/cli lint docs/api/openapi.yaml",
+        "docs:api:bundle": "npx --yes @redocly/cli bundle docs/api/openapi.yaml -o docs/api/openapi.bundle.yaml"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

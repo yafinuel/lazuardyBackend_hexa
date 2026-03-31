@@ -1,0 +1,46 @@
+banks:
+  get:
+    tags:
+      - Payment Gateway
+    security: []
+    summary: Mendapatkan daftar bank
+    responses:
+      '200':
+        description: Berhasil
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string, example: "success" }
+                data:
+                  type: array
+                  items:
+                    $ref: '../components/schemas.yaml#/Bank'
+
+validateBankAccount:
+  post:
+    tags:
+      - Payment Gateway
+    security: []
+    summary: Memvalidasi nomor rekening
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [bank_code, account_number]
+            properties:
+              bank_code: { type: string, example: "ID_BSI" }
+              account_number: { type: string, example: "1234567890" }
+    responses:
+      '200':
+        description: Validasi rekening berhasil/gagal
+        content:
+          application/json:
+            examples:
+              SuccessCondition:
+                value: { status: "success", account_holder_name: "FETCH_HOLDER_NAME" }
+              ValidationFailed:
+                value: { status: "error", message: "Gagal memverifikasi rekening", error_code: "API_ERROR" }
