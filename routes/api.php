@@ -48,4 +48,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Course Catalog
     Route::get('/jenjang', [ClassController::class, 'getClassLevels']);
+    Route::get('/getAllClass', [ClassController::class, 'getAllClass']);
 });
