@@ -24,7 +24,8 @@ class ClassController extends Controller
         $classes = $action->execute();
         return response()->json([
             'status' => 'success',
-            'classes' => $classes
+            'data' => $classes['data'],
+            'meta' => $classes['meta']
         ]);
     }
 

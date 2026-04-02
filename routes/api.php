@@ -5,6 +5,7 @@ use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\Socialit
 use App\Domains\ClassDomain\Infrastructure\Delivery\Http\Controllers\ClassController;
 use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
+use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
 use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
 use App\Domains\UserProfile\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController;
 use App\Domains\UserProfile\User\Infrastructure\Delivery\Http\Controllers\UserController;
@@ -35,6 +36,11 @@ Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateB
 Route::get('/jenjang', [ClassController::class, 'getClassLevels']);
 Route::get('/getAllClass', [ClassController::class, 'getAllClass']);
 Route::get('/getClassByLevel', [ClassController::class, 'getClassByLevel']);
+
+// Subject
+Route::get('/getAllSubjects', [SubjectController::class, 'getAllSubjects']);
+Route::get('/getSubjectByClass', [SubjectController::class, 'getSubjectByClass']);
+Route::get('/getSubjectByLevel', [SubjectController::class, 'getSubjectByLevel']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Authentication

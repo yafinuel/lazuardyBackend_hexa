@@ -8,12 +8,14 @@ use App\Domains\Authentication\Infrastructure\Repository\EloquentUserRepository;
 use App\Domains\Authentication\Ports\MailerInterface;
 use App\Domains\Authentication\Ports\OtpRepositoryInterface;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
-use App\Domains\CourseCatalog\Infrastructure\Repository\EloquentClassRepository;
-use App\Domains\CourseCatalog\Ports\ClassRepositoryInterface;
+use App\Domains\ClassDomain\Infrastructure\Repository\EloquentClassRepository;
+use App\Domains\ClassDomain\Ports\ClassRepositoryInterface;
 use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
 use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
 use App\Domains\Package\Ports\PackageRepositoryInterface;
+use App\Domains\Subject\Infrastructure\Repository\EloquentSubjectRepository;
+use App\Domains\Subject\Ports\SubjectRepositoryInterface;
 use App\Domains\UserProfile\Student\Infrastructure\Repository\EloquentStudentRepository;
 use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
 use App\Domains\UserProfile\Tutor\Infrastructure\Repository\EloquentTutorRepository;
@@ -94,6 +96,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ClassRepositoryInterface::class,
             EloquentClassRepository::class
+        );
+
+        $this->app->bind(
+            SubjectRepositoryInterface::class,
+            EloquentSubjectRepository::class
         );
     }
 

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Subject;
+use App\Models\ClassModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,47 +14,55 @@ class SubjectSeeder extends Seeder
      */
     public function run(): void
     {
+        $sdClassId = ClassModel::where('level', 'SD')->orderBy('id')->value('id');
+        $smpClassId = ClassModel::where('level', 'SMP')->orderBy('id')->value('id');
+        $smaClassId = ClassModel::where('level', 'SMA')->orderBy('id')->value('id');
+
+        if (! $sdClassId || ! $smpClassId || ! $smaClassId) {
+            return;
+        }
+
         // Default: Kurikulum Merdeka (ID 2)
         $subjects = [
-            // Matematika (ID 1-3)
-            ['name' => 'Matematika SD', 'class_id' => 1], // ID 1
-            ['name' => 'Matematika SMP', 'class_id' => 2], // ID 2
-            ['name' => 'Matematika SMA', 'class_id' => 3], // ID 3
+            // Matematika
+            ['name' => 'Matematika', 'class_id' => $sdClassId],
+            ['name' => 'Matematika', 'class_id' => $smpClassId],
+            ['name' => 'Matematika', 'class_id' => $smaClassId],
             
-            // Bahasa Inggris (ID 4-6)
-            ['name' => 'Bahasa Inggris SD', 'class_id' => 1], // ID 4
-            ['name' => 'Bahasa Inggris SMP', 'class_id' => 2], // ID 5
-            ['name' => 'Bahasa Inggris SMA', 'class_id' => 3], // ID 6
+            // Bahasa Inggris
+            ['name' => 'Bahasa Inggris', 'class_id' => $sdClassId],
+            ['name' => 'Bahasa Inggris', 'class_id' => $smpClassId],
+            ['name' => 'Bahasa Inggris', 'class_id' => $smaClassId],
             
-            // Fisika (ID 7-8)
-            ['name' => 'Fisika SMP', 'class_id' => 2], // ID 7
-            ['name' => 'Fisika SMA', 'class_id' => 3], // ID 8
+            // Fisika
+            ['name' => 'Fisika', 'class_id' => $smpClassId],
+            ['name' => 'Fisika', 'class_id' => $smaClassId],
             
-            // Kimia (ID 9-10)
-            ['name' => 'Kimia SMP', 'class_id' => 2], // ID 9
-            ['name' => 'Kimia SMA', 'class_id' => 3], // ID 10
+            // Kimia
+            ['name' => 'Kimia', 'class_id' => $smpClassId],
+            ['name' => 'Kimia', 'class_id' => $smaClassId],
             
-            // Biologi (ID 11-12)
-            ['name' => 'Biologi SMP', 'class_id' => 2], // ID 11
-            ['name' => 'Biologi SMA', 'class_id' => 3], // ID 12
+            // Biologi
+            ['name' => 'Biologi', 'class_id' => $smpClassId],
+            ['name' => 'Biologi', 'class_id' => $smaClassId],
             
-            // Ekonomi (ID 13-14)
-            ['name' => 'Ekonomi SMP', 'class_id' => 2], // ID 13
-            ['name' => 'Ekonomi SMA', 'class_id' => 3], // ID 14
+            // Ekonomi
+            ['name' => 'Ekonomi', 'class_id' => $smpClassId],
+            ['name' => 'Ekonomi', 'class_id' => $smaClassId],
             
-            // TIK/Komputer (ID 15)
-            ['name' => 'TIK/Komputer SMA', 'class_id' => 3], // ID 15
+            // TIK/Komputer
+            ['name' => 'TIK/Komputer', 'class_id' => $smaClassId],
             
-            // Bahasa Indonesia (ID 16-18)
-            ['name' => 'Bahasa Indonesia SD', 'class_id' => 1], // ID 16
-            ['name' => 'Bahasa Indonesia SMP', 'class_id' => 2], // ID 17
-            ['name' => 'Bahasa Indonesia SMA', 'class_id' => 3], // ID 18
+            // Bahasa Indonesia
+            ['name' => 'Bahasa Indonesia', 'class_id' => $sdClassId],
+            ['name' => 'Bahasa Indonesia', 'class_id' => $smpClassId],
+            ['name' => 'Bahasa Indonesia', 'class_id' => $smaClassId],
             
-            // IPA Terpadu SD (ID 19)
-            ['name' => 'IPA Terpadu SD', 'class_id' => 1], // ID 19
+            // IPA Terpadu
+            ['name' => 'IPA Terpadu', 'class_id' => $sdClassId],
             
-            // IPS (ID 20)
-            ['name' => 'IPS SD', 'class_id' => 1], // ID 20
+            // IPS
+            ['name' => 'IPS', 'class_id' => $sdClassId],
         ];
 
         foreach ($subjects as $subject) {
