@@ -36,4 +36,17 @@ class EloquentClassRepository implements ClassRepositoryInterface
             ],
         ];
     }
+
+    public function getClassesByLevel(string $level): array
+    {
+        $classes = ClassModel::where('level', $level)->get();
+
+        return $classes->map(function (ClassModel $class) {
+            return new ClassEntity(
+                id: $class->id,
+                name: $class->name,
+                level: $class->level
+            );
+        })->toArray();
+    }
 }

@@ -30,6 +30,10 @@ Route::post('/tutorRegister', [AuthController::class, 'tutorRegister']);
 Route::get('/getBankList', [PaymentGatewayController::class, 'getBankList']);
 Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateBankAccount']);
 
+// Course Catalog
+Route::get('/jenjang', [ClassController::class, 'getClassLevels']);
+Route::get('/getAllClass', [ClassController::class, 'getAllClass']);
+Route::get('/getClassByLevel', [ClassController::class, 'getClassByLevel']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Authentication
@@ -45,8 +49,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Package
     Route::get('/getPackages', [PackageController::class, 'index']);
-
-    // Course Catalog
-    Route::get('/jenjang', [ClassController::class, 'getClassLevels']);
-    Route::get('/getAllClass', [ClassController::class, 'getAllClass']);
 });
