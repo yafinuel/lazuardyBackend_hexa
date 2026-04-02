@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domains\CourseCatalog\Infrastructure\Delivery\Http\Controllers;
+namespace App\Domains\ClassDomain\Infrastructure\Delivery\Http\Controllers;
 
-use App\Domains\CourseCatalog\Actions\GetAllClassAction;
-use App\Domains\CourseCatalog\Actions\GetClassByLevelAction;
-use App\Domains\CourseCatalog\Actions\GetClassLevelAction;
+use App\Domains\ClassDomain\Actions\GetAllClassAction;
+use App\Domains\ClassDomain\Actions\GetClassByLevelAction;
+use App\Domains\ClassDomain\Actions\GetClassLevelAction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

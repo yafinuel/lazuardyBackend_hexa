@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Domains\CourseCatalog\Infrastructure\Repository;
+namespace App\Domains\ClassDomain\Infrastructure\Repository;
 
-use App\Domains\CourseCatalog\Entities\ClassEntity;
-use App\Domains\CourseCatalog\Ports\ClassRepositoryInterface;
+use App\Domains\ClassDomain\Entities\ClassEntity;
+use App\Domains\ClassDomain\Ports\ClassRepositoryInterface;
 use App\Models\ClassModel;
 use Illuminate\Support\Collection;
 

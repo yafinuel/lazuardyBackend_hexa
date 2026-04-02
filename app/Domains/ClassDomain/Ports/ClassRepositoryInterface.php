@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\CourseCatalog\Ports;
+namespace App\Domains\ClassDomain\Ports;
 
 use Illuminate\Support\Collection;
 

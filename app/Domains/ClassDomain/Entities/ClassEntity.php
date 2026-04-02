@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\CourseCatalog\Entities;
+namespace App\Domains\ClassDomain\Entities;
 
 class ClassEntity
 {

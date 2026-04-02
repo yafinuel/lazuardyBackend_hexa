@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domains\CourseCatalog\Actions;
+namespace App\Domains\ClassDomain\Actions;
 
-use App\Domains\CourseCatalog\Ports\ClassRepositoryInterface;
+use App\Domains\ClassDomain\Ports\ClassRepositoryInterface;
 
 class GetAllClassAction
 {

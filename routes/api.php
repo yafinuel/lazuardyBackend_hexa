@@ -2,17 +2,18 @@
 
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\AuthController;
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\SocialiteController;
-use App\Domains\CourseCatalog\Infrastructure\Delivery\Http\Controllers\ClassController;
+use App\Domains\ClassDomain\Infrastructure\Delivery\Http\Controllers\ClassController;
 use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
 use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
 use App\Domains\UserProfile\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController;
 use App\Domains\UserProfile\User\Infrastructure\Delivery\Http\Controllers\UserController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
 
 // Authentication
 Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect']);
@@ -30,7 +31,7 @@ Route::post('/tutorRegister', [AuthController::class, 'tutorRegister']);
 Route::get('/getBankList', [PaymentGatewayController::class, 'getBankList']);
 Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateBankAccount']);
 
-// Course Catalog
+// Class
 Route::get('/jenjang', [ClassController::class, 'getClassLevels']);
 Route::get('/getAllClass', [ClassController::class, 'getAllClass']);
 Route::get('/getClassByLevel', [ClassController::class, 'getClassByLevel']);
