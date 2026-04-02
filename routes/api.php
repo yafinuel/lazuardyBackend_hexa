@@ -2,6 +2,7 @@
 
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\AuthController;
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\SocialiteController;
+use App\Domains\CourseCatalog\Infrastructure\Delivery\Http\Controllers\ClassController;
 use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
 use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
@@ -44,4 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Package
     Route::get('/getPackages', [PackageController::class, 'index']);
+
+    // Course Catalog
+    Route::get('/jenjang', [ClassController::class, 'getClassLevels']);
 });

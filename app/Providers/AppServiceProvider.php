@@ -8,6 +8,8 @@ use App\Domains\Authentication\Infrastructure\Repository\EloquentUserRepository;
 use App\Domains\Authentication\Ports\MailerInterface;
 use App\Domains\Authentication\Ports\OtpRepositoryInterface;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
+use App\Domains\CourseCatalog\Infrastructure\Repository\EloquentClassRepository;
+use App\Domains\CourseCatalog\Ports\ClassRepositoryInterface;
 use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
 use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
@@ -87,6 +89,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PackageRepositoryInterface::class,
             EloquentPackageRepository::class
+        );
+
+        $this->app->bind(
+            ClassRepositoryInterface::class,
+            EloquentClassRepository::class
         );
     }
 
