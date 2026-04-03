@@ -15,24 +15,21 @@ class CourseCatalogServiceAdapter implements CourseCatalogServicePort
     {
         if ($category == CourseCategoryEnum::ACADEMIC->value){
             $levels = $this->levelAction->execute();
-            unset($levels[CourseCategoryEnum::GENERAL->value]);
-
-            $subjects = $this->subjectAction->execute($level);
-            return [
-                'levels' => $levels,
-                'subjects' => $subjects,
-            ];
+            $levels = collect($levels)->filter(function ($value) {
+                return $value !== CourseCategoryEnum::GENERAL->value;
+            })->values()->toArray();
+            $subjects = $this->subjectAction->execute($level, CourseCategoryEnum::ACADEMIC->value);
         } else if ($category == CourseCategoryEnum::GENERAL->value) {
+            $levels = null;
             $subjects = $this->subjectAction->execute(CourseCategoryEnum::GENERAL->value);
-            return [
-                'levels' => null,
-                'subjects' => $subjects
-            ];
         } else {
-            return [
-                'levels' => null,
-                'subjects' => null
-            ];
+            $levels = null;
+            $subjects = null;
         }
+            
+        return [
+            'levels' => $levels,
+            'subjects' => $subjects
+        ];
     }
 }

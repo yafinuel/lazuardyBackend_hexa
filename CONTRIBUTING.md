@@ -56,7 +56,11 @@ app/
 │           │   └── Http/           <-- Entry Point (Driving Adapters)
 │           │       ├── Controllers # Menangkap Request API
 │           │       └── Requests    # Validasi Form Request
-│           └── External/           <-- Integrasi Pihak Ketiga (API Luar)
+│           ├── External/           <-- Integrasi Pihak Ketiga (API Luar)
+│           │
+│           ├── Repository/         <-- Database
+│           │
+│           └── Service/           <-- Mengambil action domain lain
 │
 ├── Shared/                         <-- Komponen yang digunakan lintas domain
 │   ├── Actions/                    # Logic umum (misal: UploadFile)

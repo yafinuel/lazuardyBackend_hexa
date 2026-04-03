@@ -18,21 +18,21 @@ class ClassSeeder extends Seeder
         for ($i=1; $i<=6; $i++){
             $classes[] = [
                 'name' => 'kelas ' . $i, 
-                'level' => 'SD'
+                'level' => 'sd'
             ];
         }
         for ($i=0; $i<3; $i++){
             $n = $i + 7;
             $classes[] = [
                 'name' => 'kelas ' . $n, 
-                'level' => 'SMP'
+                'level' => 'smp'
             ];
         }
         for ($i=0; $i<3; $i++){
             $n = $i + 10;
             $classes[] = [
                 'name' => 'kelas ' . $n, 
-                'level' => 'SMA'
+                'level' => 'sma'
             ];
         }
         
