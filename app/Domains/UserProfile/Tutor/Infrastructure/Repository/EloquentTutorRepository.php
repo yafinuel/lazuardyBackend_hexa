@@ -23,7 +23,7 @@ class EloquentTutorRepository implements TutorRepositoryInterface
             telephoneNumber: $user->telephone_number,
             telephoneVerifiedAt: $user->telephone_verified_at,
             profilePhotoUrl: $user->profile_photo_path,
-            dateOfBirth: $user->date_ofbirth,
+            dateOfBirth: $user->date_of_birth,
             gender: $user->gender?->displayName(),
             religion: $user->religion?->displayName(),
             homeAddress: $user->home_address,

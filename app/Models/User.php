@@ -32,7 +32,7 @@ class User extends Authenticatable
         'telephone_number',
         'google_id',
         'facebook_id',
-        'profile_photo_url',
+        'profile_photo_path',
         'date_of_birth',
         'gender',
         'religion',

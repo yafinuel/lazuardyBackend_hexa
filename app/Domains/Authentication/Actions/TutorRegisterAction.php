@@ -33,6 +33,9 @@ class TutorRegisterAction
         $data['id_card_name'] = basename($data['id_card_temp_path']);
         $data['certificate_temp_path'] = $this->storage->uploadToTemp($data['certificate']);
         $data['certificate_name'] = basename($data['certificate_temp_path']);
+        if(isset($data['profile_photo'])) {
+            $data['profile_photo_temp_path'] = $this->storage->uploadToTemp($data['profile_photo']);
+        }
 
         $user = $this->repository->createTutorData($data);
         $token = $this->repository->getToken($user->id);

@@ -9,6 +9,7 @@ use App\Models\Tutor;
 use App\Models\User;
 use App\Shared\Enums\FileTypeEnum;
 use App\Shared\Infrastructure\Queues\ProcessFileUploadJob;
+use App\Shared\Infrastructure\Queues\ProcessProfilePhotoUploadJob;
 use App\Shared\Ports\TaskQueueInterface;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -104,6 +105,7 @@ class EloquentUserRepository implements UserRepositoryInterface
                 'date_of_birth' => $data['date_of_birth'],
                 'telephone_number' => $data['telephone_number'],
                 'home_address' => $data['home_address'],
+                'profile_photo_path' => $data['profile_photo_temp_path'] ?? 'profile_photo/default/default.jpg',
             ]);
     
             $tutor = Tutor::create([
@@ -144,6 +146,9 @@ class EloquentUserRepository implements UserRepositoryInterface
                 $this->queue->dispatch(new ProcessFileUploadJob($cv->id, $data['curriculum_vitae_temp_path'], 'cv/' . $user->id));
                 $this->queue->dispatch(new ProcessFileUploadJob($idCard->id, $data['id_card_temp_path'], 'idcard/' . $user->id));
                 $this->queue->dispatch(new ProcessFileUploadJob($certificate->id, $data['certificate_temp_path'], 'certificate/' . $user->id));
+                if(isset($data['profile_photo_temp_path'])) {
+                    $this->queue->dispatch(new ProcessProfilePhotoUploadJob($user->id, $data['profile_photo_temp_path'], 'profile_photo/' . $user->id));
+                }
             });
             
             return new UserAuthEntity(
