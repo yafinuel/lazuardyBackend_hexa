@@ -6,6 +6,7 @@ getPackages:
     description: Endpoint untuk mendapatkan daftar paket belajar dengan informasi harga akhir dan metadata pagination. Membutuhkan autentikasi.
     security:
       - bearerAuth: []
+    operationId: getPackages
     responses:
       '200':
         description: Berhasil mendapatkan daftar paket
@@ -19,5 +20,7 @@ getPackages:
           application/json:
             example:
               message: "Unauthenticated."
+      '400':
+        description: Permintaan tidak valid
       '500':
         $ref: '../components/responses.yaml#/ServerError'

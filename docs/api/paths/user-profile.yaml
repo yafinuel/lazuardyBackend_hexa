@@ -6,6 +6,7 @@ studentBiodata:
     description: Endpoint untuk mendapatkan biodata siswa yang sedang login. Membutuhkan autentikasi.
     security:
       - bearerAuth: []
+    operationId: studentBiodata
     responses:
       '200':
         description: Berhasil mengambil biodata siswa
@@ -25,6 +26,8 @@ studentBiodata:
           application/json:
             example:
               message: "Unauthenticated."
+      '400':
+        description: Permintaan tidak valid
       '500':
         description: Gagal mengambil biodata siswa
         content:
@@ -42,6 +45,7 @@ updateStudentBiodata:
     description: Endpoint untuk memperbarui biodata siswa yang sedang login. Membutuhkan autentikasi.
     security:
       - bearerAuth: []
+    operationId: updateStudentBiodata
     requestBody:
       $ref: '../components/request-bodies.yaml#/UpdateStudentBiodata'
     responses:
@@ -76,6 +80,7 @@ tutorBiodata:
     description: Endpoint untuk mendapatkan biodata tutor yang sedang login. Membutuhkan autentikasi.
     security:
       - bearerAuth: []
+    operationId: tutorBiodata
     responses:
       '200':
         description: Berhasil mengambil biodata tutor
@@ -95,6 +100,8 @@ tutorBiodata:
           application/json:
             example:
               message: "Unauthenticated."
+      '400':
+        description: Permintaan tidak valid
       '500':
         description: Gagal mengambil biodata tutor
         content:
@@ -112,6 +119,7 @@ updateTutorBiodata:
     description: Endpoint untuk memperbarui biodata tutor yang sedang login. Membutuhkan autentikasi.
     security:
       - bearerAuth: []
+    operationId: updateTutorBiodata
     requestBody:
       $ref: '../components/request-bodies.yaml#/UpdateTutorBiodata'
     responses:
@@ -146,6 +154,7 @@ getTutorFile:
     description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor. Membutuhkan autentikasi.
     security:
       - bearerAuth: []
+    operationId: getTutorFile
     responses:
       '200':
         description: Berhasil mengambil file tutor
@@ -167,6 +176,8 @@ getTutorFile:
           application/json:
             example:
               message: "Unauthenticated."
+      '400':
+        description: Permintaan tidak valid
       '500':
         description: Gagal mengambil file tutor
         content:
@@ -184,6 +195,7 @@ updateProfilePhoto:
     description: Endpoint untuk mengunggah foto profil pengguna yang sedang login. Membutuhkan autentikasi.
     security:
       - bearerAuth: []
+    operationId: updateProfilePhoto
     requestBody:
       required: true
       content:

@@ -10,6 +10,8 @@ use App\Domains\Authentication\Ports\OtpRepositoryInterface;
 use App\Domains\Authentication\Ports\UserRepositoryInterface;
 use App\Domains\ClassDomain\Infrastructure\Repository\EloquentClassRepository;
 use App\Domains\ClassDomain\Ports\ClassRepositoryInterface;
+use App\Domains\CourseCatalog\Infrastructure\Service\CourseCatalogServiceAdapter;
+use App\Domains\CourseCatalog\Ports\CourseCatalogServicePort;
 use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
 use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
@@ -101,6 +103,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             SubjectRepositoryInterface::class,
             EloquentSubjectRepository::class
+        );
+
+        $this->app->bind(
+            CourseCatalogServicePort::class,
+            CourseCatalogServiceAdapter::class
         );
     }
 

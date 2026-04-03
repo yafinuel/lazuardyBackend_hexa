@@ -1,0 +1,70 @@
+getAllSubjects:
+  get:
+    tags:
+      - Subject
+    security: []
+    summary: Mendapatkan daftar semua mata pelajaran
+    operationId: getAllSubjects
+    responses:
+      '200':
+        description: Berhasil mendapatkan daftar mata pelajaran
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/SubjectListResponse'
+      '400':
+        description: Permintaan tidak valid
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+getSubjectByClass:
+  get:
+    tags:
+      - Subject
+    security: []
+    summary: Mendapatkan mata pelajaran berdasarkan class ID
+    operationId: getSubjectByClass
+    parameters:
+      - name: classId
+        in: query
+        required: true
+        schema:
+          type: integer
+          example: 1
+    responses:
+      '200':
+        description: Berhasil mendapatkan mata pelajaran berdasarkan class ID
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/SubjectListResponse'
+      '400':
+        description: Permintaan tidak valid
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+getSubjectByLevel:
+  get:
+    tags:
+      - Subject
+    security: []
+    summary: Mendapatkan mata pelajaran berdasarkan jenjang
+    operationId: getSubjectByLevel
+    parameters:
+      - name: level
+        in: query
+        required: true
+        schema:
+          type: string
+        example: SD
+    responses:
+      '200':
+        description: Berhasil mendapatkan mata pelajaran berdasarkan jenjang
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/SubjectByLevelResponse'
+      '400':
+        description: Permintaan tidak valid
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

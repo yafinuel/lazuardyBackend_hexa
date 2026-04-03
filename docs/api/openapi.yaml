@@ -3,9 +3,12 @@ info:
   title: Lazuardy API Documentation
   description: Dokumentasi API untuk backend Lazuardy
   version: 1.0.0
+  license:
+    name: Proprietary
+    url: https://lazuardy.id
 
 servers:
-  - url: http://localhost:8000/api
+  - url: https://api.lazuardy.id/api
     description: Local Server
 
 tags:
@@ -15,6 +18,12 @@ tags:
     description: Hal-hal yang berkaitan dengan keuangan
   - name: Package
     description: Endpoint untuk daftar paket belajar
+  - name: Class
+    description: Endpoint untuk data kelas dan jenjang
+  - name: Subject
+    description: Endpoint untuk data mata pelajaran
+  - name: Course Catalog
+    description: Endpoint untuk filter halaman kategori kursus
   - name: User Profile
     description: Endpoint untuk profil pengguna
 
@@ -47,6 +56,23 @@ paths:
 
   /getPackages:
     $ref: './paths/package.yaml#/getPackages'
+
+  /jenjang:
+    $ref: './paths/class.yaml#/getClassLevels'
+  /getAllClass:
+    $ref: './paths/class.yaml#/getAllClass'
+  /getClassByLevel:
+    $ref: './paths/class.yaml#/getClassByLevel'
+
+  /getAllSubjects:
+    $ref: './paths/subject.yaml#/getAllSubjects'
+  /getSubjectByClass:
+    $ref: './paths/subject.yaml#/getSubjectByClass'
+  /getSubjectByLevel:
+    $ref: './paths/subject.yaml#/getSubjectByLevel'
+
+  /filterCategoryPage:
+    $ref: './paths/course-catalog.yaml#/filterCategoryPage'
 
   /studentBiodata:
     $ref: './paths/user-profile.yaml#/studentBiodata'
@@ -81,6 +107,26 @@ components:
       $ref: './components/request-bodies.yaml#/UpdateTutorBiodata'
 
   schemas:
+    ClassEntity:
+      $ref: './components/schemas.yaml#/ClassEntity'
+    ClassLevelResponse:
+      $ref: './components/schemas.yaml#/ClassLevelResponse'
+    ClassListResponse:
+      $ref: './components/schemas.yaml#/ClassListResponse'
+    ClassByLevelResponse:
+      $ref: './components/schemas.yaml#/ClassByLevelResponse'
+    SubjectEntity:
+      $ref: './components/schemas.yaml#/SubjectEntity'
+    SubjectListResponse:
+      $ref: './components/schemas.yaml#/SubjectListResponse'
+    SubjectByLevelResponse:
+      $ref: './components/schemas.yaml#/SubjectByLevelResponse'
+    FilterCategoryPageResponse:
+      $ref: './components/schemas.yaml#/FilterCategoryPageResponse'
+    FilterCategoryPageData:
+      $ref: './components/schemas.yaml#/FilterCategoryPageData'
+    FilterCategorySubjects:
+      $ref: './components/schemas.yaml#/FilterCategorySubjects'
     StudentRegisterRequest:
       $ref: './components/schemas.yaml#/StudentRegisterRequest'
     Bank:

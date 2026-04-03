@@ -1,0 +1,63 @@
+getClassLevels:
+  get:
+    tags:
+      - Class
+    security: []
+    summary: Mendapatkan daftar jenjang kelas
+    operationId: getClassLevels
+    responses:
+      '200':
+        description: Berhasil mendapatkan daftar jenjang kelas
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/ClassLevelResponse'
+      '400':
+        description: Permintaan tidak valid
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+getAllClass:
+  get:
+    tags:
+      - Class
+    security: []
+    summary: Mendapatkan daftar semua kelas
+    operationId: getAllClass
+    responses:
+      '200':
+        description: Berhasil mendapatkan daftar kelas
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/ClassListResponse'
+      '400':
+        description: Permintaan tidak valid
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+getClassByLevel:
+  get:
+    tags:
+      - Class
+    security: []
+    summary: Mendapatkan kelas berdasarkan jenjang
+    operationId: getClassByLevel
+    parameters:
+      - name: level
+        in: query
+        required: true
+        schema:
+          type: string
+        example: SD
+    responses:
+      '200':
+        description: Berhasil mendapatkan kelas berdasarkan jenjang
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/ClassByLevelResponse'
+      '400':
+        description: Permintaan tidak valid
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

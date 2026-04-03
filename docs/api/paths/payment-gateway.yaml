@@ -4,6 +4,7 @@ banks:
       - Payment Gateway
     security: []
     summary: Mendapatkan daftar bank
+    operationId: getBankList
     responses:
       '200':
         description: Berhasil
@@ -17,6 +18,8 @@ banks:
                   type: array
                   items:
                     $ref: '../components/schemas.yaml#/Bank'
+      '400':
+        description: Permintaan tidak valid
 
 validateBankAccount:
   post:
@@ -24,6 +27,7 @@ validateBankAccount:
       - Payment Gateway
     security: []
     summary: Memvalidasi nomor rekening
+    operationId: validateBankAccount
     requestBody:
       required: true
       content:
@@ -44,3 +48,5 @@ validateBankAccount:
                 value: { status: "success", account_holder_name: "FETCH_HOLDER_NAME" }
               ValidationFailed:
                 value: { status: "error", message: "Gagal memverifikasi rekening", error_code: "API_ERROR" }
+      '400':
+        description: Permintaan tidak valid

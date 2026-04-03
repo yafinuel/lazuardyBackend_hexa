@@ -1,0 +1,34 @@
+filterCategoryPage:
+  get:
+    tags:
+      - Course Catalog
+    security: []
+    summary: Filter data halaman kategori kursus
+    description: Mengembalikan level dan daftar subject berdasarkan kategori dan level.
+    operationId: filterCategoryPage
+    parameters:
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+          enum: [akademik, umum]
+        example: akademik
+      - name: level
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Jika kosong, backend menggunakan default SD.
+        example: SD
+    responses:
+      '200':
+        description: Berhasil mengambil data filter kategori
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/FilterCategoryPageResponse'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

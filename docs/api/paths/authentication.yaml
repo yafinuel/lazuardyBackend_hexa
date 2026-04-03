@@ -4,6 +4,7 @@ registerOtpEmail:
       - Authentication
     security: []
     summary: Mengirim OTP untuk Registrasi
+    operationId: registerOtpEmail
     requestBody:
       required: true
       content:
@@ -19,6 +20,8 @@ registerOtpEmail:
         content:
           application/json:
             example: { status: "success" }
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
       '500':
         description: Gagal mengirim OTP
         content:
@@ -31,6 +34,7 @@ verifyOtpRegisterEmail:
       - Authentication
     security: []
     summary: Verifikasi OTP untuk Registrasi
+    operationId: verifyOtpRegisterEmail
     requestBody:
       required: true
       content:
@@ -47,6 +51,8 @@ verifyOtpRegisterEmail:
         content:
           application/json:
             example: { status: "verified" }
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
       '404':
         description: OTP tidak valid atau kadaluwarsa
         content:
@@ -59,6 +65,7 @@ forgotPasswordOtpEmail:
       - Authentication
     security: []
     summary: Mengirim OTP untuk Lupa Password
+    operationId: forgotPasswordOtpEmail
     requestBody:
       required: true
       content:
@@ -71,6 +78,8 @@ forgotPasswordOtpEmail:
     responses:
       '201':
         description: OTP Berhasil dikirim
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
@@ -80,6 +89,7 @@ forgotPasswordVerifyOtpEmail:
       - Authentication
     security: []
     summary: Verifikasi OTP untuk Lupa Password
+    operationId: forgotPasswordVerifyOtpEmail
     requestBody:
       required: true
       content:
@@ -111,6 +121,7 @@ forgotPasswordResetPassword:
       - Authentication
     security: []
     summary: Reset password menggunakan token hasil verifikasi OTP
+    operationId: forgotPasswordResetPassword
     description: |
       Endpoint ini digunakan untuk memperbarui password user setelah berhasil memverifikasi OTP.
       Token yang digunakan harus sesuai dengan yang disimpan di Cache pada tahap verifikasi.
@@ -168,6 +179,7 @@ authProviderRedirect:
     tags: [Authentication]
     security: []
     summary: Redirect ke Authentikasi OAuth
+    operationId: authProviderRedirect
     parameters:
       - name: provider
         in: path
@@ -175,12 +187,14 @@ authProviderRedirect:
         schema: { type: string }
     responses:
       '200': { description: Berhasil redirect }
+      '400': { description: Provider tidak valid }
 
 authProviderCallback:
   get:
     tags: [Authentication]
     security: []
     summary: Callback dari OAuth
+    operationId: authProviderCallback
     parameters:
       - name: provider
         in: path
@@ -195,12 +209,15 @@ authProviderCallback:
               oneOf:
                 - $ref: '../components/schemas.yaml#/AuthSuccess'
                 - $ref: '../components/schemas.yaml#/OAuthUserNew'
+      '400':
+        description: Provider tidak valid atau callback gagal
 
 login:
   post:
     tags: [Authentication]
     security: []
     summary: Login secara manual
+    operationId: login
     requestBody:
       required: true
       content:
@@ -225,6 +242,7 @@ studentRegister:
     tags: [Authentication]
     security: []
     summary: Mendaftarkan user siswa baru
+    operationId: studentRegister
     requestBody:
       required: true
       content:
@@ -233,6 +251,7 @@ studentRegister:
             $ref: '../components/schemas.yaml#/StudentRegisterRequest'
     responses:
       '201': { description: Berhasil mendaftar }
+      '422': { $ref: '../components/responses.yaml#/ValidationError' }
       '500': { description: Gagal mendaftar }
 
 tutorRegister:
@@ -241,6 +260,7 @@ tutorRegister:
       - Authentication
     security: []
     summary: Mendaftarkan user tutor baru (dengan upload file)
+    operationId: tutorRegister
     requestBody:
       required: true
       content:

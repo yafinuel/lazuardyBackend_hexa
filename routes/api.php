@@ -3,6 +3,7 @@
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\AuthController;
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\SocialiteController;
 use App\Domains\ClassDomain\Infrastructure\Delivery\Http\Controllers\ClassController;
+use App\Domains\CourseCatalog\Infrastructure\Delivery\Http\Controllers\CourseCatalogController;
 use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
 use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
@@ -41,6 +42,9 @@ Route::get('/getClassByLevel', [ClassController::class, 'getClassByLevel']);
 Route::get('/getAllSubjects', [SubjectController::class, 'getAllSubjects']);
 Route::get('/getSubjectByClass', [SubjectController::class, 'getSubjectByClass']);
 Route::get('/getSubjectByLevel', [SubjectController::class, 'getSubjectByLevel']);
+
+// Course Catalog
+Route::get('/filterCategoryPage', [CourseCatalogController::class, 'filterCategoryPageAction']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Authentication

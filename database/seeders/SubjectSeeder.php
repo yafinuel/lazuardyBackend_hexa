@@ -17,8 +17,9 @@ class SubjectSeeder extends Seeder
         $sdClassId = ClassModel::where('level', 'SD')->orderBy('id')->value('id');
         $smpClassId = ClassModel::where('level', 'SMP')->orderBy('id')->value('id');
         $smaClassId = ClassModel::where('level', 'SMA')->orderBy('id')->value('id');
+        $umumClassId = ClassModel::where('level', 'umum')->orderBy('id')->value('id');
 
-        if (! $sdClassId || ! $smpClassId || ! $smaClassId) {
+        if (! $sdClassId || ! $smpClassId || ! $smaClassId || ! $umumClassId) {
             return;
         }
 
@@ -63,6 +64,11 @@ class SubjectSeeder extends Seeder
             
             // IPS
             ['name' => 'IPS', 'class_id' => $sdClassId],
+
+            // Umum
+            ['name' => 'Public Speaking', 'class_id' => $umumClassId],
+            ['name' => 'Desain Grafis', 'class_id' => $umumClassId],
+            ['name' => 'Pemrograman Dasar', 'class_id' => $umumClassId],
         ];
 
         foreach ($subjects as $subject) {

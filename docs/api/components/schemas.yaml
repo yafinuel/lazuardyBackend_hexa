@@ -72,6 +72,142 @@ PaginationMeta:
       type: integer
       example: 25
 
+ClassEntity:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    name:
+      type: string
+      example: "Matematika"
+    level:
+      type: string
+      example: "SD"
+
+ClassLevelResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: "success"
+    level:
+      type: array
+      items:
+        type: string
+      example: ["SD", "SMP", "SMA"]
+
+ClassListResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: "success"
+    data:
+      type: array
+      items:
+        $ref: '#/ClassEntity'
+    meta:
+      $ref: '#/PaginationMeta'
+
+ClassByLevelResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: "success"
+    classes:
+      type: array
+      items:
+        $ref: '#/ClassEntity'
+
+SubjectEntity:
+  type: object
+  properties:
+    id:
+      type: integer
+      nullable: true
+      example: 1
+    name:
+      type: string
+      example: "Fisika"
+    icon_image_path:
+      type: string
+      nullable: true
+      example: "/storage/subjects/fisika.png"
+    classId:
+      type: integer
+      nullable: true
+      example: 1
+    className:
+      type: string
+      nullable: true
+      example: "Kelas 10"
+    classLevel:
+      type: string
+      nullable: true
+      example: "SMA"
+
+SubjectListResponse:
+  type: object
+  properties:
+    success:
+      type: string
+      example: "success"
+    data:
+      type: array
+      items:
+        $ref: '#/SubjectEntity'
+    meta:
+      $ref: '#/PaginationMeta'
+
+SubjectByLevelResponse:
+  type: object
+  properties:
+    success:
+      type: string
+      example: "success"
+    data:
+      type: array
+      items:
+        $ref: '#/SubjectEntity'
+    meta:
+      $ref: '#/PaginationMeta'
+
+FilterCategorySubjects:
+  type: object
+  properties:
+    data:
+      type: array
+      items:
+        $ref: '#/SubjectEntity'
+    meta:
+      $ref: '#/PaginationMeta'
+
+FilterCategoryPageData:
+  type: object
+  properties:
+    levels:
+      type: array
+      nullable: true
+      items:
+        type: string
+      example: ["SD", "SMP", "SMA"]
+    subjects:
+      type: object
+      nullable: true
+      allOf:
+        - $ref: '#/FilterCategorySubjects'
+
+FilterCategoryPageResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: "success"
+    data:
+      $ref: '#/FilterCategoryPageData'
+
 GetPackagesResponse:
   type: object
   properties:

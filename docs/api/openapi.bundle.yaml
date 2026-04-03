@@ -3,8 +3,11 @@ info:
   title: Lazuardy API Documentation
   description: Dokumentasi API untuk backend Lazuardy
   version: 1.0.0
+  license:
+    name: Proprietary
+    url: https://lazuardy.id
 servers:
-  - url: http://localhost:8000/api
+  - url: https://api.lazuardy.id/api
     description: Local Server
 tags:
   - name: Authentication
@@ -13,6 +16,12 @@ tags:
     description: Hal-hal yang berkaitan dengan keuangan
   - name: Package
     description: Endpoint untuk daftar paket belajar
+  - name: Class
+    description: Endpoint untuk data kelas dan jenjang
+  - name: Subject
+    description: Endpoint untuk data mata pelajaran
+  - name: Course Catalog
+    description: Endpoint untuk filter halaman kategori kursus
   - name: User Profile
     description: Endpoint untuk profil pengguna
 paths:
@@ -22,6 +31,7 @@ paths:
         - Authentication
       security: []
       summary: Mengirim OTP untuk Registrasi
+      operationId: registerOtpEmail
       requestBody:
         required: true
         content:
@@ -42,6 +52,8 @@ paths:
             application/json:
               example:
                 status: success
+        '422':
+          $ref: '#/components/responses/ValidationError'
         '500':
           description: Gagal mengirim OTP
           content:
@@ -56,6 +68,7 @@ paths:
         - Authentication
       security: []
       summary: Verifikasi OTP untuk Registrasi
+      operationId: verifyOtpRegisterEmail
       requestBody:
         required: true
         content:
@@ -87,12 +100,15 @@ paths:
                 status: error
                 message: Gagal memverifikasi OTP
                 debug_error: OTP mismatch
+        '422':
+          $ref: '#/components/responses/ValidationError'
   /forgotPasswordOtpEmail:
     post:
       tags:
         - Authentication
       security: []
       summary: Mengirim OTP untuk Lupa Password
+      operationId: forgotPasswordOtpEmail
       requestBody:
         required: true
         content:
@@ -108,6 +124,8 @@ paths:
       responses:
         '201':
           description: OTP Berhasil dikirim
+        '422':
+          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
   /forgotPasswordVerifyOtpEmail:
@@ -116,6 +134,7 @@ paths:
         - Authentication
       security: []
       summary: Verifikasi OTP untuk Lupa Password
+      operationId: forgotPasswordVerifyOtpEmail
       requestBody:
         required: true
         content:
@@ -155,6 +174,7 @@ paths:
         - Authentication
       security: []
       summary: Reset password menggunakan token hasil verifikasi OTP
+      operationId: forgotPasswordResetPassword
       description: |
         Endpoint ini digunakan untuk memperbarui password user setelah berhasil memverifikasi OTP.
         Token yang digunakan harus sesuai dengan yang disimpan di Cache pada tahap verifikasi.
@@ -212,6 +232,7 @@ paths:
         - Authentication
       security: []
       summary: Redirect ke Authentikasi OAuth
+      operationId: authProviderRedirect
       parameters:
         - name: provider
           in: path
@@ -221,12 +242,15 @@ paths:
       responses:
         '200':
           description: Berhasil redirect
+        '400':
+          description: Provider tidak valid
   /auth/{provider}/callback:
     get:
       tags:
         - Authentication
       security: []
       summary: Callback dari OAuth
+      operationId: authProviderCallback
       parameters:
         - name: provider
           in: path
@@ -242,12 +266,15 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/AuthSuccess'
                   - $ref: '#/components/schemas/OAuthUserNew'
+        '400':
+          description: Provider tidak valid atau callback gagal
   /login:
     post:
       tags:
         - Authentication
       security: []
       summary: Login secara manual
+      operationId: login
       requestBody:
         required: true
         content:
@@ -272,6 +299,7 @@ paths:
         - Authentication
       security: []
       summary: Mendaftarkan user siswa baru
+      operationId: studentRegister
       requestBody:
         required: true
         content:
@@ -281,6 +309,8 @@ paths:
       responses:
         '201':
           description: Berhasil mendaftar
+        '422':
+          $ref: '#/components/responses/ValidationError'
         '500':
           description: Gagal mendaftar
   /tutorRegister:
@@ -289,6 +319,7 @@ paths:
         - Authentication
       security: []
       summary: Mendaftarkan user tutor baru (dengan upload file)
+      operationId: tutorRegister
       requestBody:
         required: true
         content:
@@ -425,6 +456,7 @@ paths:
         - Payment Gateway
       security: []
       summary: Mendapatkan daftar bank
+      operationId: getBankList
       responses:
         '200':
           description: Berhasil
@@ -440,12 +472,15 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Bank'
+        '400':
+          description: Permintaan tidak valid
   /validateBankAccount:
     post:
       tags:
         - Payment Gateway
       security: []
       summary: Memvalidasi nomor rekening
+      operationId: validateBankAccount
       requestBody:
         required: true
         content:
@@ -477,6 +512,8 @@ paths:
                     status: error
                     message: Gagal memverifikasi rekening
                     error_code: API_ERROR
+        '400':
+          description: Permintaan tidak valid
   /getPackages:
     get:
       tags:
@@ -485,6 +522,7 @@ paths:
       description: Endpoint untuk mendapatkan daftar paket belajar dengan informasi harga akhir dan metadata pagination. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
+      operationId: getPackages
       responses:
         '200':
           description: Berhasil mendapatkan daftar paket
@@ -492,12 +530,179 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetPackagesResponse'
+        '400':
+          description: Permintaan tidak valid
         '401':
           description: Unauthorized
           content:
             application/json:
               example:
                 message: Unauthenticated.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /jenjang:
+    get:
+      tags:
+        - Class
+      security: []
+      summary: Mendapatkan daftar jenjang kelas
+      operationId: getClassLevels
+      responses:
+        '200':
+          description: Berhasil mendapatkan daftar jenjang kelas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassLevelResponse'
+        '400':
+          description: Permintaan tidak valid
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /getAllClass:
+    get:
+      tags:
+        - Class
+      security: []
+      summary: Mendapatkan daftar semua kelas
+      operationId: getAllClass
+      responses:
+        '200':
+          description: Berhasil mendapatkan daftar kelas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassListResponse'
+        '400':
+          description: Permintaan tidak valid
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /getClassByLevel:
+    get:
+      tags:
+        - Class
+      security: []
+      summary: Mendapatkan kelas berdasarkan jenjang
+      operationId: getClassByLevel
+      parameters:
+        - name: level
+          in: query
+          required: true
+          schema:
+            type: string
+          example: SD
+      responses:
+        '200':
+          description: Berhasil mendapatkan kelas berdasarkan jenjang
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassByLevelResponse'
+        '400':
+          description: Permintaan tidak valid
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /getAllSubjects:
+    get:
+      tags:
+        - Subject
+      security: []
+      summary: Mendapatkan daftar semua mata pelajaran
+      operationId: getAllSubjects
+      responses:
+        '200':
+          description: Berhasil mendapatkan daftar mata pelajaran
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubjectListResponse'
+        '400':
+          description: Permintaan tidak valid
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /getSubjectByClass:
+    get:
+      tags:
+        - Subject
+      security: []
+      summary: Mendapatkan mata pelajaran berdasarkan class ID
+      operationId: getSubjectByClass
+      parameters:
+        - name: classId
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Berhasil mendapatkan mata pelajaran berdasarkan class ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubjectListResponse'
+        '400':
+          description: Permintaan tidak valid
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /getSubjectByLevel:
+    get:
+      tags:
+        - Subject
+      security: []
+      summary: Mendapatkan mata pelajaran berdasarkan jenjang
+      operationId: getSubjectByLevel
+      parameters:
+        - name: level
+          in: query
+          required: true
+          schema:
+            type: string
+          example: SD
+      responses:
+        '200':
+          description: Berhasil mendapatkan mata pelajaran berdasarkan jenjang
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubjectByLevelResponse'
+        '400':
+          description: Permintaan tidak valid
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /filterCategoryPage:
+    get:
+      tags:
+        - Course Catalog
+      security: []
+      summary: Filter data halaman kategori kursus
+      description: Mengembalikan level dan daftar subject berdasarkan kategori dan level.
+      operationId: filterCategoryPage
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - akademik
+              - umum
+          example: akademik
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Jika kosong, backend menggunakan default SD.
+          example: SD
+      responses:
+        '200':
+          description: Berhasil mengambil data filter kategori
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterCategoryPageResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
   /studentBiodata:
@@ -508,6 +713,7 @@ paths:
       description: Endpoint untuk mendapatkan biodata siswa yang sedang login. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
+      operationId: studentBiodata
       responses:
         '200':
           description: Berhasil mengambil biodata siswa
@@ -521,6 +727,8 @@ paths:
                     example: success
                   data:
                     $ref: '#/components/schemas/StudentEntity'
+        '400':
+          description: Permintaan tidak valid
         '401':
           description: Unauthorized
           content:
@@ -543,6 +751,7 @@ paths:
       description: Endpoint untuk memperbarui biodata siswa yang sedang login. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
+      operationId: updateStudentBiodata
       requestBody:
         $ref: '#/components/requestBodies/UpdateStudentBiodata'
       responses:
@@ -576,6 +785,7 @@ paths:
       description: Endpoint untuk mendapatkan biodata tutor yang sedang login. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
+      operationId: tutorBiodata
       responses:
         '200':
           description: Berhasil mengambil biodata tutor
@@ -589,6 +799,8 @@ paths:
                     example: success
                   data:
                     $ref: '#/components/schemas/TutorEntity'
+        '400':
+          description: Permintaan tidak valid
         '401':
           description: Unauthorized
           content:
@@ -611,6 +823,7 @@ paths:
       description: Endpoint untuk memperbarui biodata tutor yang sedang login. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
+      operationId: updateTutorBiodata
       requestBody:
         $ref: '#/components/requestBodies/UpdateTutorBiodata'
       responses:
@@ -644,6 +857,7 @@ paths:
       description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
+      operationId: getTutorFile
       responses:
         '200':
           description: Berhasil mengambil file tutor
@@ -659,6 +873,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/FileEntity'
+        '400':
+          description: Permintaan tidak valid
         '401':
           description: Unauthorized
           content:
@@ -681,6 +897,7 @@ paths:
       description: Endpoint untuk mengunggah foto profil pengguna yang sedang login. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
+      operationId: updateProfilePhoto
       requestBody:
         required: true
         content:
@@ -756,6 +973,138 @@ components:
           schema:
             $ref: '#/components/schemas/UpdateTutorBiodataRequest'
   schemas:
+    ClassEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Matematika
+        level:
+          type: string
+          example: SD
+    ClassLevelResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        level:
+          type: array
+          items:
+            type: string
+          example:
+            - SD
+            - SMP
+            - SMA
+    ClassListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClassEntity'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    ClassByLevelResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClassEntity'
+    SubjectEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+          example: 1
+        name:
+          type: string
+          example: Fisika
+        icon_image_path:
+          type: string
+          nullable: true
+          example: /storage/subjects/fisika.png
+        classId:
+          type: integer
+          nullable: true
+          example: 1
+        className:
+          type: string
+          nullable: true
+          example: Kelas 10
+        classLevel:
+          type: string
+          nullable: true
+          example: SMA
+    SubjectListResponse:
+      type: object
+      properties:
+        success:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubjectEntity'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    SubjectByLevelResponse:
+      type: object
+      properties:
+        success:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubjectEntity'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    FilterCategoryPageResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/FilterCategoryPageData'
+    FilterCategoryPageData:
+      type: object
+      properties:
+        levels:
+          type: array
+          nullable: true
+          items:
+            type: string
+          example:
+            - SD
+            - SMP
+            - SMA
+        subjects:
+          type: object
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/FilterCategorySubjects'
+    FilterCategorySubjects:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubjectEntity'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
     StudentRegisterRequest:
       type: object
       required:
