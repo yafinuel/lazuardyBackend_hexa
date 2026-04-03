@@ -191,7 +191,7 @@ FilterCategorySubjects:
     data:
       type: array
       items:
-        $ref: '#/SubjectEntity'
+        $ref: '#/UniqueSubjectEntity'
     meta:
       $ref: '#/PaginationMeta'
 

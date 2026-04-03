@@ -4,12 +4,12 @@ namespace App\Domains\CourseCatalog\Infrastructure\Service;
 
 use App\Domains\ClassDomain\Actions\GetClassLevelAction;
 use App\Domains\CourseCatalog\Ports\CourseCatalogServicePort;
-use App\Domains\Subject\Actions\GetSubjectByLevelAction;
+use App\Domains\Subject\Actions\GetUniqueSubjectByLevelAction;
 use App\Shared\Enums\CourseCategoryEnum;
 
 class CourseCatalogServiceAdapter implements CourseCatalogServicePort
 {
-    public function __construct(protected GetClassLevelAction $levelAction, protected GetSubjectByLevelAction $subjectAction) {}
+    public function __construct(protected GetClassLevelAction $levelAction, protected GetUniqueSubjectByLevelAction $subjectAction) {}
 
     public function filterCategoryPage(?string $category, string $level): array
     {
