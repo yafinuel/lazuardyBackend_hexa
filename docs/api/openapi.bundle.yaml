@@ -380,6 +380,10 @@ paths:
                 account_number:
                   type: string
                   example: '7123456789'
+                profile_photo:
+                  type: string
+                  format: binary
+                  description: Upload foto profil (jpg/png/jpeg/svg/webp)
                 province:
                   type: string
                   example: Jawa Timur

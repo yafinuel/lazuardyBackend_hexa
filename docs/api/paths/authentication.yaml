@@ -297,6 +297,10 @@ tutorRegister:
               telephone_number: { type: string, example: "08123456789" }
               bank_code: { type: string, example: "ID_BSI" }
               account_number: { type: string, example: "7123456789" }
+              profile_photo:
+                type: string
+                format: binary
+                description: "Upload foto profil (jpg/png/jpeg/svg/webp)"
               province: { type: string, example: "Jawa Timur" }
               regency: { type: string, example: "Malang" }
               district: { type: string, example: "Lowokwaru" }
