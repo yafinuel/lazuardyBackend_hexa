@@ -41,7 +41,7 @@ Route::get('/getClassByLevel', [ClassController::class, 'getClassByLevel']);
 // Subject
 Route::get('/getAllSubjects', [SubjectController::class, 'getAllSubjects']);
 Route::get('/getSubjectByClass', [SubjectController::class, 'getSubjectByClass']);
-Route::get('/getSubjectByLevel', [SubjectController::class, 'getSubjectByLevel']);
+Route::get('/getUniqueSubjectByLevel', [SubjectController::class, 'getUniqueSubjectByLevel']);
 
 // Course Catalog
 Route::get('/filterCategoryPage', [CourseCatalogController::class, 'filterCategoryPageAction']);

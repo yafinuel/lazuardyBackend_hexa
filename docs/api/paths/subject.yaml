@@ -43,13 +43,13 @@ getSubjectByClass:
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
-getSubjectByLevel:
+getUniqueSubjectByLevel:
   get:
     tags:
       - Subject
     security: []
-    summary: Mendapatkan mata pelajaran berdasarkan jenjang
-    operationId: getSubjectByLevel
+    summary: Mendapatkan mata pelajaran unik berdasarkan jenjang
+    operationId: getUniqueSubjectByLevel
     parameters:
       - name: level
         in: query
@@ -59,11 +59,11 @@ getSubjectByLevel:
         example: SD
     responses:
       '200':
-        description: Berhasil mendapatkan mata pelajaran berdasarkan jenjang
+        description: Berhasil mendapatkan mata pelajaran unik berdasarkan jenjang
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/SubjectByLevelResponse'
+              $ref: '../components/schemas.yaml#/UniqueSubjectByLevelResponse'
       '400':
         description: Permintaan tidak valid
       '500':

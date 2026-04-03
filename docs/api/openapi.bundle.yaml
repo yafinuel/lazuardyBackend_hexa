@@ -644,13 +644,13 @@ paths:
           description: Permintaan tidak valid
         '500':
           $ref: '#/components/responses/ServerError'
-  /getSubjectByLevel:
+  /getUniqueSubjectByLevel:
     get:
       tags:
         - Subject
       security: []
-      summary: Mendapatkan mata pelajaran berdasarkan jenjang
-      operationId: getSubjectByLevel
+      summary: Mendapatkan mata pelajaran unik berdasarkan jenjang
+      operationId: getUniqueSubjectByLevel
       parameters:
         - name: level
           in: query
@@ -660,11 +660,11 @@ paths:
           example: SD
       responses:
         '200':
-          description: Berhasil mendapatkan mata pelajaran berdasarkan jenjang
+          description: Berhasil mendapatkan mata pelajaran unik berdasarkan jenjang
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubjectByLevelResponse'
+                $ref: '#/components/schemas/UniqueSubjectByLevelResponse'
         '400':
           description: Permintaan tidak valid
         '500':
@@ -1059,7 +1059,17 @@ components:
             $ref: '#/components/schemas/SubjectEntity'
         meta:
           $ref: '#/components/schemas/PaginationMeta'
-    SubjectByLevelResponse:
+    UniqueSubjectEntity:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Fisika
+        icon_image_path:
+          type: string
+          nullable: true
+          example: /storage/subjects/fisika.png
+    UniqueSubjectByLevelResponse:
       type: object
       properties:
         success:
@@ -1068,7 +1078,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/SubjectEntity'
+            $ref: '#/components/schemas/UniqueSubjectEntity'
         meta:
           $ref: '#/components/schemas/PaginationMeta'
     FilterCategoryPageResponse:

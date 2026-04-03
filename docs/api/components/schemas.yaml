@@ -161,7 +161,18 @@ SubjectListResponse:
     meta:
       $ref: '#/PaginationMeta'
 
-SubjectByLevelResponse:
+UniqueSubjectEntity:
+  type: object
+  properties:
+    name:
+      type: string
+      example: "Fisika"
+    icon_image_path:
+      type: string
+      nullable: true
+      example: "/storage/subjects/fisika.png"
+
+UniqueSubjectByLevelResponse:
   type: object
   properties:
     success:
@@ -170,7 +181,7 @@ SubjectByLevelResponse:
     data:
       type: array
       items:
-        $ref: '#/SubjectEntity'
+        $ref: '#/UniqueSubjectEntity'
     meta:
       $ref: '#/PaginationMeta'
 

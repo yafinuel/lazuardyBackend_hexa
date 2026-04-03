@@ -6,5 +6,5 @@ interface SubjectRepositoryInterface
 {
     public function getAllSubjects(): array;
     public function getSubjectByClass(int $classId): array;
-    public function getSubjectByLevel(string $level): array;
+    public function getUniqueSubjectByLevel(string $level): array;
 }

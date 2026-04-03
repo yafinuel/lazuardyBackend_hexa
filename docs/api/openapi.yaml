@@ -68,8 +68,8 @@ paths:
     $ref: './paths/subject.yaml#/getAllSubjects'
   /getSubjectByClass:
     $ref: './paths/subject.yaml#/getSubjectByClass'
-  /getSubjectByLevel:
-    $ref: './paths/subject.yaml#/getSubjectByLevel'
+  /getUniqueSubjectByLevel:
+    $ref: './paths/subject.yaml#/getUniqueSubjectByLevel'
 
   /filterCategoryPage:
     $ref: './paths/course-catalog.yaml#/filterCategoryPage'
@@ -119,8 +119,10 @@ components:
       $ref: './components/schemas.yaml#/SubjectEntity'
     SubjectListResponse:
       $ref: './components/schemas.yaml#/SubjectListResponse'
-    SubjectByLevelResponse:
-      $ref: './components/schemas.yaml#/SubjectByLevelResponse'
+    UniqueSubjectEntity:
+      $ref: './components/schemas.yaml#/UniqueSubjectEntity'
+    UniqueSubjectByLevelResponse:
+      $ref: './components/schemas.yaml#/UniqueSubjectByLevelResponse'
     FilterCategoryPageResponse:
       $ref: './components/schemas.yaml#/FilterCategoryPageResponse'
     FilterCategoryPageData:

@@ -5,6 +5,7 @@ namespace App\Domains\Subject\Infrastructure\Delivery\Http\Controllers;
 use App\Domains\Subject\Actions\GetAllSubjectAction;
 use App\Domains\Subject\Actions\GetSubjectByClassAction;
 use App\Domains\Subject\Actions\GetSubjectByLevelAction;
+use App\Domains\Subject\Actions\GetUniqueSubjectByLevelAction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -33,7 +34,7 @@ class SubjectController extends Controller
         ]);
     }
 
-    public function getSubjectByLevel(Request $request, GetSubjectByLevelAction $action)
+    public function getUniqueSubjectByLevel(Request $request, GetUniqueSubjectByLevelAction $action)
     {
         $level = $request->input('level');
         $subjects = $action->execute($level);

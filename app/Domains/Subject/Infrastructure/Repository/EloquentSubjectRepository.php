@@ -62,7 +62,7 @@ class EloquentSubjectRepository implements SubjectRepositoryInterface
         ];
     }
 
-    public function getSubjectByLevel(string $level): array
+    public function getUniqueSubjectByLevel(string $level): array
     {
         $uniqueSubjectIds = Subject::query()
             ->whereHas('class', function ($query) use ($level) {
@@ -77,15 +77,11 @@ class EloquentSubjectRepository implements SubjectRepositoryInterface
             ->paginate(15);
 
         $subjects = collect($paginator->items())->map(function (Subject $subject) {
-            return new SubjectEntity(
-                id: null,
-                name: $subject->name,
-                icon_image_path: $subject->icon_image_path,
-                classId: null,
-                className: null,
-                classLevel: null
-            );
-        })->toArray();
+            return [
+                'name' => $subject->name,
+                'icon_image_path' => $subject->icon_image_path,
+            ];
+        });
 
         return [
             'data' => $subjects,
