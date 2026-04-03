@@ -29,7 +29,7 @@ return new class extends Migration
             $table->enum('role', $roles)->nullable();
             $table->string('telephone_number', 15)->nullable();
             $table->timestamp('telephone_verified_at')->nullable();
-            $table->string('profile_photo_url')->nullable();
+            $table->string('profile_photo_path')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->enum('gender', $genders)->nullable();
             $table->enum('religion', $religions)->nullable();

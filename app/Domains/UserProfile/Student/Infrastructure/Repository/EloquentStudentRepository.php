@@ -23,7 +23,7 @@ class EloquentStudentRepository implements StudentRepositoryInterface
             googleId: $user->google_id,
             facebookId: $user->facebook_id,
             role: $user->role->displayName(),
-            profilePhotoUrl: $user->profile_photo_url,
+            profilePhotoUrl: $user->profile_photo_path,
             gender: $user->gender?->displayName(),
             dateOfBirth: $user->date_of_birth,
             telephoneNumber: $user->telephone_number,

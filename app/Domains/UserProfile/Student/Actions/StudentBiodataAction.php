@@ -4,7 +4,6 @@ namespace App\Domains\UserProfile\Student\Actions;
 
 use App\Domains\UserProfile\Student\Entities\StudentEntity;
 use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
-use App\Shared\Infrastructure\Storage\LaravelFileStorage;
 use App\Shared\Ports\FileStorageInterface;
 
 class StudentBiodataAction

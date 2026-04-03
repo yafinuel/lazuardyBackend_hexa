@@ -5,9 +5,12 @@ namespace App\Domains\Subject\Infrastructure\Repository;
 use App\Domains\Subject\Entities\SubjectEntity;
 use App\Domains\Subject\Ports\SubjectRepositoryInterface;
 use App\Models\Subject;
+use App\Shared\Ports\FileStorageInterface;
 
 class EloquentSubjectRepository implements SubjectRepositoryInterface
 {
+    public function __construct(protected FileStorageInterface $storage) {}
+    
     public function getAllSubjects(): array
     {
         $paginator = Subject::with('class')->paginate(15);
@@ -16,7 +19,7 @@ class EloquentSubjectRepository implements SubjectRepositoryInterface
             return new SubjectEntity(
                 id: $subject->id,
                 name: $subject->name,
-                icon_image_path: $subject->icon_image_path,
+                icon_image_url: $subject->icon_image_path ? $this->storage->getMedia($subject->icon_image_path) : null,
                 classId: $subject->class->id,
                 className: $subject->class->name,
                 classLevel: $subject->class->level
@@ -44,7 +47,7 @@ class EloquentSubjectRepository implements SubjectRepositoryInterface
             return new SubjectEntity(
                 id: $subject->id,
                 name: $subject->name,
-                icon_image_path: $subject->icon_image_path,
+                icon_image_url: $subject->icon_image_path ? $this->storage->getMedia($subject->icon_image_path) : null,
                 classId: $subject->class->id,
                 className: $subject->class->name,
                 classLevel: $subject->class->level
