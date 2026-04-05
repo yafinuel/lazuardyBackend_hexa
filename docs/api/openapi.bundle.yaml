@@ -24,6 +24,8 @@ tags:
     description: Endpoint untuk filter halaman kategori kursus
   - name: User Profile
     description: Endpoint untuk profil pengguna
+  - name: Notification
+    description: Endpoint untuk notifikasi pengguna
 paths:
   /registerOtpEmail:
     post:
@@ -938,6 +940,30 @@ paths:
                 status: failed
                 message: Gagal memperbarui foto profil
                 debug_error: Error message
+  /getAllUserNotification:
+    get:
+      tags:
+        - Notification
+      summary: Mendapatkan semua notifikasi pengguna
+      description: Endpoint untuk mendapatkan daftar notifikasi milik pengguna yang sedang login, beserta metadata pagination.
+      security:
+        - bearerAuth: []
+      operationId: getAllUserNotification
+      responses:
+        '200':
+          description: Berhasil mendapatkan daftar notifikasi pengguna
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllUserNotificationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '500':
+          $ref: '#/components/responses/ServerError'
 components:
   securitySchemes:
     bearerAuth:
@@ -1575,3 +1601,42 @@ components:
         status:
           type: string
           nullable: true
+    NotificationEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 6e74dca4-5d7d-4f89-9f0d-427ac95df5fc
+        type:
+          type: string
+          example: App\Domains\Notification\Notifications\OrderPaidExample
+        title:
+          type: string
+          example: Pembayaran Berhasil
+        body:
+          type: string
+          example: Pembayaran paket kamu sudah kami terima.
+        data:
+          type: string
+          nullable: true
+          example: '{"order_id":"INV-20260405-001"}'
+        isRead:
+          type: boolean
+          example: false
+    NotificationListPayload:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationEntity'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    GetAllUserNotificationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/NotificationListPayload'

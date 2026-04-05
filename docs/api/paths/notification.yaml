@@ -1,0 +1,24 @@
+getAllUserNotification:
+  get:
+    tags:
+      - Notification
+    summary: Mendapatkan semua notifikasi pengguna
+    description: Endpoint untuk mendapatkan daftar notifikasi milik pengguna yang sedang login, beserta metadata pagination.
+    security:
+      - bearerAuth: []
+    operationId: getAllUserNotification
+    responses:
+      '200':
+        description: Berhasil mendapatkan daftar notifikasi pengguna
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/GetAllUserNotificationResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

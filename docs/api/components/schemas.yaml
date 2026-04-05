@@ -549,3 +549,45 @@ FileEntity:
     status:
       type: string
       nullable: true
+
+NotificationEntity:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "6e74dca4-5d7d-4f89-9f0d-427ac95df5fc"
+    type:
+      type: string
+      example: "App\\Domains\\Notification\\Notifications\\OrderPaidExample"
+    title:
+      type: string
+      example: "Pembayaran Berhasil"
+    body:
+      type: string
+      example: "Pembayaran paket kamu sudah kami terima."
+    data:
+      type: string
+      nullable: true
+      example: "{\"order_id\":\"INV-20260405-001\"}"
+    isRead:
+      type: boolean
+      example: false
+
+NotificationListPayload:
+  type: object
+  properties:
+    data:
+      type: array
+      items:
+        $ref: '#/NotificationEntity'
+    meta:
+      $ref: '#/PaginationMeta'
+
+GetAllUserNotificationResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: "success"
+    data:
+      $ref: '#/NotificationListPayload'

@@ -26,6 +26,8 @@ tags:
     description: Endpoint untuk filter halaman kategori kursus
   - name: User Profile
     description: Endpoint untuk profil pengguna
+  - name: Notification
+    description: Endpoint untuk notifikasi pengguna
 
 paths:
   /registerOtpEmail:
@@ -86,6 +88,9 @@ paths:
     $ref: './paths/user-profile.yaml#/getTutorFile'
   /updateProfilePhoto:
     $ref: './paths/user-profile.yaml#/updateProfilePhoto'
+
+  /getAllUserNotification:
+    $ref: './paths/notification.yaml#/getAllUserNotification'
 
 components:
   securitySchemes:
@@ -157,3 +162,9 @@ components:
       $ref: './components/schemas.yaml#/UpdateStudentBiodataRequest'
     FileEntity:
       $ref: './components/schemas.yaml#/FileEntity'
+    NotificationEntity:
+      $ref: './components/schemas.yaml#/NotificationEntity'
+    NotificationListPayload:
+      $ref: './components/schemas.yaml#/NotificationListPayload'
+    GetAllUserNotificationResponse:
+      $ref: './components/schemas.yaml#/GetAllUserNotificationResponse'
