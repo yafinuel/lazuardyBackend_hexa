@@ -39,7 +39,7 @@ class User extends Authenticatable
         'home_address',
         'latitude',
         'longitude',
-        'platform',
+        'fcm_token',
     ];
 
     /**

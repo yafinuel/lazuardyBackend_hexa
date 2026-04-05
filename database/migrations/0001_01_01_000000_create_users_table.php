@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('google_id')->nullable();
             $table->string('facebook_id')->nullable();
+            $table->text('fcm_token')->nullable();
             $table->enum('role', $roles)->nullable();
             $table->string('telephone_number', 15)->nullable();
             $table->timestamp('telephone_verified_at')->nullable();

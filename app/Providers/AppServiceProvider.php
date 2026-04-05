@@ -14,6 +14,8 @@ use App\Domains\CourseCatalog\Infrastructure\Service\CourseCatalogServiceAdapter
 use App\Domains\CourseCatalog\Ports\CourseCatalogServicePort;
 use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
+use App\Domains\Notification\Infrastructure\External\Firebase\FcmAdapter;
+use App\Domains\Notification\Ports\NotificationGatewayInterface;
 use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
 use App\Domains\Package\Ports\PackageRepositoryInterface;
 use App\Domains\Subject\Infrastructure\Repository\EloquentSubjectRepository;
@@ -108,6 +110,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             CourseCatalogServicePort::class,
             CourseCatalogServiceAdapter::class
+        );
+
+        $this->app->bind(
+            NotificationGatewayInterface::class,
+            FcmAdapter::class
         );
     }
 

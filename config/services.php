@@ -39,4 +39,8 @@ return [
         'secret_key' => env('XENDIT_SECRET_KEY'),
     ],
 
+    'fcm' => [
+        'project_id' => env('FCM_PROJECT_ID'),
+    ],
+
 ];
