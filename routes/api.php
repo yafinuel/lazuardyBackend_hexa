@@ -5,6 +5,7 @@ use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\Socialit
 use App\Domains\ClassDomain\Infrastructure\Delivery\Http\Controllers\ClassController;
 use App\Domains\CourseCatalog\Infrastructure\Delivery\Http\Controllers\CourseCatalogController;
 use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
+use App\Domains\Notification\Infrastructure\Delivery\Http\Controllers\NotificationController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
 use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
 use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
@@ -60,4 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Package
     Route::get('/getPackages', [PackageController::class, 'index']);
+
+    // Notification
+    Route::get('/getAllUserNotification', [NotificationController::class, 'getAllUserNotification']);
 });
