@@ -22,6 +22,8 @@ use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
 use App\Domains\Package\Ports\PackageRepositoryInterface;
 use App\Domains\Subject\Infrastructure\Repository\EloquentSubjectRepository;
 use App\Domains\Subject\Ports\SubjectRepositoryInterface;
+use App\Domains\Tutor\Infrastructure\Repository\EloquentTutorRepository as RepositoryEloquentTutorRepository;
+use App\Domains\Tutor\Ports\TutorRepositoryInterface as PortsTutorRepositoryInterface;
 use App\Domains\UserProfile\Student\Infrastructure\Repository\EloquentStudentRepository;
 use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
 use App\Domains\UserProfile\Tutor\Infrastructure\Repository\EloquentTutorRepository;
@@ -122,6 +124,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             NotificationRepositoryInterface::class,
             EloquentNotificationRepository::class
+        );
+
+        $this->app->bind(
+            PortsTutorRepositoryInterface::class,
+            RepositoryEloquentTutorRepository::class
         );
     }
 

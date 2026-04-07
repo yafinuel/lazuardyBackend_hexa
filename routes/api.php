@@ -8,6 +8,7 @@ use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayC
 use App\Domains\Notification\Infrastructure\Delivery\Http\Controllers\NotificationController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
 use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
+use App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController as ControllersTutorController;
 use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
 use App\Domains\UserProfile\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController;
 use App\Domains\UserProfile\User\Infrastructure\Delivery\Http\Controllers\UserController;
@@ -64,4 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Notification
     Route::get('/getAllUserNotification', [NotificationController::class, 'getAllUserNotification']);
+    
+    // Tutor
+    Route::get('/getTutorByCriteria', [ControllersTutorController::class, 'getTutorByCriteria']);
 });

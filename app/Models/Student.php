@@ -35,6 +35,11 @@ class Student extends Model
         return $this->belongsTo(Curriculum::class, 'curriculum_id');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'student_id', 'user_id');
+    }
+
     // public function studentPackages()
     // {
     //     return $this->hasMany(StudentPackage::class, 'student_user_id', 'user_id');

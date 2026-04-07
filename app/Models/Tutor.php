@@ -55,4 +55,8 @@ class Tutor extends Model
         return $this->hasMany(ScheduleTutor::class, 'tutor_id', 'user_id');
     }
     
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'tutor_id', 'user_id');
+    }
 }

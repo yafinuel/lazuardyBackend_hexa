@@ -113,16 +113,6 @@ class User extends Authenticatable
     // {
     //     return $this->hasMany(StudentPackage::class, 'student_user_id');
     // }
-
-    // public function reviewStudents():HasMany
-    // {
-    //     return $this->hasMany(Review::class, 'from_user_id');
-    // }
-
-    // public function reviewTutors():HasMany
-    // {
-    //     return $this->hasMany(Review::class, 'to_user_id');
-    // }
     
     public function scopeGetUserByEmail($query, $email)
     {
