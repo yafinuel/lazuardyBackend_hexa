@@ -50,12 +50,13 @@ app/
 │       ├── Actions/                # (Logic) Alur proses bisnis tunggal
 │       ├── Entities/               # (Data) Objek data murni (Plain PHP)
 │       ├── Ports/                  # (Kontrak) Interface untuk Repository/Service
-│       ├── ValueObjects/           # (Aturan) Objek dengan validasi internal
 │       └── Infrastructure/         # (Detail Teknis / Adapter)
-│           ├── Delivery/
+│           ├── Delivery/            # (Data) Objek data murni (Plain PHP)
+│           |   ├── Console/     
+│           │   |   └── Commands/    
 │           │   └── Http/           <-- Entry Point (Driving Adapters)
-│           │       ├── Controllers # Menangkap Request API
-│           │       └── Requests    # Validasi Form Request
+│           │       ├── Controllers/ # Menangkap Request API
+│           │       └── Requests/    # Validasi Form Request
 │           ├── External/           <-- Integrasi Pihak Ketiga (API Luar)
 │           │
 │           ├── Repository/         <-- Database
@@ -67,6 +68,5 @@ app/
 │   ├── Enums/                      # Enum global (Gender, FileType)
 │   ├── Infrastructure/             # Implementasi alat (Mail, Queue, Storage)
 │   ├── Ports/                      # Interface global
-│   └── ValueObjects/               # Email.php, Address.php (Aturan standar)
 |
 ├── Models/                         <-- Model eloquent

@@ -6,7 +6,7 @@ use App\Domains\Notification\Infrastructure\External\Firebase\FcmChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class OrderPaidExample extends Notification
+class TemplateNotification extends Notification
 {
     use Queueable;
 
@@ -20,8 +20,8 @@ class OrderPaidExample extends Notification
     public function toDatabase($notifiable): array
     {
         return [
-            'title' => $this->details['title'] ?? 'Order Paid',
-            'body' => $this->details['body'] ?? 'Your order has been paid successfully.',
+            'title' => $this->details['title'],
+            'body' => $this->details['body'],
             'data' => $this->details['data'] ?? [],
         ];
     }
@@ -29,12 +29,9 @@ class OrderPaidExample extends Notification
     public function toFcm($notifiable): array
     {
         return [
-            'title' => 'Pembayaran Berhasil',
-            'body' => 'Klik untuk lihat detail paket kamu.',
-            'data' => [
-                'type' => 'payment_success',
-                'id' => (string) ($this->details['order_id'] ?? '')
-            ]
+            'title' => $this->details['title'],
+            'body' => $this->details['body'],
+            'data' => $this->details['data'] ?? [],
         ];
     }
 }

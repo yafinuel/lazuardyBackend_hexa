@@ -14,6 +14,8 @@ Schedule::command('model:prune', [
     '--model' => [Notification::class],
 ])->daily();
 
+// Artisan command untuk membuat file baru di folder Domain
+
 Artisan::command('domain:port {domainName} {name}', function (string $domainName, string $name){
     $directory = app_path("Domains/{$domainName}/Ports");
     $filePath = "{$directory}/{$name}.php";
@@ -181,3 +183,121 @@ PHP;
     $this->info("Berhasil membuat controller: {$filePath}");
     }
 )->purpose('Membuat file controller baru di folder Domain');
+
+Artisan::command('domain:notification {domainName} {name}', function (string $domainName, string $name){
+    $directory = app_path("Domains/{$domainName}/Notifications");
+    $filePath = "{$directory}/{$name}.php";
+
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0755, true);
+    }
+
+    if (File::exists($filePath)) {
+        $this->error("Notifikasi {$name} sudah ada di domain {$domainName}!");
+        return;
+    }
+
+    $template = <<<PHP
+<?php
+
+namespace App\Domains\\{$domainName}\Notifications;
+
+use App\Domains\Notification\Infrastructure\External\Firebase\FcmChannel;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+
+class {$name} extends Notification
+{
+    use Queueable;
+
+    public function __construct(protected array \$details) {}
+
+    public function via(\$notifiable): array
+    {
+        return ['database', FcmChannel::class];
+    }
+
+    public function toDatabase(\$notifiable): array
+    {
+        return [
+            'title' => \$this->details['title'],
+            'body' => \$this->details['body'],
+            'data' => \$this->details['data'] ?? [],
+        ];
+    }
+    
+    public function toFcm(\$notifiable): array
+    {
+        return [
+            'title' => \$this->details['title'],
+            'body' => \$this->details['body'],
+            'data' => \$this->details['data'] ?? [],
+            ]
+        ];
+    }
+}
+
+PHP;
+
+    File::put($filePath, $template);
+
+    $this->info("Berhasil membuat notifikasi: {$filePath}");
+    }
+)->purpose('Membuat file notifikasi baru di folder Domain');
+
+
+
+
+
+
+Artisan::command('domain:command {domainName} {name}', function (string $domainName, string $name){
+    $directory = app_path("Domains/{$domainName}/Infrastructure/Delivery/Console/Commands");
+    $filePath = "{$directory}/{$name}.php";
+
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0755, true);
+    }
+
+    if (File::exists($filePath)) {
+        $this->error("Notifikasi {$name} sudah ada di domain {$domainName}!");
+        return;
+    }
+
+    $template = <<<PHP
+<?php
+
+namespace App\Domains\\{$domainName}\Infrastructure\Delivery\Console\Commands;
+
+use Illuminate\Console\Command;
+
+class {$name} extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected \$signature = 'app:one-hour-student-schedule-notification';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected \$description = 'Command description';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        //
+    }
+}
+PHP;
+
+    File::put($filePath, $template);
+
+    $this->info("Berhasil membuat notifikasi: {$filePath}");
+    }
+)->purpose('Membuat file notifikasi baru di folder Domain');
