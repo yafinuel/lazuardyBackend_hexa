@@ -10,7 +10,8 @@ class EloquentTutorRepository implements TutorRepositoryInterface
 {
     public function getByCriteria(array $filters)
     {
-        $query = Tutor::with(['user', 'subjects.class']);
+        $query = Tutor::with(['user', 'subjects.class'])
+            ->withAvg('reviews', 'rate');
 
         if(isset($filters['subject']) || isset($filters['class_name']) || isset($filters['level'])) {
             $query->whereHas('subjects', function($q) use ($filters) {
@@ -31,6 +32,8 @@ class EloquentTutorRepository implements TutorRepositoryInterface
             });
         }
 
+        $query->orderByDesc('reviews_avg_rate');
+        
         $paginator = $query->paginate(10);
 
         $tutors = collect($paginator->items())->map(function (Tutor $tutor) {
