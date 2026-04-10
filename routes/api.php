@@ -8,9 +8,8 @@ use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayC
 use App\Domains\Notification\Infrastructure\Delivery\Http\Controllers\NotificationController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
 use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
-use App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController as ControllersTutorController;
+use App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController;
 use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
-use App\Domains\UserProfile\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController;
 use App\Domains\UserProfile\User\Infrastructure\Delivery\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -55,7 +54,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // User Profile
     Route::get('/studentBiodata', [StudentController::class, 'biodata']);
     Route::patch('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
-    Route::get('/tutorBiodata', [TutorController::class, 'biodata']);
+    Route::get('/meAsTutor', [TutorController::class, 'getTutorById']);
+    Route::get('/getTutorById', [TutorController::class, 'getTutorById']);
     Route::get('/getTutorFile', [TutorController::class, 'getTutorFile']);
     Route::patch('/updateTutorBiodata', [TutorController::class, 'updateBiodata']);
     Route::patch('/updateProfilePhoto', [UserController::class, 'updateProfilePhoto']);
@@ -67,5 +67,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getAllUserNotification', [NotificationController::class, 'getAllUserNotification']);
     
     // Tutor
-    Route::get('/getTutorByCriteria', [ControllersTutorController::class, 'getTutorByCriteria']);
+    Route::get('/getTutorByCriteria', [TutorController::class, 'getTutorByCriteria']);
 });

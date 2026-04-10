@@ -5,9 +5,9 @@ info:
   version: 1.0.0
   license:
     name: Proprietary
-    url: https://lazuardy.id
+    url: http://127.0.0.1:8000
 servers:
-  - url: https://api.lazuardy.id/api
+  - url: http://127.0.0.1:8000/api
     description: Local Server
 tags:
   - name: Authentication
@@ -456,7 +456,7 @@ paths:
               example:
                 status: error
                 message: Gagal melakukan registrasi tutor.
-  /banks:
+  /getBankList:
     get:
       tags:
         - Payment Gateway
@@ -783,15 +783,53 @@ paths:
                 status: failed
                 message: Gagal memperbarui biodata siswa
                 debug_error: Error message
-  /tutorBiodata:
+  /meAsTutor:
     get:
       tags:
         - User Profile
       summary: Mengambil biodata tutor
-      description: Endpoint untuk mendapatkan biodata tutor yang sedang login. Membutuhkan autentikasi.
+      description: Endpoint untuk mendapatkan biodata tutor yang sedang login melalui alias /meAsTutor. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
-      operationId: tutorBiodata
+      operationId: meAsTutor
+      responses:
+        '200':
+          description: Berhasil mengambil biodata tutor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    $ref: '#/components/schemas/TutorEntity'
+        '400':
+          description: Permintaan tidak valid
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '500':
+          description: Gagal mengambil biodata tutor
+          content:
+            application/json:
+              example:
+                status: failed
+                message: Gagal mengambil biodata tutor
+                debug_error: Error message
+  /getTutorById:
+    get:
+      tags:
+        - User Profile
+      summary: Mengambil biodata tutor berdasarkan ID user login
+      description: Endpoint untuk mendapatkan biodata tutor yang sedang login melalui alias /getTutorById. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: getTutorById
       responses:
         '200':
           description: Berhasil mengambil biodata tutor

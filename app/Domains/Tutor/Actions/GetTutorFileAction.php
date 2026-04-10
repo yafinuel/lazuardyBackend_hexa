@@ -1,16 +1,12 @@
 <?php
 
-namespace App\Domains\UserProfile\Tutor\Actions;
+namespace App\Domains\Tutor\Actions;
 
-use App\Domains\UserProfile\Tutor\Ports\TutorRepositoryInterface;
 use App\Shared\Ports\FileRepositoryInterface;
 use App\Shared\Ports\FileStorageInterface;
 
 class GetTutorFileAction
 {
-    /**
-     * Create a new class instance.
-     */
     public function __construct(protected FileRepositoryInterface $repository, protected FileStorageInterface $storage) {}
 
     public function execute(int $tutorId)

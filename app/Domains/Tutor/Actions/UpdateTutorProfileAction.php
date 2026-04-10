@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domains\UserProfile\Tutor\Actions;
+namespace App\Domains\Tutor\Actions;
 
-use App\Domains\UserProfile\Tutor\Ports\TutorRepositoryInterface;
+use App\Domains\Tutor\Ports\TutorRepositoryInterface;
 
 class UpdateTutorProfileAction
 {

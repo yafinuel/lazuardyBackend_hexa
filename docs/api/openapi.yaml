@@ -51,8 +51,8 @@ paths:
   /tutorRegister:
     $ref: './paths/authentication.yaml#/tutorRegister'
 
-  /banks:
-    $ref: './paths/payment-gateway.yaml#/banks'
+  /getBankList:
+    $ref: './paths/payment-gateway.yaml#/getBankList'
   /validateBankAccount:
     $ref: './paths/payment-gateway.yaml#/validateBankAccount'
 
@@ -80,8 +80,10 @@ paths:
     $ref: './paths/user-profile.yaml#/studentBiodata'
   /updateStudentBiodata:
     $ref: './paths/user-profile.yaml#/updateStudentBiodata'
-  /tutorBiodata:
-    $ref: './paths/user-profile.yaml#/tutorBiodata'
+  /meAsTutor:
+    $ref: './paths/user-profile.yaml#/meAsTutor'
+  /getTutorById:
+    $ref: './paths/user-profile.yaml#/getTutorById'
   /updateTutorBiodata:
     $ref: './paths/user-profile.yaml#/updateTutorBiodata'
   /getTutorFile:
