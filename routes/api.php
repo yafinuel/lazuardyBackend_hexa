@@ -4,12 +4,13 @@ use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\AuthCont
 use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\SocialiteController;
 use App\Domains\ClassDomain\Infrastructure\Delivery\Http\Controllers\ClassController;
 use App\Domains\CourseCatalog\Infrastructure\Delivery\Http\Controllers\CourseCatalogController;
+use App\Domains\Dashboard\Infrastructure\Delivery\Http\Controllers\DashboardController;
 use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
 use App\Domains\Notification\Infrastructure\Delivery\Http\Controllers\NotificationController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
+use App\Domains\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
 use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
 use App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController;
-use App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
 use App\Domains\UserProfile\User\Infrastructure\Delivery\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -52,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // User Profile
-    Route::get('/studentBiodata', [StudentController::class, 'biodata']);
+    Route::get('/meStudent', [StudentController::class, 'meStudent']);
     Route::patch('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
     Route::get('/meAsTutor', [TutorController::class, 'getTutorById']);
     Route::get('/getTutorById', [TutorController::class, 'getTutorById']);
@@ -64,8 +65,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getPackages', [PackageController::class, 'index']);
 
     // Notification
-    Route::get('/getAllUserNotification', [NotificationController::class, 'getAllUserNotification']);
+    Route::get('/getNotificationByUserId', [NotificationController::class, 'getNotificationByUserId']);
     
     // Tutor
     Route::get('/getTutorByCriteria', [TutorController::class, 'getTutorByCriteria']);
+
+    // Dashboard
+    Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
 });

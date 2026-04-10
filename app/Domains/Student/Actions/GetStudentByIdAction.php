@@ -1,21 +1,18 @@
 <?php
 
-namespace App\Domains\UserProfile\Student\Actions;
+namespace App\Domains\Student\Actions;
 
-use App\Domains\UserProfile\Student\Entities\StudentEntity;
-use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
+use App\Domains\Student\Entities\StudentEntity;
+use App\Domains\Student\Ports\StudentRepositoryInterface;
 use App\Shared\Ports\FileStorageInterface;
 
-class StudentBiodataAction
+class GetStudentByIdAction
 {
-    /**
-     * Create a new class instance.
-     */
     public function __construct(protected StudentRepositoryInterface $repository, protected FileStorageInterface $storage) {}
 
     public function execute(int $studentId): StudentEntity
     {
-        $student = $this->repository->getStudentProfile($studentId);
+        $student = $this->repository->getStudentById($studentId);
 
         $student->profilePhotoUrl = $this->storage->getMedia($student->profilePhotoUrl);
         

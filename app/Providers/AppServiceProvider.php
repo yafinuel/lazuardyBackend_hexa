@@ -12,6 +12,8 @@ use App\Domains\ClassDomain\Infrastructure\Repository\EloquentClassRepository;
 use App\Domains\ClassDomain\Ports\ClassRepositoryInterface;
 use App\Domains\CourseCatalog\Infrastructure\Service\CourseCatalogServiceAdapter;
 use App\Domains\CourseCatalog\Ports\CourseCatalogServicePort;
+use App\Domains\Dashboard\Infrastructure\Services\DashboardServiceAdapter;
+use App\Domains\Dashboard\Ports\DashboardServicePort;
 use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
 use App\Domains\Notification\Infrastructure\External\Firebase\FcmAdapter;
@@ -20,12 +22,12 @@ use App\Domains\Notification\Ports\NotificationGatewayInterface;
 use App\Domains\Notification\Ports\NotificationRepositoryInterface;
 use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
 use App\Domains\Package\Ports\PackageRepositoryInterface;
+use App\Domains\Student\Infrastructure\Repository\EloquentStudentRepository;
+use App\Domains\Student\Ports\StudentRepositoryInterface;
 use App\Domains\Subject\Infrastructure\Repository\EloquentSubjectRepository;
 use App\Domains\Subject\Ports\SubjectRepositoryInterface;
 use App\Domains\Tutor\Infrastructure\Repository\EloquentTutorRepository;
 use App\Domains\Tutor\Ports\TutorRepositoryInterface;
-use App\Domains\UserProfile\Student\Infrastructure\Repository\EloquentStudentRepository;
-use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
 use App\Domains\UserProfile\User\Infrastructure\Repository\EloquentUserRepository as EloquentUserProfileRepository;
 use App\Domains\UserProfile\User\Ports\UserRepositoryInterface as UserProfileRepositoryInterface;
 use App\Models\Package;
@@ -122,6 +124,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             TutorRepositoryInterface::class,
             EloquentTutorRepository::class
+        );
+
+        $this->app->bind(
+            DashboardServicePort::class,
+            DashboardServiceAdapter::class
         );
     }
 

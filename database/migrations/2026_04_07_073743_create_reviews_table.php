@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tutor_id')->references('id')->on('tutors')->onDelete('cascade');
-            $table->foreignId('student_id')->references('id')->on('students')->onDelete('cascade');
+            $table->foreignId('tutor_id')->references('user_id')->on('tutors')->onDelete('cascade');
+            $table->foreignId('student_id')->references('user_id')->on('students')->onDelete('cascade');
             $table->integer('rate')->unsigned();
             $table->text('comment')->nullable();
             $table->timestamps();

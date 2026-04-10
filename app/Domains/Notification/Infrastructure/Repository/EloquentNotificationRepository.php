@@ -8,7 +8,7 @@ use App\Models\User;
 
 class EloquentNotificationRepository implements NotificationRepositoryInterface
 {
-    public function getAllUserNotification(int $userId, int $paginate): array
+    public function getNotificationByUserId(int $userId, int $paginate): array
     {
         $user = User::findOrFail($userId);
         $paginator = $user->notifications()->paginate($paginate);

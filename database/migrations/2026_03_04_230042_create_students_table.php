@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('class_id')->constrained('classes');
             $table->integer('session')->default(0);
+            $table->timestamp('sanction')->nullable();
             $table->timestamps();
             
             $table->primary('user_id');

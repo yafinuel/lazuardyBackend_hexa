@@ -11,8 +11,8 @@ class GetTutorByCriteria
      */
     public function __construct(protected TutorRepositoryInterface $repository) {}
 
-    public function execute(array $data): array
+    public function execute(array $data = [], int $paginate = 10): array
     {
-        return $this->repository->getByCriteria($data);
+        return $this->repository->getByCriteria($data, $paginate);
     }
 }

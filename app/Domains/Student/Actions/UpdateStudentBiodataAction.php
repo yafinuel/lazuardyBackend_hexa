@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Domains\UserProfile\Student\Actions;
+namespace App\Domains\Student\Actions;
 
-use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
+use App\Domains\Student\Ports\StudentRepositoryInterface;
 
-class UpdateStudentProfileAction
+class UpdateStudentBiodataAction
 {
-    /**
-     * Create a new class instance.
-     */
     public function __construct(protected StudentRepositoryInterface $repository) {}
 
     public function execute(int $studentId, array $data): void

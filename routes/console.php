@@ -36,9 +36,6 @@ namespace App\Domains\\{$domainName}\Ports;
 
 interface {$name}
 {
-    /**
-     * Define your contract methods here
-     */
 }
 PHP;
 
@@ -98,9 +95,6 @@ namespace App\Domains\\{$domainName}\Actions;
 
 class {$name}
 {
-    /**
-     * Create a new class instance.
-     */
     public function __construct() {}
 
     public function execute()
@@ -134,10 +128,7 @@ Artisan::command('domain:entity {domainName} {name}', function (string $domainNa
 
 namespace App\Domains\\{$domainName}\Entities;
 
-class {$name}
-    /**
-     * Create a new class instance.
-     */
+class {$name} {
     public function __construct(
     ) {}
 }
@@ -301,3 +292,33 @@ PHP;
     $this->info("Berhasil membuat notifikasi: {$filePath}");
     }
 )->purpose('Membuat file notifikasi baru di folder Domain');
+
+Artisan::command('domain:service {domainName} {name}', function (string $domainName, string $name){
+    $directory = app_path("Domains/{$domainName}/Infrastructure/Services");
+    $filePath = "{$directory}/{$name}.php";
+
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0755, true);
+    }
+
+    if (File::exists($filePath)) {
+        $this->error("Service {$name} sudah ada di domain {$domainName}!");
+        return;
+    }
+
+    $template = <<<PHP
+<?php
+
+namespace App\Domains\\{$domainName}\Infrastructure\Services;
+
+class {$name} implements 
+{
+}
+PHP;
+
+    File::put($filePath, $template);
+
+    $this->info("Berhasil membuat service: {$filePath}");
+    }
+)->purpose('Membuat file service baru di folder Domain');
+

@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Domains\UserProfile\Student\Infrastructure\Repository;
+namespace App\Domains\Student\Infrastructure\Repository;
 
-use App\Domains\UserProfile\Student\Entities\StudentEntity;
-use App\Domains\UserProfile\Student\Ports\StudentRepositoryInterface;
+use App\Domains\Student\Entities\StudentEntity;
+use App\Domains\Student\Ports\StudentRepositoryInterface;
+use App\Models\Student;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
 class EloquentStudentRepository implements StudentRepositoryInterface
 {
-    public function getStudentProfile(int $studentId): ?StudentEntity
+    public function getStudentById(int $studentId): ?StudentEntity
     {
         $user = User::where('id', $studentId)->firstOrFail();
         $student = $user->student;
@@ -34,6 +35,7 @@ class EloquentStudentRepository implements StudentRepositoryInterface
             longitude: $user->longitude,
             session: $student->session,
             classId: $student->class_id,
+            sanction:$student->sanction,
         );
     }
 

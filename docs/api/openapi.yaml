@@ -76,11 +76,11 @@ paths:
   /filterCategoryPage:
     $ref: './paths/course-catalog.yaml#/filterCategoryPage'
 
-  /studentBiodata:
+  /meStudent:
     $ref: './paths/user-profile.yaml#/studentBiodata'
   /updateStudentBiodata:
     $ref: './paths/user-profile.yaml#/updateStudentBiodata'
-  /meAsTutor:
+  /meTutor:
     $ref: './paths/user-profile.yaml#/meAsTutor'
   /getTutorById:
     $ref: './paths/user-profile.yaml#/getTutorById'

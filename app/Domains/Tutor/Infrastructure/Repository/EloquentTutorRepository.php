@@ -75,7 +75,7 @@ class EloquentTutorRepository implements TutorRepositoryInterface
         }
     }
 
-    public function getByCriteria(array $filters)
+    public function getByCriteria(array $filters, int $paginate)
     {
         $query = Tutor::with(['user', 'subjects.class'])
             ->withAvg('reviews', 'rate');
@@ -101,7 +101,7 @@ class EloquentTutorRepository implements TutorRepositoryInterface
 
         $query->orderByDesc('reviews_avg_rate');
         
-        $paginator = $query->paginate(10);
+        $paginator = $query->paginate($paginate);
 
         $tutors = collect($paginator->items())->map(function (Tutor $tutor) {
             $user = $tutor->user;

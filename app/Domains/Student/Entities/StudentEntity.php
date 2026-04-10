@@ -1,22 +1,14 @@
 <?php
 
-namespace App\Domains\UserProfile\Student\Entities;
+namespace App\Domains\Student\Entities;
 
-class StudentEntity
-{
-    /**
-     * Create a new class instance.
-     */
+class StudentEntity {
     public function __construct(
-        
         // User attributes
         public readonly ?string $id,
         public ?string $name,
         public readonly ?string $email,
         public readonly ?string $emailVerifiedAt,
-        public readonly ?string $googleId,
-        public readonly ?string $facebookId,
-        public readonly ?string $role,
         public ?string $telephoneNumber,
         public ?string $telephoneVerifiedAt,
         public ?string $profilePhotoUrl,
@@ -24,12 +16,15 @@ class StudentEntity
         public ?string $gender,
         public ?string $religion,
         public ?array $homeAddress,
-        public ?float $latitude,
-        public ?float $longitude,
-
+        public ?string $latitude,
+        public ?string $longitude,
+        public ?string $googleId,
+        public ?string $facebookId,
+        public ?string $role,
+        
         // Student attributes
-        public ?int $session,
+        public ?string $session,
         public ?int $classId,
-    )
-    {}
+        public ?string $sanction,
+    ) {}
 }

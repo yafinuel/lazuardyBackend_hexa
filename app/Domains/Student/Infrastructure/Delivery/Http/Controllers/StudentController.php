@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Domains\UserProfile\Student\Infrastructure\Delivery\Http\Controllers;
+namespace App\Domains\Student\Infrastructure\Delivery\Http\Controllers;
 
-use App\Domains\UserProfile\Student\Actions\StudentBiodataAction;
-use App\Domains\UserProfile\Student\Actions\UpdateProfilePictureAction;
-use App\Domains\UserProfile\Student\Actions\UpdateStudentProfileAction;
+use App\Domains\Student\Actions\GetStudentByIdAction;
+use App\Domains\Student\Actions\UpdateStudentBiodataAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\GenderEnum;
 use App\Shared\Enums\ReligionEnum;
@@ -14,7 +13,7 @@ use Illuminate\Validation\Rules\Enum;
 
 class StudentController extends Controller
 {
-    public function biodata(Request $request, StudentBiodataAction $action)
+    public function meStudent(Request $request, GetStudentByIdAction $action)
     {
         try {
             $user = $request->user();
@@ -33,7 +32,7 @@ class StudentController extends Controller
         }
     }
 
-    public function updateBiodata(Request $request, UpdateStudentProfileAction $action)
+    public function updateBiodata(Request $request, UpdateStudentBiodataAction $action)
     {
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],

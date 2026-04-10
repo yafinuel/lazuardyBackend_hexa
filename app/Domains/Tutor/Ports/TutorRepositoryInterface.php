@@ -8,5 +8,5 @@ interface TutorRepositoryInterface
 {
     public function getTutorById(int $tutorId): TutorEntity;
     public function updateTutorBiodata(int $tutorId, array $data): void;
-    public function getByCriteria(array $filters);
+    public function getByCriteria(array $filters, int $paginate);
 }
