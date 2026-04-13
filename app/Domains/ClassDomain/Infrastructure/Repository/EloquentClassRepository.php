@@ -5,6 +5,7 @@ namespace App\Domains\ClassDomain\Infrastructure\Repository;
 use App\Domains\ClassDomain\Entities\ClassEntity;
 use App\Domains\ClassDomain\Ports\ClassRepositoryInterface;
 use App\Models\ClassModel;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class EloquentClassRepository implements ClassRepositoryInterface
@@ -14,27 +15,17 @@ class EloquentClassRepository implements ClassRepositoryInterface
         return ClassModel::distinct()->pluck('level');
     }
 
-    public function getAllClasses(): array
+    public function getAllClasses(): LengthAwarePaginator
     {
-        $paginator = ClassModel::paginate(10);
+        return ClassModel::paginate(10);
 
-        $classes = collect($paginator->items())->map(function (ClassModel $class) {
-            return new ClassEntity(
-                id: $class->id,
-                name: $class->name,
-                level: $class->level
-            );
-        })->toArray();
-
-        return [
-            'data' => $classes,
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ];
+        // $classes = collect($paginator->items())->map(function (ClassModel $class) {
+        //     return new ClassEntity(
+        //         id: $class->id,
+        //         name: $class->name,
+        //         level: $class->level
+        //     );
+        // })->toArray();
     }
 
     public function getClassesByLevel(string $level): array

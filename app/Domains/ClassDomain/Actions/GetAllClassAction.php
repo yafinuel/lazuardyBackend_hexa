@@ -2,7 +2,9 @@
 
 namespace App\Domains\ClassDomain\Actions;
 
+use App\Domains\ClassDomain\Entities\ClassEntity;
 use App\Domains\ClassDomain\Ports\ClassRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GetAllClassAction
 {
@@ -11,8 +13,16 @@ class GetAllClassAction
      */
     public function __construct(protected ClassRepositoryInterface $repository) {}
 
-    public function execute()
+    public function execute(): LengthAwarePaginator
     {
-        return $this->repository->getAllClasses();
+        $result = $this->repository->getAllClasses();
+
+        return $result->through(function($class){
+            return new ClassEntity(
+                id: $class->id,
+                name: $class->name,
+                level: $class->level
+            );
+        });
     }
 }

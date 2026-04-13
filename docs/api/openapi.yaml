@@ -183,5 +183,11 @@ components:
       $ref: './components/schemas.yaml#/NotificationEntity'
     NotificationListPayload:
       $ref: './components/schemas.yaml#/NotificationListPayload'
+    TutorListPayload:
+      $ref: './components/schemas.yaml#/TutorListPayload'
+    DashboardNotificationItem:
+      $ref: './components/schemas.yaml#/DashboardNotificationItem'
+    DashboardNotificationListPayload:
+      $ref: './components/schemas.yaml#/DashboardNotificationListPayload'
     GetAllUserNotificationResponse:
       $ref: './components/schemas.yaml#/GetAllUserNotificationResponse'

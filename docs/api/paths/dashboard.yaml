@@ -8,9 +8,9 @@ studentHomepage:
       - bearerAuth: []
     operationId: studentHomepage
     parameters:
-      - name: notif_paginate
+      - name: notification_paginate
         in: query
-        required: false
+        required: true
         schema:
           type: integer
           minimum: 1
@@ -18,7 +18,7 @@ studentHomepage:
         description: Jumlah notifikasi yang ditampilkan.
       - name: tutor_paginate
         in: query
-        required: false
+        required: true
         schema:
           type: integer
           minimum: 1
@@ -51,16 +51,9 @@ studentHomepage:
                       type: integer
                       nullable: true
                     notification:
-                      $ref: '../components/schemas.yaml#/NotificationListPayload'
+                      $ref: '../components/schemas.yaml#/DashboardNotificationListPayload'
                     tutor_recomendation:
-                      type: object
-                      properties:
-                        tutors:
-                          type: array
-                          items:
-                            $ref: '../components/schemas.yaml#/TutorEntity'
-                        meta:
-                          $ref: '../components/schemas.yaml#/PaginationMeta'
+                      $ref: '../components/schemas.yaml#/TutorListPayload'
       '401':
         description: Unauthorized
         content:

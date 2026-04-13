@@ -8,40 +8,27 @@ getTutorByCriteria:
       - bearerAuth: []
     operationId: getTutorByCriteria
     parameters:
-      - name: per_page
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          example: 10
-        description: Jumlah data tutor per halaman.
-      - name: page
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          example: 1
-        description: Nomor halaman data tutor.
-      - name: class_id
-        in: query
-        required: false
-        schema:
-          type: integer
-          example: 1
-      - name: subject_id
-        in: query
-        required: false
-        schema:
-          type: integer
-          example: 2
-      - name: learning_method
+      - name: subject
         in: query
         required: false
         schema:
           type: string
-          example: online
+          example: matematika
+        description: Nama mata pelajaran yang dipakai untuk memfilter tutor.
+      - name: class_name
+        in: query
+        required: false
+        schema:
+          type: string
+          example: kelas 10
+        description: Nama kelas yang dipakai untuk memfilter tutor.
+      - name: level
+        in: query
+        required: false
+        schema:
+          type: string
+          example: SD
+        description: Jenjang kelas yang dipakai untuk memfilter tutor.
     responses:
       '200':
         description: Berhasil mendapatkan daftar tutor
@@ -54,14 +41,7 @@ getTutorByCriteria:
                   type: string
                   example: success
                 data:
-                  type: object
-                  properties:
-                    tutors:
-                      type: array
-                      items:
-                        $ref: '../components/schemas.yaml#/TutorEntity'
-                    meta:
-                      $ref: '../components/schemas.yaml#/PaginationMeta'
+                  $ref: '../components/schemas.yaml#/TutorListPayload'
       '401':
         description: Unauthorized
         content:

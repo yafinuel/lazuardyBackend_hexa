@@ -3,9 +3,7 @@
 namespace App\Domains\Package\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Package\Actions\GetPackagesAction;
-use App\Domains\Package\Infrastructure\Delivery\Http\Resources\PackageResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class PackageController extends Controller
 {
@@ -13,10 +11,9 @@ class PackageController extends Controller
     {
         $result = $action->execute();
         
-        return PackageResource::collection(
-            $result['data']
-        )->additional([
-            'meta' => $result['meta']
+        return response()->json([
+            'success' => 'success',
+            'data' => $result,
         ]);
     }
 }

@@ -24,10 +24,6 @@ class DashboardServiceAdapter implements DashboardServicePort
         $notifications = $this->notifAction->execute($studentId, $notifPaginate);
         $tutors = $this->tutorAction->execute([], $tutorPaginate);
         
-        foreach($tutors['tutors'] as $tutor){
-            $tutor->profilePhotoUrl = $this->storage->getMedia($tutor->profilePhotoUrl);
-        }
-        
         return [
             'me' => $me,
             'notification' => $notifications,

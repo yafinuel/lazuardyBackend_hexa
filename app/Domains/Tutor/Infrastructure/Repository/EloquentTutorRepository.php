@@ -7,6 +7,7 @@ use App\Domains\Tutor\Ports\TutorRepositoryInterface;
 use App\Models\Tutor;
 use App\Models\User;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 
 class EloquentTutorRepository implements TutorRepositoryInterface
@@ -78,7 +79,7 @@ class EloquentTutorRepository implements TutorRepositoryInterface
         }
     }
 
-    public function getByCriteria(array $filters, int $paginate)
+    public function getByCriteria(array $filters, int $paginate): LengthAwarePaginator
     {
         $query = Tutor::with(['user', 'subjects.class'])
             ->withAvg('reviews', 'rate');
@@ -106,46 +107,36 @@ class EloquentTutorRepository implements TutorRepositoryInterface
         
         $paginator = $query->paginate($paginate);
 
-        $tutors = collect($paginator->items())->map(function (Tutor $tutor) {
+        return $paginator->through(function (Tutor $tutor) {
             $user = $tutor->user;
             return new TutorEntity(
-            id: $user->id,
-            name: $user->name,
-            email: $user->email,
-            emailVerifiedAt: $user->email_verified_at,
-            telephoneNumber: $user->telephone_number,
-            telephoneVerifiedAt: $user->telephone_verified_at,
-            profilePhotoUrl: $user->profile_photo_path,
-            dateOfBirth: $user->date_of_birth,
-            gender: $user->gender?->displayName(),
-            religion: $user->religion?->displayName(),
-            homeAddress: $user->home_address,
-            warning: $user->warning,
-            sanction: $user->sanction,
-            latitude: $user->latitude,
-            longitude: $user->longitude,
-            education: $tutor->education,
-            salary: $tutor->salary,
-            role: $user->role?->displayName(),
-            price: $tutor->price,
-            description: $tutor->description,
-            bankCode: $tutor->bank_code,
-            accountNumber: $tutor->account_number,
-            learningMethod: $tutor->learning_method,
-            status: $tutor->status?->displayName(),
-            avgRate: $tutor->reviews_avg_rate ?? null,
+                id: $user->id,
+                name: $user->name,
+                email: $user->email,
+                emailVerifiedAt: $user->email_verified_at,
+                telephoneNumber: $user->telephone_number,
+                telephoneVerifiedAt: $user->telephone_verified_at,
+                profilePhotoUrl: $user->profile_photo_path,
+                dateOfBirth: $user->date_of_birth,
+                gender: $user->gender?->displayName(),
+                religion: $user->religion?->displayName(),
+                homeAddress: $user->home_address,
+                warning: $user->warning,
+                sanction: $user->sanction,
+                latitude: $user->latitude,
+                longitude: $user->longitude,
+                education: $tutor->education,
+                salary: $tutor->salary,
+                role: $user->role?->displayName(),
+                price: $tutor->price,
+                description: $tutor->description,
+                bankCode: $tutor->bank_code,
+                accountNumber: $tutor->account_number,
+                learningMethod: $tutor->learning_method,
+                status: $tutor->status?->displayName(),
+                avgRate: $tutor->reviews_avg_rate ?? null,
             );
-        })->toArray();
-        
-        return [
-            'tutors' => $tutors,
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ];
+        });
     }
 
     

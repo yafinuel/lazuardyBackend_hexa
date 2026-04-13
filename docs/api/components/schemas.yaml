@@ -104,11 +104,56 @@ ClassListResponse:
       type: string
       example: "success"
     data:
-      type: array
-      items:
-        $ref: '#/ClassEntity'
-    meta:
-      $ref: '#/PaginationMeta'
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/ClassEntity'
+        first_page_url:
+          type: string
+          nullable: true
+        from:
+          type: integer
+          nullable: true
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        next_page_url:
+          type: string
+          nullable: true
+        path:
+          type: string
+        per_page:
+          type: integer
+          example: 10
+        prev_page_url:
+          type: string
+          nullable: true
+        to:
+          type: integer
+          nullable: true
+        total:
+          type: integer
+          example: 10
 
 ClassByLevelResponse:
   type: object
@@ -131,10 +176,10 @@ SubjectEntity:
     name:
       type: string
       example: "Fisika"
-    icon_image_path:
+    icon_image_url:
       type: string
       nullable: true
-      example: "/storage/subjects/fisika.png"
+      example: "http://localhost:8000/storage/subjects/fisika.png"
     classId:
       type: integer
       nullable: true
@@ -155,11 +200,56 @@ SubjectListResponse:
       type: string
       example: "success"
     data:
-      type: array
-      items:
-        $ref: '#/SubjectEntity'
-    meta:
-      $ref: '#/PaginationMeta'
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/SubjectEntity'
+        first_page_url:
+          type: string
+          nullable: true
+        from:
+          type: integer
+          nullable: true
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        next_page_url:
+          type: string
+          nullable: true
+        path:
+          type: string
+        per_page:
+          type: integer
+          example: 15
+        prev_page_url:
+          type: string
+          nullable: true
+        to:
+          type: integer
+          nullable: true
+        total:
+          type: integer
+          example: 10
 
 UniqueSubjectEntity:
   type: object
@@ -167,10 +257,10 @@ UniqueSubjectEntity:
     name:
       type: string
       example: "Fisika"
-    icon_image_path:
+    icon_image_url:
       type: string
       nullable: true
-      example: "/storage/subjects/fisika.png"
+      example: "http://localhost:8000/storage/subjects/fisika.png"
 
 UniqueSubjectByLevelResponse:
   type: object
@@ -179,11 +269,56 @@ UniqueSubjectByLevelResponse:
       type: string
       example: "success"
     data:
-      type: array
-      items:
-        $ref: '#/UniqueSubjectEntity'
-    meta:
-      $ref: '#/PaginationMeta'
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/SubjectEntity'
+        first_page_url:
+          type: string
+          nullable: true
+        from:
+          type: integer
+          nullable: true
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        next_page_url:
+          type: string
+          nullable: true
+        path:
+          type: string
+        per_page:
+          type: integer
+          example: 15
+        prev_page_url:
+          type: string
+          nullable: true
+        to:
+          type: integer
+          nullable: true
+        total:
+          type: integer
+          example: 10
 
 FilterCategorySubjects:
   type: object
@@ -222,12 +357,60 @@ FilterCategoryPageResponse:
 GetPackagesResponse:
   type: object
   properties:
+    success:
+      type: string
+      example: "success"
     data:
-      type: array
-      items:
-        $ref: '#/PackageItem'
-    meta:
-      $ref: '#/PaginationMeta'
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/PackageItem'
+        first_page_url:
+          type: string
+          nullable: true
+        from:
+          type: integer
+          nullable: true
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        next_page_url:
+          type: string
+          nullable: true
+        path:
+          type: string
+        per_page:
+          type: integer
+          example: 10
+        prev_page_url:
+          type: string
+          nullable: true
+        to:
+          type: integer
+          nullable: true
+        total:
+          type: integer
+          example: 10
 
 AuthSuccess:
   type: object
@@ -286,6 +469,13 @@ StudentEntity:
     role:
       type: string
       nullable: true
+    warning:
+      type: integer
+      nullable: true
+    sanction:
+      type: string
+      format: date-time
+      nullable: true
     telephoneNumber:
       type: string
       nullable: true
@@ -317,15 +507,13 @@ StudentEntity:
         subdistrict:
           type: string
     latitude:
-      type: number
-      format: float
+      type: string
       nullable: true
     longitude:
-      type: number
-      format: float
+      type: string
       nullable: true
     session:
-      type: integer
+      type: string
       nullable: true
     classId:
       type: integer
@@ -377,16 +565,16 @@ TutorEntity:
         subdistrict:
           type: string
     latitude:
-      type: number
-      format: float
-      nullable: true
-    longitude:
-      type: number
-      format: float
-      nullable: true
-    education:
       type: string
       nullable: true
+    longitude:
+      type: string
+      nullable: true
+    education:
+      type: array
+      nullable: true
+      items:
+        type: string
     salary:
       type: integer
       nullable: true
@@ -407,11 +595,22 @@ TutorEntity:
       nullable: true
       items:
         type: string
+    role:
+      type: string
+      nullable: true
+    warning:
+      type: integer
+      nullable: true
     sanction:
       type: string
+      format: date-time
       nullable: true
     status:
       type: string
+      nullable: true
+    avgRate:
+      type: number
+      format: float
       nullable: true
 
 UpdateTutorBiodataRequest:
@@ -559,6 +758,12 @@ NotificationEntity:
     type:
       type: string
       example: "App\\Domains\\Notification\\Notifications\\OrderPaidExample"
+    notifiableType:
+      type: string
+      example: "App\\Models\\User"
+    notifiableId:
+      type: string
+      example: "1"
     title:
       type: string
       example: "Pembayaran Berhasil"
@@ -566,22 +771,214 @@ NotificationEntity:
       type: string
       example: "Pembayaran paket kamu sudah kami terima."
     data:
-      type: string
+      type: object
       nullable: true
-      example: "{\"order_id\":\"INV-20260405-001\"}"
-    isRead:
-      type: boolean
-      example: false
+      example:
+        order_id: "INV-20260405-001"
+    readAt:
+      type: string
+      format: date-time
+      nullable: true
+      example: null
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-04-05T10:15:00Z"
 
 NotificationListPayload:
   type: object
   properties:
+    current_page:
+      type: integer
+      example: 1
     data:
       type: array
       items:
         $ref: '#/NotificationEntity'
-    meta:
-      $ref: '#/PaginationMeta'
+    first_page_url:
+      type: string
+      nullable: true
+      example: "http://localhost:8000/api/getNotificationByUserId?page=1"
+    from:
+      type: integer
+      nullable: true
+      example: 1
+    last_page:
+      type: integer
+      example: 3
+    last_page_url:
+      type: string
+      nullable: true
+      example: "http://localhost:8000/api/getNotificationByUserId?page=3"
+    links:
+      type: array
+      items:
+        type: object
+        properties:
+          url:
+            type: string
+            nullable: true
+          label:
+            type: string
+          active:
+            type: boolean
+    next_page_url:
+      type: string
+      nullable: true
+      example: "http://localhost:8000/api/getNotificationByUserId?page=2"
+    path:
+      type: string
+      example: "http://localhost:8000/api/getNotificationByUserId"
+    per_page:
+      type: integer
+      example: 15
+    prev_page_url:
+      type: string
+      nullable: true
+      example: null
+    to:
+      type: integer
+      nullable: true
+      example: 15
+    total:
+      type: integer
+      example: 42
+
+TutorListPayload:
+  type: object
+  properties:
+    current_page:
+      type: integer
+      example: 1
+    data:
+      type: array
+      items:
+        $ref: '#/TutorEntity'
+    first_page_url:
+      type: string
+      nullable: true
+      example: "http://localhost:8000/api/getTutorByCriteria?page=1"
+    from:
+      type: integer
+      nullable: true
+      example: 1
+    last_page:
+      type: integer
+      example: 4
+    last_page_url:
+      type: string
+      nullable: true
+      example: "http://localhost:8000/api/getTutorByCriteria?page=4"
+    links:
+      type: array
+      items:
+        type: object
+        properties:
+          url:
+            type: string
+            nullable: true
+          label:
+            type: string
+          active:
+            type: boolean
+    next_page_url:
+      type: string
+      nullable: true
+      example: null
+    path:
+      type: string
+      example: "http://localhost:8000/api/getTutorByCriteria"
+    per_page:
+      type: integer
+      example: 10
+    prev_page_url:
+      type: string
+      nullable: true
+      example: null
+    to:
+      type: integer
+      nullable: true
+      example: 10
+    total:
+      type: integer
+      example: 35
+
+DashboardNotificationItem:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "6e74dca4-5d7d-4f89-9f0d-427ac95df5fc"
+    title:
+      type: string
+      example: "Pembayaran Berhasil"
+    body:
+      type: string
+      example: "Pembayaran paket kamu sudah kami terima."
+    data:
+      type: object
+      nullable: true
+      example:
+        order_id: "INV-20260405-001"
+
+DashboardNotificationListPayload:
+  type: object
+  properties:
+    current_page:
+      type: integer
+      example: 1
+    data:
+      type: array
+      items:
+        $ref: '#/DashboardNotificationItem'
+    first_page_url:
+      type: string
+      nullable: true
+      example: "http://localhost:8000/api/student/dashboard/homepage?page=1"
+    from:
+      type: integer
+      nullable: true
+      example: 1
+    last_page:
+      type: integer
+      example: 2
+    last_page_url:
+      type: string
+      nullable: true
+      example: "http://localhost:8000/api/student/dashboard/homepage?page=2"
+    links:
+      type: array
+      items:
+        type: object
+        properties:
+          url:
+            type: string
+            nullable: true
+          label:
+            type: string
+          active:
+            type: boolean
+    next_page_url:
+      type: string
+      nullable: true
+      example: null
+    path:
+      type: string
+      example: "http://localhost:8000/api/student/dashboard/homepage"
+    per_page:
+      type: integer
+      example: 2
+    prev_page_url:
+      type: string
+      nullable: true
+      example: null
+    to:
+      type: integer
+      nullable: true
+      example: 2
+    total:
+      type: integer
+      example: 8
 
 GetAllUserNotificationResponse:
   type: object

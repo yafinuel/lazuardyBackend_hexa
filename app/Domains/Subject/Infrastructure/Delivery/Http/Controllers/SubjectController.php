@@ -4,7 +4,6 @@ namespace App\Domains\Subject\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Subject\Actions\GetAllSubjectAction;
 use App\Domains\Subject\Actions\GetSubjectByClassAction;
-use App\Domains\Subject\Actions\GetSubjectByLevelAction;
 use App\Domains\Subject\Actions\GetUniqueSubjectByLevelAction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -17,8 +16,7 @@ class SubjectController extends Controller
 
         return response()->json([
             'success' => 'success',
-            'data' => $subjects['data'],
-            'meta' => $subjects['meta'],
+            'data' => $subjects
         ]);
     }
 
@@ -29,8 +27,7 @@ class SubjectController extends Controller
 
         return response()->json([
             'success' => 'success',
-            'data' => $subjects['data'],
-            'meta' => $subjects['meta'],
+            'data' => $subjects
         ]);
     }
 
@@ -41,8 +38,7 @@ class SubjectController extends Controller
 
         return response()->json([
             'success' => 'success',
-            'data' => $subjects['data'],
-            'meta' => $subjects['meta'],
+            'data' => $subjects
         ]);
     }
 }

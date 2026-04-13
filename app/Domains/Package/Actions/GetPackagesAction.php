@@ -2,7 +2,9 @@
 
 namespace App\Domains\Package\Actions;
 
+use App\Domains\Package\Entities\PackageEntity;
 use App\Domains\Package\Ports\PackageRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GetPackagesAction
 {
@@ -11,8 +13,20 @@ class GetPackagesAction
      */
     public function __construct(protected PackageRepositoryInterface $repository) {}
 
-    public function execute(): array
+    public function execute(): LengthAwarePaginator
     {
-        return $this->repository->getPackages();
+        $result = $this->repository->getPackages();
+        
+        return $result->through(function ($package) {
+            return new PackageEntity(
+                id: $package->id,
+                name: $package->name,
+                session: $package->session,
+                price: (float) $package->price,
+                discount: (float) $package->discount,
+                description: $package->description,
+                imagePath: $package->image_path,
+            );
+        });
     }
 }

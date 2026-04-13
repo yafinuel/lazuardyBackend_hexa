@@ -2,70 +2,26 @@
 
 namespace App\Domains\Subject\Infrastructure\Repository;
 
-use App\Domains\Subject\Entities\SubjectEntity;
 use App\Domains\Subject\Ports\SubjectRepositoryInterface;
 use App\Models\Subject;
 use App\Shared\Ports\FileStorageInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EloquentSubjectRepository implements SubjectRepositoryInterface
 {
     public function __construct(protected FileStorageInterface $storage) {}
     
-    public function getAllSubjects(): array
+    public function getAllSubjects(): LengthAwarePaginator
     {
-        $paginator = Subject::with('class')->paginate(15);
-
-        $subjects = collect($paginator->items())->map(function (Subject $subject) {
-            return new SubjectEntity(
-                id: $subject->id,
-                name: $subject->name,
-                icon_image_url: $subject->icon_image_path ? $this->storage->getMedia($subject->icon_image_path) : null,
-                classId: $subject->class->id,
-                className: $subject->class->name,
-                classLevel: $subject->class->level
-            );
-        })->toArray();
-
-        return [
-            'data' => $subjects,
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ];
+        return Subject::with('class')->paginate(15);
     }
 
-    public function getSubjectByClass(int $classId): array
+    public function getSubjectByClass(int $classId): LengthAwarePaginator
     {
-        $paginator = Subject::with('class')
-            ->where('class_id', $classId)
-            ->paginate(15);
-
-        $subjects = collect($paginator->items())->map(function (Subject $subject) {
-            return new SubjectEntity(
-                id: $subject->id,
-                name: $subject->name,
-                icon_image_url: $subject->icon_image_path ? $this->storage->getMedia($subject->icon_image_path) : null,
-                classId: $subject->class->id,
-                className: $subject->class->name,
-                classLevel: $subject->class->level
-            );
-        })->toArray();
-
-        return [
-            'data' => $subjects,
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ];
+        return Subject::with('class')->where('class_id', $classId)->paginate(15);
     }
 
-    public function getUniqueSubjectByLevel(string $level): array
+    public function getUniqueSubjectByLevel(string $level): LengthAwarePaginator
     {
         $uniqueSubjectIds = Subject::query()
             ->whereHas('class', function ($query) use ($level) {
@@ -74,26 +30,9 @@ class EloquentSubjectRepository implements SubjectRepositoryInterface
             ->selectRaw('MIN(id) as id')
             ->groupBy('name');
 
-        $paginator = Subject::with('class')
+        return Subject::with('class')
             ->whereIn('id', $uniqueSubjectIds)
             ->orderBy('name')
             ->paginate(15);
-
-        $subjects = collect($paginator->items())->map(function (Subject $subject) {
-            return [
-                'name' => $subject->name,
-                'icon_image_path' => $subject->icon_image_path,
-            ];
-        });
-
-        return [
-            'data' => $subjects,
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ];
     }
 }
