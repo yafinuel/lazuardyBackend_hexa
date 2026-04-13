@@ -3,8 +3,8 @@
 namespace App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Tutor\Actions\GetTutorByCriteria;
+use App\Domains\Tutor\Actions\GetTutorByIdAction;
 use App\Domains\Tutor\Actions\GetTutorFileAction;
-use App\Domains\Tutor\Actions\TutorBiodataAction;
 use App\Domains\Tutor\Actions\UpdateTutorProfileAction;
 use App\Shared\Enums\GenderEnum;
 use App\Shared\Enums\ReligionEnum;
@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 class TutorController extends Controller
 {
     
-    public function getTutorById(Request $request, TutorBiodataAction $action)
+    public function getTutorById(Request $request, GetTutorByIdAction $action)
     {
         try {
             $tutorId = $request->user()->id;

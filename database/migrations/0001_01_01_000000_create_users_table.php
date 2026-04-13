@@ -35,6 +35,8 @@ return new class extends Migration
             $table->enum('gender', $genders)->nullable();
             $table->enum('religion', $religions)->nullable();
             $table->json('home_address')->nullable();
+            $table->integer('warning')->default(0);
+            $table->timestamp('sanction')->nullable();
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
             $table->rememberToken();

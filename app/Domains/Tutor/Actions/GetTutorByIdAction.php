@@ -5,7 +5,7 @@ namespace App\Domains\Tutor\Actions;
 use App\Domains\Tutor\Ports\TutorRepositoryInterface;
 use App\Shared\Ports\FileStorageInterface;
 
-class TutorBiodataAction
+class GetTutorByIdAction
 {
     public function __construct(protected TutorRepositoryInterface $repository, protected FileStorageInterface $storage) {}
 

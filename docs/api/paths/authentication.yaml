@@ -237,6 +237,52 @@ login:
       '422':
         $ref: '../components/responses.yaml#/ValidationError'
 
+logout:
+  post:
+    tags:
+      - Authentication
+    summary: Logout pengguna
+    description: Mengakhiri sesi pengguna yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: logout
+    responses:
+      '200':
+        description: Berhasil logout
+        content:
+          application/json:
+            example:
+              status: "success"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+
+currentUser:
+  get:
+    tags:
+      - Authentication
+    summary: Mendapatkan data user aktif
+    description: Endpoint utilitas untuk mengambil data user yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: currentUser
+    responses:
+      '200':
+        description: Berhasil mengambil data user aktif
+        content:
+          application/json:
+            schema:
+              type: object
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+
 studentRegister:
   post:
     tags: [Authentication]

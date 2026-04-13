@@ -10,6 +10,14 @@ class StudentHomePageAction
 
     public function execute(int $studentId,  int $notifPaginate = 2, int $tutorPaginate = 4)
     {
-        return $this->service->studentHomePage($studentId, $notifPaginate, $tutorPaginate);
+        $result = $this->service->studentHomePage($studentId, $notifPaginate, $tutorPaginate);
+        return [
+            'user_name' => $result['me']->name,
+            'warning' => $result['me']->warning,
+            'sanction' => $result['me']->sanction,
+            'session' => $result['me']->session,
+            'notification' => $result['notification'],
+            'tutor_recomendation' => $result['tutor_recomendation'],
+        ];
     }
 }

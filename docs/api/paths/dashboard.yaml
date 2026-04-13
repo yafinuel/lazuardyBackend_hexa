@@ -1,0 +1,71 @@
+studentHomepage:
+  get:
+    tags:
+      - Dashboard
+    summary: Mengambil data homepage siswa
+    description: Endpoint untuk mengambil ringkasan data homepage siswa yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: studentHomepage
+    parameters:
+      - name: notif_paginate
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 2
+        description: Jumlah notifikasi yang ditampilkan.
+      - name: tutor_paginate
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 4
+        description: Jumlah rekomendasi tutor yang ditampilkan.
+    responses:
+      '200':
+        description: Berhasil mengambil data homepage siswa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: success
+                data:
+                  type: object
+                  properties:
+                    user_name:
+                      type: string
+                    warning:
+                      type: integer
+                      nullable: true
+                    sanction:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    session:
+                      type: integer
+                      nullable: true
+                    notification:
+                      $ref: '../components/schemas.yaml#/NotificationListPayload'
+                    tutor_recomendation:
+                      type: object
+                      properties:
+                        tutors:
+                          type: array
+                          items:
+                            $ref: '../components/schemas.yaml#/TutorEntity'
+                        meta:
+                          $ref: '../components/schemas.yaml#/PaginationMeta'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

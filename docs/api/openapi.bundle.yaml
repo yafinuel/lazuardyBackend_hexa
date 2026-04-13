@@ -26,6 +26,10 @@ tags:
     description: Endpoint untuk profil pengguna
   - name: Notification
     description: Endpoint untuk notifikasi pengguna
+  - name: Tutor
+    description: Endpoint untuk pencarian tutor
+  - name: Dashboard
+    description: Endpoint untuk data dashboard pengguna
 paths:
   /registerOtpEmail:
     post:
@@ -295,6 +299,28 @@ paths:
                 token_type: Bearer
         '422':
           $ref: '#/components/responses/ValidationError'
+  /logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout pengguna
+      description: Mengakhiri sesi pengguna yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: logout
+      responses:
+        '200':
+          description: Berhasil logout
+          content:
+            application/json:
+              example:
+                status: success
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
   /studentRegister:
     post:
       tags:
@@ -456,6 +482,28 @@ paths:
               example:
                 status: error
                 message: Gagal melakukan registrasi tutor.
+  /user:
+    get:
+      tags:
+        - Authentication
+      summary: Mendapatkan data user aktif
+      description: Endpoint utilitas untuk mengambil data user yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: currentUser
+      responses:
+        '200':
+          description: Berhasil mengambil data user aktif
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
   /getBankList:
     get:
       tags:
@@ -711,7 +759,7 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
-  /studentBiodata:
+  /meStudent:
     get:
       tags:
         - User Profile
@@ -978,7 +1026,7 @@ paths:
                 status: failed
                 message: Gagal memperbarui foto profil
                 debug_error: Error message
-  /getAllUserNotification:
+  /getNotificationByUserId:
     get:
       tags:
         - Notification
@@ -986,7 +1034,7 @@ paths:
       description: Endpoint untuk mendapatkan daftar notifikasi milik pengguna yang sedang login, beserta metadata pagination.
       security:
         - bearerAuth: []
-      operationId: getAllUserNotification
+      operationId: getNotificationByUserId
       responses:
         '200':
           description: Berhasil mendapatkan daftar notifikasi pengguna
@@ -994,6 +1042,149 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAllUserNotificationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /getTutorByCriteria:
+    get:
+      tags:
+        - Tutor
+      summary: Mencari tutor berdasarkan kriteria
+      description: Endpoint untuk mengambil daftar tutor berdasarkan filter tertentu. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: getTutorByCriteria
+      parameters:
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 10
+          description: Jumlah data tutor per halaman.
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+          description: Nomor halaman data tutor.
+        - name: class_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: subject_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 2
+        - name: learning_method
+          in: query
+          required: false
+          schema:
+            type: string
+            example: online
+      responses:
+        '200':
+          description: Berhasil mendapatkan daftar tutor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      tutors:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/TutorEntity'
+                      meta:
+                        $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /student/dashboard/homepage:
+    get:
+      tags:
+        - Dashboard
+      summary: Mengambil data homepage siswa
+      description: Endpoint untuk mengambil ringkasan data homepage siswa yang sedang login. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: studentHomepage
+      parameters:
+        - name: notif_paginate
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 2
+          description: Jumlah notifikasi yang ditampilkan.
+        - name: tutor_paginate
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 4
+          description: Jumlah rekomendasi tutor yang ditampilkan.
+      responses:
+        '200':
+          description: Berhasil mengambil data homepage siswa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      user_name:
+                        type: string
+                      warning:
+                        type: integer
+                        nullable: true
+                      sanction:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      session:
+                        type: integer
+                        nullable: true
+                      notification:
+                        $ref: '#/components/schemas/NotificationListPayload'
+                      tutor_recomendation:
+                        type: object
+                        properties:
+                          tutors:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/TutorEntity'
+                          meta:
+                            $ref: '#/components/schemas/PaginationMeta'
         '401':
           description: Unauthorized
           content:

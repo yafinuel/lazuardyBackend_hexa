@@ -27,6 +27,7 @@ class Tutor extends Model
         'description',
         'learning_method',
         'status',
+        'warning',
         'sanction',
         'bank_code',
         'account_number',

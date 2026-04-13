@@ -321,4 +321,3 @@ PHP;
     $this->info("Berhasil membuat service: {$filePath}");
     }
 )->purpose('Membuat file service baru di folder Domain');
-

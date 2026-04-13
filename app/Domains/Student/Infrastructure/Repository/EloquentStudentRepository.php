@@ -21,8 +21,6 @@ class EloquentStudentRepository implements StudentRepositoryInterface
             name: $user->name,
             email: $user->email,
             emailVerifiedAt: $user->email_verified_at,
-            googleId: $user->google_id,
-            facebookId: $user->facebook_id,
             role: $user->role->displayName(),
             profilePhotoUrl: $user->profile_photo_path,
             gender: $user->gender?->displayName(),
@@ -31,11 +29,12 @@ class EloquentStudentRepository implements StudentRepositoryInterface
             telephoneVerifiedAt: $user->telephone_verified_at,
             religion: $user->religion?->displayName(),
             homeAddress: $user->home_address,
+            warning: $user->warning,
+            sanction:$user->sanction,
             latitude: $user->latitude,
             longitude: $user->longitude,
             session: $student->session,
             classId: $student->class_id,
-            sanction:$student->sanction,
         );
     }
 

@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('bank_code')->nullable();
             $table->string('account_number')->nullable();
             $table->json('learning_method')->nullable();
-            $table->timestamp('sanction')->nullable();
             $table->enum('status', $statusses)->nullable();
             $table->timestamps();
 

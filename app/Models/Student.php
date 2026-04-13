@@ -12,13 +12,16 @@ class Student extends Model
     use HasFactory;
 
     protected $primaryKey = 'user_id';
+    public $incrementing = false;
 
     protected $fillable = 
     [
         'user_id',
         'class_id',
         'session',
-        'sanction',
+    ];
+
+    protected $casts = [
     ];
 
     public function user(): BelongsTo

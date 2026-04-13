@@ -1,0 +1,72 @@
+getTutorByCriteria:
+  get:
+    tags:
+      - Tutor
+    summary: Mencari tutor berdasarkan kriteria
+    description: Endpoint untuk mengambil daftar tutor berdasarkan filter tertentu. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: getTutorByCriteria
+    parameters:
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 10
+        description: Jumlah data tutor per halaman.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 1
+        description: Nomor halaman data tutor.
+      - name: class_id
+        in: query
+        required: false
+        schema:
+          type: integer
+          example: 1
+      - name: subject_id
+        in: query
+        required: false
+        schema:
+          type: integer
+          example: 2
+      - name: learning_method
+        in: query
+        required: false
+        schema:
+          type: string
+          example: online
+    responses:
+      '200':
+        description: Berhasil mendapatkan daftar tutor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: success
+                data:
+                  type: object
+                  properties:
+                    tutors:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/TutorEntity'
+                    meta:
+                      $ref: '../components/schemas.yaml#/PaginationMeta'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

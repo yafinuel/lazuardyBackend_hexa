@@ -2,6 +2,8 @@
 
 namespace App\Domains\Tutor\Entities;
 
+use Carbon\Carbon;
+
 class TutorEntity{
 
         public function __construct(
@@ -17,6 +19,9 @@ class TutorEntity{
         public ?string $gender,
         public ?string $religion,
         public ?array $homeAddress,
+        public ?string $role,
+        public ?int $warning,
+        public ?Carbon $sanction,
         public ?string $latitude,
         public ?string $longitude,
 
@@ -28,7 +33,7 @@ class TutorEntity{
         public ?string $bankCode,
         public ?string $accountNumber,
         public ?array $learningMethod,
-        public ?string $sanction,
         public ?string $status,
+        public ?float $avgRate
     ) {}
 }

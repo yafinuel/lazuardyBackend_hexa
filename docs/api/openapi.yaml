@@ -28,6 +28,10 @@ tags:
     description: Endpoint untuk profil pengguna
   - name: Notification
     description: Endpoint untuk notifikasi pengguna
+  - name: Tutor
+    description: Endpoint untuk pencarian tutor
+  - name: Dashboard
+    description: Endpoint untuk data dashboard pengguna
 
 paths:
   /registerOtpEmail:
@@ -46,10 +50,15 @@ paths:
     $ref: './paths/authentication.yaml#/authProviderCallback'
   /login:
     $ref: './paths/authentication.yaml#/login'
+  /logout:
+    $ref: './paths/authentication.yaml#/logout'
   /studentRegister:
     $ref: './paths/authentication.yaml#/studentRegister'
   /tutorRegister:
     $ref: './paths/authentication.yaml#/tutorRegister'
+
+  /user:
+    $ref: './paths/authentication.yaml#/currentUser'
 
   /getBankList:
     $ref: './paths/payment-gateway.yaml#/getBankList'
@@ -80,7 +89,7 @@ paths:
     $ref: './paths/user-profile.yaml#/studentBiodata'
   /updateStudentBiodata:
     $ref: './paths/user-profile.yaml#/updateStudentBiodata'
-  /meTutor:
+  /meAsTutor:
     $ref: './paths/user-profile.yaml#/meAsTutor'
   /getTutorById:
     $ref: './paths/user-profile.yaml#/getTutorById'
@@ -91,8 +100,14 @@ paths:
   /updateProfilePhoto:
     $ref: './paths/user-profile.yaml#/updateProfilePhoto'
 
-  /getAllUserNotification:
-    $ref: './paths/notification.yaml#/getAllUserNotification'
+  /getNotificationByUserId:
+    $ref: './paths/notification.yaml#/getNotificationByUserId'
+
+  /getTutorByCriteria:
+    $ref: './paths/tutor.yaml#/getTutorByCriteria'
+
+  /student/dashboard/homepage:
+    $ref: './paths/dashboard.yaml#/studentHomepage'
 
 components:
   securitySchemes:

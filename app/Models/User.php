@@ -37,6 +37,8 @@ class User extends Authenticatable
         'gender',
         'religion',
         'home_address',
+        'warning',
+        'sanction',
         'latitude',
         'longitude',
         'fcm_token',
@@ -67,7 +69,8 @@ class User extends Authenticatable
             'role' => RoleEnum::class,
             'gender' => GenderEnum::class,
             'religion' => ReligionEnum::class,
-            'rekening' => 'string'
+            'rekening' => 'string',
+            'sanction' => 'datetime',
         ];
     }
 

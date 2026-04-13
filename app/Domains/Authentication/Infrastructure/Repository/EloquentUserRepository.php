@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Tutor;
 use App\Models\User;
 use App\Shared\Enums\FileTypeEnum;
+use App\Shared\Enums\RoleEnum;
 use App\Shared\Infrastructure\Queues\ProcessFileUploadJob;
 use App\Shared\Infrastructure\Queues\ProcessProfilePhotoUploadJob;
 use App\Shared\Ports\TaskQueueInterface;
@@ -55,7 +56,7 @@ class EloquentUserRepository implements UserRepositoryInterface
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'email_verified_at' => $data['email_verified_at'],
-                'role' => 'student',
+                'role' => RoleEnum::STUDENT,
                 'password' => Hash::make($data['password']),
                 'google_id' => $data['google_id'],
                 'facebook_id' => $data['facebook_id'],
@@ -99,6 +100,7 @@ class EloquentUserRepository implements UserRepositoryInterface
                 'email' => $data['email'],
                 'email_verified_at' => $data['email_verified_at'],
                 'password' => Hash::make($data['password']),
+                'role' => RoleEnum::TUTOR,
                 'google_id' => $data['google_id'],
                 'facebook_id' => $data['facebook_id'],
                 'gender' => $data['gender'],
@@ -122,21 +124,21 @@ class EloquentUserRepository implements UserRepositoryInterface
 
             $cv = $user->files()->create([
                 'name' => $data['cv_name'],
-                'type' => FileTypeEnum::CV->value,
+                'type' => FileTypeEnum::CV,
                 'path' => $data['curriculum_vitae_temp_path'],
                 'status' => 'pending',
             ]);
 
             $idCard = $user->files()->create([
                 'name' => $data['id_card_name'],
-                'type' => FileTypeEnum::ID_CARD->value,
+                'type' => FileTypeEnum::ID_CARD,
                 'path' => $data['id_card_temp_path'],
                 'status' => 'pending',
             ]);
 
             $certificate = $user->files()->create([
                 'name' => $data['certificate_name'],
-                'type' => FileTypeEnum::CERTIFICATE->value,
+                'type' => FileTypeEnum::CERTIFICATE,
                 'path' => $data['certificate_temp_path'],
                 'status' => 'pending',
             ]);

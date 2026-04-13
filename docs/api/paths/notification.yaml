@@ -1,4 +1,4 @@
-getAllUserNotification:
+getNotificationByUserId:
   get:
     tags:
       - Notification
@@ -6,7 +6,7 @@ getAllUserNotification:
     description: Endpoint untuk mendapatkan daftar notifikasi milik pengguna yang sedang login, beserta metadata pagination.
     security:
       - bearerAuth: []
-    operationId: getAllUserNotification
+    operationId: getNotificationByUserId
     responses:
       '200':
         description: Berhasil mendapatkan daftar notifikasi pengguna

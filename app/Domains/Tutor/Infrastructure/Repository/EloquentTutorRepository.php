@@ -28,17 +28,20 @@ class EloquentTutorRepository implements TutorRepositoryInterface
             gender: $user->gender?->displayName(),
             religion: $user->religion?->displayName(),
             homeAddress: $user->home_address,
+            warning: $user->warning,
+            sanction: $user->sanction,
             latitude: $user->latitude,
             longitude: $user->longitude,
             education: $tutor->education,
             salary: $tutor->salary,
+            role: $user->role?->displayName(),
             price: $tutor->price,
             description: $tutor->description,
             bankCode: $tutor->bank_code,
             accountNumber: $tutor->account_number,
             learningMethod: $tutor->learning_method,
-            sanction: $tutor->sanction,
             status: $tutor->status?->displayName(),
+            avgRate: $tutor->reviews_avg_rate ?? null,
         );
     }
 
@@ -117,17 +120,20 @@ class EloquentTutorRepository implements TutorRepositoryInterface
             gender: $user->gender?->displayName(),
             religion: $user->religion?->displayName(),
             homeAddress: $user->home_address,
+            warning: $user->warning,
+            sanction: $user->sanction,
             latitude: $user->latitude,
             longitude: $user->longitude,
             education: $tutor->education,
             salary: $tutor->salary,
+            role: $user->role?->displayName(),
             price: $tutor->price,
             description: $tutor->description,
             bankCode: $tutor->bank_code,
             accountNumber: $tutor->account_number,
             learningMethod: $tutor->learning_method,
-            sanction: $tutor->sanction,
             status: $tutor->status?->displayName(),
+            avgRate: $tutor->reviews_avg_rate ?? null,
             );
         })->toArray();
         
