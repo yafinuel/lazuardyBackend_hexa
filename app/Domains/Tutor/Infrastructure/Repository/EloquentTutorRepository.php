@@ -139,5 +139,19 @@ class EloquentTutorRepository implements TutorRepositoryInterface
         });
     }
 
+    // public function createTutor(array $data)
+    // {
+    //     Tutor::create([
+    //         'user_id' => $data['user_id'],
+    //         'education' => $data['education'],
+    //         'salary' => $data['salary'],
+    //         'price' => $data['price'],
+    //         'description' => $data['description'],
+    //         'bank_code' => $data['bank_code'],
+    //         'account_number' => $data['account_number'],
+    //         'learning_method' => $data['learning_method'],
+    //     ]);
+    // }
+
     
 }

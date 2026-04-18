@@ -31,7 +31,7 @@ class StudentHomePageAction
 
         return [
             'user_name' => $result['me']->name,
-            'warning' => $result['me']->warning,
+            'warning' => $result['warning'],
             'sanction' => $result['me']->sanction,
             'session' => $result['me']->session,
             'notification' => $notifications,
