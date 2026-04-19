@@ -13,8 +13,8 @@ StudentRegisterRequest:
     regency: { type: string }
     district: { type: string }
     subdistrict: { type: string }
-    google_id: { type: string, example: nullable }
-    facebook_id: { type: string, example: nullable }
+    google_id: { type: string, nullable: true, example: null }
+    facebook_id: { type: string, nullable: true, example: null }
 
 Bank:
   type: object

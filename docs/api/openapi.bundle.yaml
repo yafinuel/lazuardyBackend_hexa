@@ -97,15 +97,23 @@ paths:
           content:
             application/json:
               example:
-                status: verified
-        '404':
-          description: OTP tidak valid atau kadaluwarsa
+                status: success
+        '403':
+          description: OTP tidak valid
           content:
             application/json:
               example:
                 status: error
                 message: Gagal memverifikasi OTP
-                debug_error: OTP mismatch
+                debug_error: Kode OTP yang Anda masukkan salah.
+        '404':
+          description: OTP tidak ditemukan atau kadaluwarsa
+          content:
+            application/json:
+              example:
+                status: error
+                message: Gagal memverifikasi OTP
+                debug_error: OTP tidak ditemukan atau sudah kedaluwarsa.
         '422':
           $ref: '#/components/responses/ValidationError'
   /forgotPasswordOtpEmail:
@@ -130,10 +138,20 @@ paths:
       responses:
         '201':
           description: OTP Berhasil dikirim
+          content:
+            application/json:
+              example:
+                status: success
         '422':
           $ref: '#/components/responses/ValidationError'
         '500':
-          $ref: '#/components/responses/ServerError'
+          description: Gagal mengirim OTP
+          content:
+            application/json:
+              example:
+                status: error
+                message: Gagal mengirim OTP
+                debug_error: Terjadi kesalahan sistem saat memproses OTP.
   /forgotPasswordVerifyOtpEmail:
     post:
       tags:
@@ -170,10 +188,32 @@ paths:
                   reset_token:
                     type: string
                     example: PmBbJbJTiub0IbNe
-        '404':
+        '403':
           description: OTP salah
+          content:
+            application/json:
+              example:
+                status: error
+                message: Gagal memverifikasi OTP
+                debug_error: Kode OTP yang Anda masukkan salah.
+        '404':
+          description: OTP tidak ditemukan atau sudah kedaluwarsa
+          content:
+            application/json:
+              example:
+                status: error
+                message: Gagal memverifikasi OTP
+                debug_error: OTP tidak ditemukan atau sudah kedaluwarsa.
+        '422':
+          $ref: '#/components/responses/ValidationError'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              example:
+                status: error
+                message: Gagal memverifikasi OTP
+                debug_error: Terjadi kesalahan sistem saat memproses OTP.
   /forgotPasswordResetPassword:
     post:
       tags:
@@ -207,7 +247,7 @@ paths:
                   example: passwordBaru123
                 reset_token:
                   type: string
-                  description: Token unik yang didapat dari response verifyOtpRegisterEmail
+                  description: Token unik yang didapat dari response forgotPasswordVerifyOtpEmail
                   example: aB1cD2eF3gH4iJ5k
       responses:
         '200':
@@ -296,6 +336,7 @@ paths:
               example:
                 status: success
                 access_token: 1|...
+                role: student
                 token_type: Bearer
         '422':
           $ref: '#/components/responses/ValidationError'
@@ -335,12 +376,24 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentRegisterRequest'
       responses:
-        '201':
+        '200':
           description: Berhasil mendaftar
+          content:
+            application/json:
+              example:
+                status: success
+                access_token: 1|...
+                token_type: Bearer
         '422':
           $ref: '#/components/responses/ValidationError'
         '500':
           description: Gagal mendaftar
+          content:
+            application/json:
+              example:
+                status: error
+                message: Gagal melakukan registrasi siswa.
+                debug_error: Terjadi kesalahan saat menyimpan data ke sistem.
   /tutorRegister:
     post:
       tags:
@@ -465,7 +518,7 @@ paths:
                   format: binary
                   description: Upload file PDF
       responses:
-        '201':
+        '200':
           description: Berhasil mendaftar
           content:
             application/json:
@@ -476,12 +529,13 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
         '500':
-          description: Gagal melakukan registrasi tutor.
+          description: Gagal melakukan registrasi tentor.
           content:
             application/json:
               example:
                 status: error
-                message: Gagal melakukan registrasi tutor.
+                message: Gagal melakukan registrasi tentor.
+                debug_error: Terjadi kesalahan saat menyimpan data ke sistem.
   /user:
     get:
       tags:
@@ -1527,10 +1581,12 @@ components:
           type: string
         google_id:
           type: string
-          example: nullable
+          nullable: true
+          example: null
         facebook_id:
           type: string
-          example: nullable
+          nullable: true
+          example: null
     Bank:
       type: object
       properties:

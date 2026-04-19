@@ -142,11 +142,6 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            FileStorageInterface::class,
-            LaravelFileStorage::class
-        );
-
-        $this->app->bind(
             OtpRepositoryInterface::class,
             EloquentOtpRepository::class
         );
