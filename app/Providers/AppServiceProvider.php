@@ -2,14 +2,8 @@
 
 namespace App\Providers;
 
-use App\Domains\Authentication\Infrastructure\Messaging\LaravelMailer;
-use App\Domains\Authentication\Infrastructure\Repository\EloquentOtpRepository;
-use App\Domains\Authentication\Infrastructure\Repository\EloquentUserRepository as EloquentAuthRepository;
 use App\Domains\Authentication\Infrastructure\Services\AuthenticationServiceAdapter;
 use App\Domains\Authentication\Ports\AuthenticationServicePort;
-use App\Domains\Authentication\Ports\MailerInterface;
-use App\Domains\Authentication\Ports\OtpRepositoryInterface;
-use App\Domains\Authentication\Ports\UserRepositoryInterface as AuthRepositoryInterface;
 use App\Domains\ClassDomain\Infrastructure\Repository\EloquentClassRepository;
 use App\Domains\ClassDomain\Ports\ClassRepositoryInterface;
 use App\Domains\CourseCatalog\Infrastructure\Service\CourseCatalogServiceAdapter;
@@ -22,10 +16,14 @@ use App\Domains\FileManager\Ports\FileRepositoryInterface;
 use App\Domains\FileManager\Ports\FileStorageInterface;
 use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
 use App\Domains\Finance\Ports\BankValidatorInterface;
+use App\Domains\MailManager\Infrastructure\Messaging\LaravelMailer;
+use App\Domains\MailManager\Ports\MailerInterface;
 use App\Domains\Notification\Infrastructure\External\Firebase\FcmAdapter;
 use App\Domains\Notification\Infrastructure\Repository\EloquentNotificationRepository;
 use App\Domains\Notification\Ports\NotificationGatewayInterface;
 use App\Domains\Notification\Ports\NotificationRepositoryInterface;
+use App\Domains\OtpManager\Infrastructure\Repository\EloquentOtpRepository;
+use App\Domains\OtpManager\Ports\OtpRepositoryInterface;
 use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
 use App\Domains\Package\Ports\PackageRepositoryInterface;
 use App\Domains\Penalty\Infrastructure\Repository\EloquentPenaltyRepository;
@@ -54,23 +52,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
-            AuthRepositoryInterface::class,
-            EloquentAuthRepository::class
-        );
-
-        $this->app->bind(
             UserRepositoryInterface::class,
             EloquentUserRepository::class
-        );
-
-        $this->app->bind(
-            OtpRepositoryInterface::class,
-            EloquentOtpRepository::class
-        );
-
-        $this->app->bind(
-            MailerInterface::class,
-            LaravelMailer::class
         );
 
         $this->app->bind(
@@ -161,6 +144,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             FileStorageInterface::class,
             LaravelFileStorage::class
+        );
+
+        $this->app->bind(
+            OtpRepositoryInterface::class,
+            EloquentOtpRepository::class
+        );
+
+        $this->app->bind(
+            MailerInterface::class,
+            LaravelMailer::class
         );
     }
 

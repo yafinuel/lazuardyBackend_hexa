@@ -2,7 +2,8 @@
 
 namespace App\Domains\Authentication\Actions;
 
-use App\Domains\Authentication\Ports\UserRepositoryInterface;
+use App\Domains\Authentication\Ports\AuthenticationServicePort;
+use App\Domains\User\Ports\UserRepositoryInterface;
 use Illuminate\Support\Str;
 
 use function Symfony\Component\Clock\now;
@@ -15,19 +16,19 @@ class AuthenticateSocialAction
      * 2. Jika email ditemukan dan sudah memiliki "provider_id" maka akan login
      * 3. Jika email tidak ditemukan maka akan mengirim data ke API berupa identitas yang didapatkan dari OAuth dan selanjutnya akan diarahkan ke biodata.
      */
-    public function __construct(protected UserRepositoryInterface $repository)
+    public function __construct(protected AuthenticationServicePort $service, protected UserRepositoryInterface $userRepository)
     {}
 
     public function execute(object $socialUser, string $provider)
     {
-        $user = $this->repository->findByEmail($socialUser->getEmail());
+        $user = $this->userRepository->getUserByEmail($socialUser->getEmail());
 
         if ($user) {
             if (!$user->$provider + '_id') {
                 // provider without "_id".
-                $this->repository->updateSocialId($user->id, $provider, $socialUser->getId());
+                $this->userRepository->updateSocialId($user->id, $provider, $socialUser->getId());
             }
-            $token = $this->repository->getToken($user->id);
+            $token = $this->service->getToken($user->id);
             return [
                 'message' => 'Authorized',
                 'access_token' => $token,

@@ -5,12 +5,17 @@ namespace App\Domains\Authentication\Infrastructure\Services;
 use App\Domains\Authentication\Ports\AuthenticationServicePort;
 use App\Domains\FileManager\Actions\MoveToPermanentPathAction;
 use App\Domains\FileManager\Actions\SaveJobApplicationLetterAction;
+use App\Domains\OtpManager\Actions\SendOtpAction;
+use App\Domains\OtpManager\Actions\VerifyOtpAction;
 use App\Domains\Schedule\Actions\CreateTutorScheduleAction;
 use App\Domains\Subject\Actions\CreateTutorSubjectAction;
 use App\Domains\Tutor\Actions\CreateTutorAction;
 use App\Domains\User\Actions\CreateUserAction;
+use App\Domains\User\Actions\ResetPasswordAction;
 use App\Models\User;
 use App\Shared\Enums\FileTypeEnum;
+use App\Shared\Enums\OtpIdentifierEnum;
+use App\Shared\Enums\OtpVerificationTypeEnum;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -23,9 +28,10 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
         protected CreateTutorScheduleAction $createTutorScheduleAction,
         protected SaveJobApplicationLetterAction $saveJobApplicationLetterAction,
         protected MoveToPermanentPathAction $moveToPermanentPathAction,
+        protected SendOtpAction $sendOtpAction,
+        protected VerifyOtpAction $verifyOtpAction,
+        protected ResetPasswordAction $resetPasswordAction,
     ){}
-
-
 
     public function tutorRegister(array $userData, array $tutorData, int $subjectId, array $scheduleData, array $fileData): int
     {
@@ -78,5 +84,20 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
         User::find($userId)->tokens()->delete();
         $token = User::find($userId)->createToken('auth_token')->plainTextToken;
         return $token;
+    }
+
+    public function registerOtpEmail(string $email, OtpIdentifierEnum $identifierType, OtpVerificationTypeEnum $verificationType, string $subject, string $title): string
+    {
+        return $this->sendOtpAction->execute($email, $identifierType, $verificationType, $subject, $title);
+    }
+
+    public function verifyOtpEmail(string $code, string $identifier, OtpIdentifierEnum $identifierType, OtpVerificationTypeEnum $verificationType): ?string
+    {
+        return $this->verifyOtpAction->execute($code, $identifier, $identifierType, $verificationType);
+    }
+
+    public function resetPassword(string $email, string $resetToken, string $newPassword): void
+    {
+        $this->resetPasswordAction->execute($email, $resetToken, $newPassword);
     }
 }

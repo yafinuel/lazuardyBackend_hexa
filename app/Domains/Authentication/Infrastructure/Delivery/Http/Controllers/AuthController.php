@@ -2,12 +2,17 @@
 
 namespace App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers;
 
+use App\Domains\Authentication\Actions\ForgotPasswordOtpEmailAction;
 use App\Domains\Authentication\Actions\LoginManualAction;
+use App\Domains\Authentication\Actions\RegisterOtpEmailAction;
 use App\Domains\Authentication\Actions\ResetPasswordAction;
+use App\Domains\Authentication\Actions\ResetPasswordAuthAction;
 use App\Domains\Authentication\Actions\SendOtpAction;
 use App\Domains\Authentication\Actions\StudentRegisterPageAction;
 use App\Domains\Authentication\Actions\TutorRegisterPageAction;
 use App\Domains\Authentication\Actions\VerifyOtpAction;
+use App\Domains\Authentication\Actions\VerifyOtpEmailForgotPasswordAction;
+use App\Domains\Authentication\Actions\VerifyOtpRegisterEmailAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\GenderEnum;
 use App\Shared\Enums\OtpIdentifierEnum;
@@ -30,6 +35,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             'access_token' => $result['token'],
+            'role' => $result['role'],
             'token_type' => 'Bearer'
         ], 200);
     }
@@ -43,14 +49,14 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function registerOtpEmail(Request $request, SendOtpAction $action)
+    public function registerOtpEmail(Request $request, RegisterOtpEmailAction $action)
     {
-        $request->validate([
+        $data = $request->validate([
             "email" => ['required', 'email'],
         ]);
         
         try {
-            $otp = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::REGISTER->value, "Kode Verifikasi OTP Lazuardy App", "Verifikasi Akun");
+            $action->execute($data);
 
             return response()->json([
                 'status' => 'success'
@@ -64,14 +70,14 @@ class AuthController extends Controller
         }
     }
 
-    public function forgotPasswordOtpEmail(Request $request, SendOtpAction $action)
+    public function forgotPasswordOtpEmail(Request $request, ForgotPasswordOtpEmailAction $action)
     {
-        $request->validate([
+        $data = $request->validate([
             "email" => ['required', 'email'],
         ]);
         
         try {
-            $otp = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::FORGOT_PASSWORD->value, "Kode OTP Lupa Password Lazuardy App", "Forgot Password");
+            $action->execute($data);
 
             return response()->json([
                 'status' => 'success'
@@ -85,15 +91,15 @@ class AuthController extends Controller
         }
     }
 
-    public function verifyOtpRegisterEmail(Request $request, VerifyOtpAction $action)
+    public function verifyOtpRegisterEmail(Request $request, VerifyOtpRegisterEmailAction $action)
     {
-        $request->validate([
+        $data = $request->validate([
             'email' => ['required', 'email'],
             'otp' => ['required', 'string']
         ]);
 
         try {
-            $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::REGISTER->value, $request->otp);
+            $action->execute($data);
             
             return response()->json([
                 'status' => 'success',
@@ -107,15 +113,15 @@ class AuthController extends Controller
         }
     }
 
-    public function forgotPasswordVerifyOtpEmail(Request $request, VerifyOtpAction $action)
+    public function forgotPasswordVerifyOtpEmail(Request $request, VerifyOtpEmailForgotPasswordAction $action)
     {
-        $request->validate([
+        $data = $request->validate([
             'email' => ['required', 'email'],
             'otp' => ['required', 'string']
         ]);
 
         try {
-            $resetToken = $action->execute($request->email, OtpIdentifierEnum::EMAIL->value, OtpVerificationTypeEnum::FORGOT_PASSWORD->value, $request->otp);
+            $resetToken = $action->execute($data);
             
             return response()->json([
                 'status' => 'success',
@@ -130,16 +136,16 @@ class AuthController extends Controller
         }
     }
 
-    public function forgotPasswordResetPassword(Request $request, ResetPasswordAction $action)
+    public function forgotPasswordResetPassword(Request $request, ResetPasswordAuthAction $action)
     {
-        $request->validate([
+        $data = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string', 'min:8'],
             'reset_token' => ['required', 'string'],
         ]);
 
         try {
-            $action->execute($request['email'], $request['password'], $request['reset_token']);
+            $action->execute($data);
             return response()->json([
                 'status' => 'success'
             ], 200);
@@ -176,7 +182,6 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'success',
                 'access_token' => $result['token'],
-                'role' => $result['role'],
                 'token_type' => 'Bearer'
             ], 200);
 
@@ -226,7 +231,6 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'success',
                 'access_token' => $result['token'],
-                'role' => $result['role'],
                 'token_type' => 'Bearer'
             ], 200);
         } catch (Exception $e) {
