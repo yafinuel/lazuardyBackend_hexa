@@ -52,4 +52,28 @@ class EloquentUserRepository implements UserRepositoryInterface
             longitude: $user->longitude,
         );
     }
+
+    public function getUserByEmail(string $email): UserEntity
+    {
+        $user = User::where('email', $email)->firstOrFail();
+        
+        return new UserEntity(
+            id: $user->id,
+            name: $user->name,
+            email: $user->email,
+            emailVerifiedAt: $user->email_verified_at,
+            telephoneNumber: $user->telephone_number,
+            telephoneVerifiedAt: $user->telephone_verified_at,
+            profilePhotoUrl: $user->profile_photo_path,
+            dateOfBirth: $user->date_of_birth, 
+            gender: $user->gender?->displayName(),
+            religion: $user->religion,
+            homeAddress: $user->home_address,
+            role: $user->role?->value,
+            warning: $user->warning,
+            sanction: $user->sanction,
+            latitude: $user->latitude,
+            longitude: $user->longitude,
+        );
+    }
 }

@@ -8,4 +8,5 @@ interface UserRepositoryInterface
 {
     public function createUser(array $data): int;
     public function getUserById(int $userId): UserEntity;
+    public function getUserByEmail(string $email): UserEntity;
 }

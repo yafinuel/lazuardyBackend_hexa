@@ -63,4 +63,15 @@ class EloquentStudentRepository implements StudentRepositoryInterface
             throw new Exception('Failed to update student profile');
         }
     }
+
+    public function createStudent(int $userId, array $studentData): int
+    {
+        $student = Student::create([
+            'user_id' => $userId,
+            'session' => $studentData['session'],
+            'class_id' => $studentData['class_id'],
+        ]);
+
+        return $student->user_id;
+    }
 }

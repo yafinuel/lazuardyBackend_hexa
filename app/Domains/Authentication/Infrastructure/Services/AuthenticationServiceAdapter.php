@@ -25,6 +25,8 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
         protected MoveToPermanentPathAction $moveToPermanentPathAction,
     ){}
 
+
+
     public function tutorRegister(array $userData, array $tutorData, int $subjectId, array $scheduleData, array $fileData): int
     {
         DB::beginTransaction();
@@ -50,6 +52,20 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
                     $this->moveToPermanentPathAction->execute($certificate['id'], $certificate['temp_path'], FileTypeEnum::CERTIFICATE->value . '/' . $userId);
                 }
             );
+            return $userId;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function studentRegister(array $userData, array $studentData): int
+    {
+        DB::beginTransaction();
+        try {
+            $userId = $this->createUserAction->execute($userData);
+            $this->createTutorAction->execute($userId, $studentData);
+            DB::commit();
             return $userId;
         } catch (Exception $e) {
             DB::rollBack();

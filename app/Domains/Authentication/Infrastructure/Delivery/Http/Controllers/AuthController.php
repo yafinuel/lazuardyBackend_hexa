@@ -5,8 +5,7 @@ namespace App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers;
 use App\Domains\Authentication\Actions\LoginManualAction;
 use App\Domains\Authentication\Actions\ResetPasswordAction;
 use App\Domains\Authentication\Actions\SendOtpAction;
-use App\Domains\Authentication\Actions\StudentRegisterAction;
-use App\Domains\Authentication\Actions\TutorRegisterAction;
+use App\Domains\Authentication\Actions\StudentRegisterPageAction;
 use App\Domains\Authentication\Actions\TutorRegisterPageAction;
 use App\Domains\Authentication\Actions\VerifyOtpAction;
 use App\Http\Controllers\Controller;
@@ -152,7 +151,7 @@ class AuthController extends Controller
         }
     }
     
-    public function studentRegister(Request $request, StudentRegisterAction $action)
+    public function studentRegister(Request $request, StudentRegisterPageAction $action)
     {
         $data = $request->validate([
             'email' => ['required', 'email', 'unique:users,email'],
@@ -172,11 +171,12 @@ class AuthController extends Controller
 
         try {
 
-            $token = $action->execute($data);
+            $result = $action->execute($data);
 
             return response()->json([
                 'status' => 'success',
-                'access_token' => $token,
+                'access_token' => $result['token'],
+                'role' => $result['role'],
                 'token_type' => 'Bearer'
             ], 200);
 
