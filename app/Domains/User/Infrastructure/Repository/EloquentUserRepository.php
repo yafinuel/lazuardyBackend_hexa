@@ -38,6 +38,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             name: $user->name,
             email: $user->email,
             emailVerifiedAt: $user->email_verified_at,
+            password: null,
             telephoneNumber: $user->telephone_number,
             telephoneVerifiedAt: $user->telephone_verified_at,
             profilePhotoUrl: $user->profile_photo_path,
@@ -62,6 +63,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             name: $user->name,
             email: $user->email,
             emailVerifiedAt: $user->email_verified_at,
+            password: $user->password,
             telephoneNumber: $user->telephone_number,
             telephoneVerifiedAt: $user->telephone_verified_at,
             profilePhotoUrl: $user->profile_photo_path,
@@ -75,5 +77,25 @@ class EloquentUserRepository implements UserRepositoryInterface
             latitude: $user->latitude,
             longitude: $user->longitude,
         );
+    }
+
+    public function resetPassword(string $email, string $newPassword): void
+    {
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            throw new \Exception("User dengan email tersebut tidak ditemukan.", 404);
+        }
+
+        $user->update([
+            'password' => Hash::make($newPassword),
+        ]);
+    }
+
+    public function updateSocialId(int $userId, string $provider, string $providerId): void
+    {
+        $providerColumn = $provider . "_id";
+        User::where('id', $userId)->update([
+            $providerColumn => $providerId
+        ]);
     }
 }

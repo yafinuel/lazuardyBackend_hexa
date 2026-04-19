@@ -11,6 +11,7 @@ class UserEntity {
         public ?string $name,
         public readonly ?string $email,
         public readonly ?string $emailVerifiedAt,
+        public ?string $password,
         public ?string $telephoneNumber,
         public ?string $telephoneVerifiedAt,
         public ?string $profilePhotoUrl,
