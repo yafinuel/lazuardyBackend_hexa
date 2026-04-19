@@ -1,5 +1,6 @@
 <?php
 
+use App\Shared\Enums\FileStatusEnum;
 use App\Shared\Enums\FileTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,14 +14,15 @@ return new class extends Migration
     public function up(): void
     {
         $fileTypes = FileTypeEnum::list();
+        $fileStatus = FileStatusEnum::list();
 
-        Schema::create('files', function (Blueprint $table) use ($fileTypes) {
+        Schema::create('files', function (Blueprint $table) use ($fileTypes, $fileStatus) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('name');
             $table->enum('type', $fileTypes);
             $table->string('path');
-            $table->string('status');
+            $table->enum('status', $fileStatus);
             $table->timestamps();
         });
     }

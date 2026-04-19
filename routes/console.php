@@ -75,6 +75,65 @@ PHP;
     }
 )->purpose('Membuat file repository baru di folder Domain');
 
+Artisan::command('domain:infrastructure {domainName} {name}', function (string $domainName, string $name){
+    $directory = app_path("Domains/{$domainName}/Infrastructure");
+    $filePath = "{$directory}/{$name}.php";
+
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0755, true);
+    }
+
+    if (File::exists($filePath)) {
+        $this->error("Infrastucture {$name} sudah ada di domain {$domainName}!");
+        return;
+    }
+
+    $template = <<<PHP
+<?php
+
+namespace App\Domains\\{$domainName}\Infrastructure;
+
+class {$name} implements 
+{
+}
+PHP;
+
+    File::put($filePath, $template);
+
+    $this->info("Berhasil membuat infrastructure: {$filePath}");
+    }
+)->purpose('Membuat file infrastructure baru di folder Domain');
+
+Artisan::command('domain:infrastructure {domainName} {folder} {name}', function (string $domainName, string $name, string $folder){
+    $directory = app_path("Domains/{$domainName}/Infrastructure/{$folder}");
+    $filePath = "{$directory}/{$name}.php";
+
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0755, true);
+    }
+
+    if (File::exists($filePath)) {
+        $this->error("Infrastucture {$name} sudah ada di domain {$domainName}!");
+        return;
+    }
+
+    $template = <<<PHP
+<?php
+
+namespace App\Domains\\{$domainName}\Infrastructure;
+
+class {$name} implements 
+{
+}
+PHP;
+
+    File::put($filePath, $template);
+
+    $this->info("Berhasil membuat infrastructure: {$filePath}");
+    }
+)->purpose('Membuat file infrastructure baru di folder Domain');
+
+
 Artisan::command('domain:action {domainName} {name}', function (string $domainName, string $name){
     $directory = app_path("Domains/{$domainName}/Actions");
     $filePath = "{$directory}/{$name}.php";
@@ -321,3 +380,80 @@ PHP;
     $this->info("Berhasil membuat service: {$filePath}");
     }
 )->purpose('Membuat file service baru di folder Domain');
+
+Artisan::command('domain:job {domainName} {name}', function (string $domainName, string $name){
+    $directory = app_path("Domains/{$domainName}/Infrastructure/Jobs");
+    $filePath = "{$directory}/{$name}.php";
+
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0755, true);
+    }
+
+    if (File::exists($filePath)) {
+        $this->error("Job {$name} sudah ada di domain {$domainName}!");
+        return;
+    }
+
+    $template = <<<PHP
+<?php
+
+namespace App\Domains\FileManager\Infrastructure\Jobs;
+
+use App\Domains\FileManager\Ports\FileStorageInterface;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+
+class ProcessFileUploadJob implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(
+    ) {}
+
+    /**
+     * Execute the job.
+     */
+    public function handle(FileStorageInterface \$storage, ): void
+    {
+    }
+}
+
+PHP;
+
+    File::put($filePath, $template);
+
+    $this->info("Berhasil membuat job: {$filePath}");
+    }
+)->purpose('Membuat file job baru di folder Domain');
+
+Artisan::command('domain:queue {domainName} {name}', function (string $domainName, string $name){
+    $directory = app_path("Domains/{$domainName}/Infrastructure/Queues");
+    $filePath = "{$directory}/{$name}.php";
+
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0755, true);
+    }
+
+    if (File::exists($filePath)) {
+        $this->error("Queue {$name} sudah ada di domain {$domainName}!");
+        return;
+    }
+
+    $template = <<<PHP
+<?php
+
+namespace App\Domains\QueueManager\Infrastructure\Queues;
+
+class LaravelTaskQueue implements
+{
+}
+PHP;
+
+    File::put($filePath, $template);
+
+    $this->info("Berhasil membuat queue: {$filePath}");
+    }
+)->purpose('Membuat file queue baru di folder Domain');

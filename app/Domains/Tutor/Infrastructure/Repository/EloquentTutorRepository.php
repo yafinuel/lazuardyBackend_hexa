@@ -6,6 +6,7 @@ use App\Domains\Tutor\Entities\TutorEntity;
 use App\Domains\Tutor\Ports\TutorRepositoryInterface;
 use App\Models\Tutor;
 use App\Models\User;
+use App\Shared\Enums\RoleEnum;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
@@ -139,19 +140,25 @@ class EloquentTutorRepository implements TutorRepositoryInterface
         });
     }
 
-    // public function createTutor(array $data)
-    // {
-    //     Tutor::create([
-    //         'user_id' => $data['user_id'],
-    //         'education' => $data['education'],
-    //         'salary' => $data['salary'],
-    //         'price' => $data['price'],
-    //         'description' => $data['description'],
-    //         'bank_code' => $data['bank_code'],
-    //         'account_number' => $data['account_number'],
-    //         'learning_method' => $data['learning_method'],
-    //     ]);
-    // }
+    public function createTutor(int $userId,array $data): int
+    {
+        $user = User::where('id', $userId)->firstOrFail();
+
+        $tutor = $user->tutor()->create([
+            'education' => $data['education'] ?? null,
+            'description' => $data['description'] ?? null,
+            'bank_code' => $data['bank_code'] ?? null,
+            'account_number' => $data['account_number'] ?? null,
+            'learning_method' => $data['learning_method'] ?? null,
+            'status' => $data['status'],
+        ]);
+
+        $user->update([
+            'role' => RoleEnum::TUTOR,
+        ]);
+
+        return $tutor->user_id;
+    }
 
     
 }

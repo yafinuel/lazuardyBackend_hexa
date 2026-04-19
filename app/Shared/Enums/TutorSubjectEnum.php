@@ -4,16 +4,16 @@ namespace App\Shared\Enums;
 
 enum TutorSubjectEnum: string
 {
-    case VERIFY = "verify";
-    case ACTIVE = "active";
+    case PENDING = "pending";
+    case VERIFIED = "verified";
     case REJECTED = "rejected";
 
     public function displayName() : string 
     {
         return match($this) 
         {
-            self::ACTIVE => 'Aktif',
-            self::VERIFY => 'Menunggu konfirmasi',
+            self::PENDING => 'Menunggu Verifikasi',
+            self::VERIFIED => 'Terverifikasi',
             self::REJECTED => 'Ditolak', 
         };
     }

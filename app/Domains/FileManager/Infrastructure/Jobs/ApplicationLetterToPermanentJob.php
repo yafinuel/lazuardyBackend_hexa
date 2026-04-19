@@ -1,25 +1,30 @@
 <?php
 
-namespace App\Shared\Infrastructure\Queues;
+namespace App\Domains\FileManager\Infrastructure\Jobs;
 
-use App\Shared\Ports\FileRepositoryInterface;
-use App\Shared\Ports\FileStorageInterface;
+use App\Domains\FileManager\Ports\FileRepositoryInterface;
+use App\Domains\FileManager\Ports\FileStorageInterface;
 use App\Shared\Enums\FileStatusEnum;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
 
-class ProcessFileUploadJob implements ShouldQueue
+class ApplicationLetterToPermanentJob implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Queueable;
 
+    /**
+     * Create a new job instance.
+     */
     public function __construct(
         protected int $documentId, 
         protected string $tempPath,
         protected string $folder,
     ) {}
 
-    public function handle(FileStorageInterface $storage, FileRepositoryInterface $repository)
+    /**
+     * Execute the job.
+     */
+    public function handle(FileStorageInterface $storage, FileRepositoryInterface $repository): void
     {
         $permanentPath = $storage->moveToPermanent($this->tempPath, $this->folder);
         

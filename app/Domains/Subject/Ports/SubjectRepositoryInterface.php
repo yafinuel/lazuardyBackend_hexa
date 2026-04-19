@@ -9,4 +9,5 @@ interface SubjectRepositoryInterface
     public function getAllSubjects(): LengthAwarePaginator;
     public function getSubjectByClass(int $classId): LengthAwarePaginator;
     public function getUniqueSubjectByLevel(string $level): LengthAwarePaginator;
+    public function createTutorSubject(int $tutorId, int $subjectId): bool;
 }

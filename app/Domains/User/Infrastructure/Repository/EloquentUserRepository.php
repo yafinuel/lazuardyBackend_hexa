@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Domains\User\Infrastructure\Repository;
+
+use App\Domains\User\Entities\UserEntity;
+use App\Domains\User\Ports\UserRepositoryInterface;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+class EloquentUserRepository implements UserRepositoryInterface
+{
+    public function createUser(array $data): int
+    {
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'email_verified_at' => $data['email_verified_at'],
+            'password' => Hash::make($data['password']),
+            'google_id' => $data['google_id'],
+            'facebook_id' => $data['facebook_id'],
+            'gender' => $data['gender'],
+            'date_of_birth' => $data['date_of_birth'],
+            'telephone_number' => $data['telephone_number'],
+            'home_address' => $data['home_address'],
+            'profile_photo_path' => $data['profile_photo_temp_path'] ?? 'profile_photo/default/default.jpg',
+            'role' => $data['role'],
+        ]);
+
+        return $user->id;
+    }
+
+    public function getUserById(int $userId): UserEntity
+    {
+        $user = User::findOrFail($userId);
+        
+        return new UserEntity(
+            id: $user->id,
+            name: $user->name,
+            email: $user->email,
+            emailVerifiedAt: $user->email_verified_at,
+            telephoneNumber: $user->telephone_number,
+            telephoneVerifiedAt: $user->telephone_verified_at,
+            profilePhotoUrl: $user->profile_photo_path,
+            dateOfBirth: $user->date_of_birth, 
+            gender: $user->gender?->displayName(),
+            religion: $user->religion,
+            homeAddress: $user->home_address,
+            role: $user->role?->value,
+            warning: $user->warning,
+            sanction: $user->sanction,
+            latitude: $user->latitude,
+            longitude: $user->longitude,
+        );
+    }
+}

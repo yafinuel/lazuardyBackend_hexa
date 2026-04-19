@@ -2,9 +2,10 @@
 
 namespace App\Domains\Subject\Infrastructure\Repository;
 
+use App\Domains\FileManager\Ports\FileStorageInterface;
 use App\Domains\Subject\Ports\SubjectRepositoryInterface;
 use App\Models\Subject;
-use App\Shared\Ports\FileStorageInterface;
+use App\Models\Tutor;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EloquentSubjectRepository implements SubjectRepositoryInterface
@@ -34,5 +35,11 @@ class EloquentSubjectRepository implements SubjectRepositoryInterface
             ->whereIn('id', $uniqueSubjectIds)
             ->orderBy('name')
             ->paginate(15);
+    }
+
+    public function createTutorSubject(int $tutorId, int $subjectId): bool
+    {
+        Tutor::where('user_id', $tutorId)->firstOrFail()->subjects()->attach($subjectId);
+        return true;
     }
 }

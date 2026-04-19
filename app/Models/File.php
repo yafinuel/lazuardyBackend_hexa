@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Shared\Enums\FileStatusEnum;
 use App\Shared\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,7 @@ class File extends Model
     {
         return [
             'type' => FileTypeEnum::class,
+            'status' => FileStatusEnum::class,
         ];
     }
 
