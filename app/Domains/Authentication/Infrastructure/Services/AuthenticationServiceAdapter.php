@@ -37,8 +37,8 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
     {
         DB::beginTransaction();
         try {
-            $userId = $this->createUserAction->execute($userData);
-            $tutorId = $this->createTutorAction->execute($userId, $tutorData);
+            $user = $this->createUserAction->execute($userData);
+            $tutorId = $this->createTutorAction->execute($user->id, $tutorData);
 
             $this->createTutorSubjectAction->execute([
                 'tutor_id' => $tutorId,
@@ -46,19 +46,22 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
             ]);
             $this->createTutorScheduleAction->execute($tutorId, $scheduleData);
             
-            $idCard = $this->saveJobApplicationLetterAction->execute($userId, $fileData['id_card'], FileTypeEnum::ID_CARD);
-            $cv = $this->saveJobApplicationLetterAction->execute($userId, $fileData['curriculum_vitae'], FileTypeEnum::CV);
-            $certificate = $this->saveJobApplicationLetterAction->execute($userId, $fileData['certificate'], FileTypeEnum::CERTIFICATE);
+            $idCard = $this->saveJobApplicationLetterAction->execute($user->id, $fileData['id_card'], FileTypeEnum::ID_CARD);
+            $cv = $this->saveJobApplicationLetterAction->execute($user->id, $fileData['curriculum_vitae'], FileTypeEnum::CV);
+            $certificate = $this->saveJobApplicationLetterAction->execute($user->id, $fileData['certificate'], FileTypeEnum::CERTIFICATE);
 
             DB::commit();
             DB::afterCommit(
-                function () use ($idCard, $cv, $certificate, $userId) {
-                    $this->moveToPermanentPathAction->execute($idCard['id'], $idCard['temp_path'], FileTypeEnum::ID_CARD->value . '/' . $userId);
-                    $this->moveToPermanentPathAction->execute($cv['id'], $cv['temp_path'], FileTypeEnum::CV->value . '/' . $userId);
-                    $this->moveToPermanentPathAction->execute($certificate['id'], $certificate['temp_path'], FileTypeEnum::CERTIFICATE->value . '/' . $userId);
+                function () use ($idCard, $cv, $certificate, $user, $userData) {
+                    $this->moveToPermanentPathAction->execute($idCard['id'], $idCard['temp_path'], FileTypeEnum::ID_CARD->value . '/' . $user->id);
+                    $this->moveToPermanentPathAction->execute($cv['id'], $cv['temp_path'], FileTypeEnum::CV->value . '/' . $user->id);
+                    $this->moveToPermanentPathAction->execute($certificate['id'], $certificate['temp_path'], FileTypeEnum::CERTIFICATE->value . '/' . $user->id);
+                    if(isset($userData['profile_photo'])) {
+                        $this->moveToPermanentPathAction->execute($user->id, $user->profilePhotoUrl, 'profile_photo/' . $user->id, true);
+                    }
                 }
             );
-            return $userId;
+            return $user->id;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -69,10 +72,10 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
     {
         DB::beginTransaction();
         try {
-            $userId = $this->createUserAction->execute($userData);
-            $this->createTutorAction->execute($userId, $studentData);
+            $user = $this->createUserAction->execute($userData);
+            $this->createTutorAction->execute($user->id, $studentData);
             DB::commit();
-            return $userId;
+            return $user->id;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;

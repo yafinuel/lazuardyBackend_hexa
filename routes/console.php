@@ -403,7 +403,7 @@ use App\Domains\FileManager\Ports\FileStorageInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
-class ProcessFileUploadJob implements ShouldQueue
+class {$name} implements ShouldQueue
 {
     use Queueable;
 
@@ -447,7 +447,7 @@ Artisan::command('domain:queue {domainName} {name}', function (string $domainNam
 
 namespace App\Domains\QueueManager\Infrastructure\Queues;
 
-class LaravelTaskQueue implements
+class {$name} implements
 {
 }
 PHP;

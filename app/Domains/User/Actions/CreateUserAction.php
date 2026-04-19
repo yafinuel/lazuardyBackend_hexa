@@ -3,14 +3,14 @@
 namespace App\Domains\User\Actions;
 
 use App\Domains\FileManager\Infrastructure\Storages\LaravelFileStorage;
+use App\Domains\User\Entities\UserEntity;
 use App\Domains\User\Ports\UserRepositoryInterface;
-use Carbon\Carbon;
 
 class CreateUserAction
 {
     public function __construct(protected UserRepositoryInterface $repository, protected LaravelFileStorage $fileStorage) {}
 
-    public function execute(array $data): int
+    public function execute(array $data): UserEntity
     {
         $filter = [
             'name' => $data['name'],
@@ -28,7 +28,7 @@ class CreateUserAction
 
         if(isset($data['profile_photo'])) {
             $tempPath = $this->fileStorage->uploadToTemp($data['profile_photo']);
-            $filter['profile_photo'] = $tempPath;
+            $filter['profile_photo_temp_path'] = $tempPath;
         }
         return $this->repository->createUser($filter);
     }

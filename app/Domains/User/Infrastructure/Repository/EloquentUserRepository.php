@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class EloquentUserRepository implements UserRepositoryInterface
 {
-    public function createUser(array $data): int
+    public function createUser(array $data): UserEntity
     {
         $user = User::create([
             'name' => $data['name'],
@@ -26,7 +26,25 @@ class EloquentUserRepository implements UserRepositoryInterface
             'role' => $data['role'],
         ]);
 
-        return $user->id;
+        return new UserEntity(
+            id: $user->id,
+            name: $user->name,
+            email: $user->email,
+            emailVerifiedAt: $user->email_verified_at,
+            password: null,
+            telephoneNumber: $user->telephone_number,
+            telephoneVerifiedAt: $user->telephone_verified_at,
+            profilePhotoUrl: $user->profile_photo_path,
+            dateOfBirth: $user->date_of_birth, 
+            gender: $user->gender?->displayName(),
+            religion: $user->religion,
+            homeAddress: $user->home_address,
+            role: $user->role?->value,
+            warning: $user->warning,
+            sanction: $user->sanction,
+            latitude: $user->latitude,
+            longitude: $user->longitude,
+        );
     }
 
     public function getUserById(int $userId): UserEntity
@@ -97,5 +115,10 @@ class EloquentUserRepository implements UserRepositoryInterface
         User::where('id', $userId)->update([
             $providerColumn => $providerId
         ]);
+    }
+
+    public function update(int $userId, array $data): void
+    {
+        User::where('id', $userId)->update($data);
     }
 }
