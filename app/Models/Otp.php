@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Shared\Enums\OtpIdentifierEnum;
+use App\Shared\Enums\OtpVerificationTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 
 class Otp extends Model
@@ -10,6 +12,8 @@ class Otp extends Model
     protected $fillable = ['user_id', 'identifier', 'identifier_type', 'code', 'verification_type', 'attempts', 'expired_at'];
 
     protected $casts = [
+        'identifier_type' => OtpIdentifierEnum::class,
+        'verification_type' => OtpVerificationTypeEnum::class,
         'expired_at' => 'datetime',
     ];
 
