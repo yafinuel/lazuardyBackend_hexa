@@ -3,7 +3,7 @@
 namespace App\Domains\Tutor\Actions;
 
 use App\Domains\Tutor\Ports\TutorRepositoryInterface;
-use App\Shared\Ports\FileStorageInterface;
+use App\Domains\FileManager\Ports\FileStorageInterface;
 
 class GetTutorByIdAction
 {

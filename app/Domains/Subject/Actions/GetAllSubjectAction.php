@@ -4,7 +4,7 @@ namespace App\Domains\Subject\Actions;
 
 use App\Domains\Subject\Entities\SubjectEntity;
 use App\Domains\Subject\Ports\SubjectRepositoryInterface;
-use App\Shared\Ports\FileStorageInterface;
+use App\Domains\FileManager\Ports\FileStorageInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GetAllSubjectAction

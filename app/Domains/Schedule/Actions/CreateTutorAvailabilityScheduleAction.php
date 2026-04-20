@@ -6,7 +6,7 @@ use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class CreateTutorScheduleAction
+class CreateTutorAvailabilityScheduleAction
 {
     public function __construct(protected ScheduleRepositoryInterface $repository) {}
 
@@ -22,6 +22,6 @@ class CreateTutorScheduleAction
             throw new ValidationException($validator);
         }
 
-        return $this->repository->createTutorSchedule($tutorId, $schedules);
+        return $this->repository->createTutorAvailabilitySchedule($tutorId, $schedules);
     }
 }

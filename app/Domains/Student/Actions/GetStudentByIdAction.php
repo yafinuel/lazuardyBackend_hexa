@@ -4,7 +4,7 @@ namespace App\Domains\Student\Actions;
 
 use App\Domains\Student\Entities\StudentEntity;
 use App\Domains\Student\Ports\StudentRepositoryInterface;
-use App\Shared\Ports\FileStorageInterface;
+use App\Domains\FileManager\Ports\FileStorageInterface;
 
 class GetStudentByIdAction
 {

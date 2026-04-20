@@ -7,6 +7,7 @@ use App\Domains\FileManager\Actions\MoveToPermanentPathAction;
 use App\Domains\FileManager\Actions\SaveJobApplicationLetterAction;
 use App\Domains\OtpManager\Actions\SendOtpAction;
 use App\Domains\OtpManager\Actions\VerifyOtpAction;
+use App\Domains\Schedule\Actions\CreateTutorAvailabilityScheduleAction;
 use App\Domains\Schedule\Actions\CreateTutorScheduleAction;
 use App\Domains\Subject\Actions\CreateTutorSubjectAction;
 use App\Domains\Tutor\Actions\CreateTutorAction;
@@ -25,7 +26,7 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
         protected CreateUserAction $createUserAction,
         protected CreateTutorAction $createTutorAction,
         protected CreateTutorSubjectAction $createTutorSubjectAction,
-        protected CreateTutorScheduleAction $createTutorScheduleAction,
+        protected CreateTutorAvailabilityScheduleAction $createTutorAvailibilityScheduleAction,
         protected SaveJobApplicationLetterAction $saveJobApplicationLetterAction,
         protected MoveToPermanentPathAction $moveToPermanentPathAction,
         protected SendOtpAction $sendOtpAction,
@@ -44,7 +45,7 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
                 'tutor_id' => $tutorId,
                 'subject_id' => $subjectId,
             ]);
-            $this->createTutorScheduleAction->execute($tutorId, $scheduleData);
+            $this->createTutorAvailibilityScheduleAction->execute($tutorId, $scheduleData);
             
             $idCard = $this->saveJobApplicationLetterAction->execute($user->id, $fileData['id_card'], FileTypeEnum::ID_CARD);
             $cv = $this->saveJobApplicationLetterAction->execute($user->id, $fileData['curriculum_vitae'], FileTypeEnum::CV);

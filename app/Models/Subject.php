@@ -33,4 +33,9 @@ class Subject extends Model
     {
         return $this->belongsTo(ClassModel::class, 'class_id');
     }
+    
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'subject_id');
+    }
 }

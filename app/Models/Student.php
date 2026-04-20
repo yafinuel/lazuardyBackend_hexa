@@ -44,13 +44,14 @@ class Student extends Model
         return $this->hasMany(Review::class, 'student_id', 'user_id');
     }
 
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'student_id', 'user_id');
+    }
+    
     // public function studentPackages()
     // {
     //     return $this->hasMany(StudentPackage::class, 'student_user_id', 'user_id');
     // }
 
-    // public function takenSchedules()
-    // {
-    //     return $this->hasMany(TakenSchedule::class, 'user_id', 'user_id');
-    // }
 }

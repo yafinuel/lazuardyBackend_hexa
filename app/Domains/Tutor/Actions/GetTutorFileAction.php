@@ -2,8 +2,8 @@
 
 namespace App\Domains\Tutor\Actions;
 
-use App\Shared\Ports\FileRepositoryInterface;
-use App\Shared\Ports\FileStorageInterface;
+use App\Domains\FileManager\Ports\FileRepositoryInterface;
+use App\Domains\FileManager\Ports\FileStorageInterface;
 
 class GetTutorFileAction
 {

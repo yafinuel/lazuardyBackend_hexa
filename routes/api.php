@@ -11,7 +11,6 @@ use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageControll
 use App\Domains\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
 use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
 use App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController;
-use App\Domains\UserProfile\User\Infrastructure\Delivery\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -59,7 +58,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getTutorById', [TutorController::class, 'getTutorById']);
     Route::get('/getTutorFile', [TutorController::class, 'getTutorFile']);
     Route::patch('/updateTutorBiodata', [TutorController::class, 'updateBiodata']);
-    Route::patch('/updateProfilePhoto', [UserController::class, 'updateProfilePhoto']);
 
     // Package
     Route::get('/getPackages', [PackageController::class, 'index']);
@@ -72,4 +70,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Dashboard
     Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
+    Route::get('/student/dashboard/schedule', [DashboardController::class, 'studentSchedulePage']);
 });

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             ClassSeeder::class,
             SubjectSeeder::class,
             PackageSeeder::class,
+            DashboardDemoSeeder::class,
         ]);
     }
 }

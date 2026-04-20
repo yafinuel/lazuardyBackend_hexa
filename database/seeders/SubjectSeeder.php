@@ -14,9 +14,9 @@ class SubjectSeeder extends Seeder
      */
     public function run(): void
     {
-        $sdClassId = ClassModel::where('level', 'SD')->orderBy('id')->value('id');
-        $smpClassId = ClassModel::where('level', 'SMP')->orderBy('id')->value('id');
-        $smaClassId = ClassModel::where('level', 'SMA')->orderBy('id')->value('id');
+        $sdClassId = ClassModel::where('level', 'sd')->orderBy('id')->value('id');
+        $smpClassId = ClassModel::where('level', 'smp')->orderBy('id')->value('id');
+        $smaClassId = ClassModel::where('level', 'sma')->orderBy('id')->value('id');
         $umumClassId = ClassModel::where('level', 'umum')->orderBy('id')->value('id');
 
         if (! $sdClassId || ! $smpClassId || ! $smaClassId || ! $umumClassId) {

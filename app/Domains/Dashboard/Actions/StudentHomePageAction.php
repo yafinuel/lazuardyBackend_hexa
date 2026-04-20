@@ -3,7 +3,7 @@
 namespace App\Domains\Dashboard\Actions;
 
 use App\Domains\Dashboard\Ports\DashboardServicePort;
-use App\Shared\Ports\FileStorageInterface;
+use App\Domains\FileManager\Ports\FileStorageInterface;
 
 class StudentHomePageAction
 {

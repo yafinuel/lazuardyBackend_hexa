@@ -108,6 +108,8 @@ paths:
 
   /student/dashboard/homepage:
     $ref: './paths/dashboard.yaml#/studentHomepage'
+  /student/dashboard/schedule:
+    $ref: './paths/dashboard.yaml#/studentSchedulePage'
 
 components:
   securitySchemes:
@@ -189,5 +191,11 @@ components:
       $ref: './components/schemas.yaml#/DashboardNotificationItem'
     DashboardNotificationListPayload:
       $ref: './components/schemas.yaml#/DashboardNotificationListPayload'
+    ScheduleEntity:
+      $ref: './components/schemas.yaml#/ScheduleEntity'
+    StudentScheduleListPayload:
+      $ref: './components/schemas.yaml#/StudentScheduleListPayload'
+    StudentScheduleResponse:
+      $ref: './components/schemas.yaml#/StudentScheduleResponse'
     GetAllUserNotificationResponse:
       $ref: './components/schemas.yaml#/GetAllUserNotificationResponse'

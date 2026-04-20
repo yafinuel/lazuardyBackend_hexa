@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Shared\Enums\CourseModeEnum;
 use App\Shared\Enums\TutorStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -51,7 +50,7 @@ class Tutor extends Model
         return $this->belongsToMany(Subject::class, 'tutor_subjects', 'tutor_id', 'subject_id');
     }
 
-    public function schedules()
+    public function tutorSchedules()
     {
         return $this->hasMany(ScheduleTutor::class, 'tutor_id', 'user_id');
     }
@@ -59,5 +58,10 @@ class Tutor extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class, 'tutor_id', 'user_id');
+    }
+    
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'tutor_id', 'user_id');
     }
 }
