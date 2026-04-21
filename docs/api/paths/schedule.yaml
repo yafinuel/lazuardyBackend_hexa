@@ -1,0 +1,42 @@
+getScheduleById:
+  get:
+    tags:
+      - Schedule
+    summary: Mengambil detail jadwal berdasarkan ID
+    description: Endpoint untuk mengambil satu data jadwal berdasarkan `schedule_id`. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: getScheduleById
+    parameters:
+      - name: schedule_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          example: 1
+        description: ID jadwal yang ingin diambil.
+    responses:
+      '200':
+        description: Berhasil mengambil detail jadwal
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/GetScheduleByIdResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '422':
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: The given data was invalid.
+              errors:
+                schedule_id:
+                  - The schedule id field is required.
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

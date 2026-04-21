@@ -32,6 +32,8 @@ tags:
     description: Endpoint untuk pencarian tutor
   - name: Dashboard
     description: Endpoint untuk data dashboard pengguna
+  - name: Schedule
+    description: Endpoint untuk detail jadwal
 
 paths:
   /registerOtpEmail:
@@ -110,6 +112,8 @@ paths:
     $ref: './paths/dashboard.yaml#/studentHomepage'
   /student/dashboard/schedule:
     $ref: './paths/dashboard.yaml#/studentSchedulePage'
+  /getScheduleById:
+    $ref: './paths/schedule.yaml#/getScheduleById'
 
 components:
   securitySchemes:
@@ -193,6 +197,8 @@ components:
       $ref: './components/schemas.yaml#/DashboardNotificationListPayload'
     ScheduleEntity:
       $ref: './components/schemas.yaml#/ScheduleEntity'
+    GetScheduleByIdResponse:
+      $ref: './components/schemas.yaml#/GetScheduleByIdResponse'
     StudentScheduleListPayload:
       $ref: './components/schemas.yaml#/StudentScheduleListPayload'
     StudentScheduleResponse:

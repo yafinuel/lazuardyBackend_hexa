@@ -13,11 +13,12 @@ class ScheduleEntity {
         public string $endTime,
         public string $status,
         public string $learningMethod,
-        public ?string $meetingLink = null,
-        public ?string $tutorName = null,
-        public ?string $subjectName = null,
-        public ?string $studentName = null,
-        public ?string $tutorTelephoneNumber = null,
-        public ?string $studentTelephoneNumber = null
+        public ?string $meetingLink,
+        public ?string $address,
+        public ?string $tutorName,
+        public ?string $subjectName,
+        public ?string $studentName,
+        public ?string $tutorTelephoneNumber,
+        public ?string $studentTelephoneNumber
     ) {}
 }

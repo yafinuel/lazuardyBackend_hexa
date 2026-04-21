@@ -1023,6 +1023,10 @@ ScheduleEntity:
       type: string
       nullable: true
       example: null
+    address:
+      type: string
+      nullable: true
+      example: Jl. Contoh No. 10, Jakarta
     tutorName:
       type: string
       nullable: true
@@ -1043,6 +1047,15 @@ ScheduleEntity:
       type: string
       nullable: true
       example: '081234567890'
+
+GetScheduleByIdResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: success
+    data:
+      $ref: '#/ScheduleEntity'
 
 StudentScheduleListPayload:
   type: object

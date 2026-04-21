@@ -30,6 +30,8 @@ tags:
     description: Endpoint untuk pencarian tutor
   - name: Dashboard
     description: Endpoint untuk data dashboard pengguna
+  - name: Schedule
+    description: Endpoint untuk detail jadwal
 paths:
   /registerOtpEmail:
     post:
@@ -1268,6 +1270,7 @@ paths:
                       status: pending
                       learningMethod: online
                       meetingLink: null
+                      address: null
                       tutorName: Demo Tutor
                       subjectName: Matematika
                       studentName: Demo Student
@@ -1313,6 +1316,48 @@ paths:
                     - Tanggal jadwal wajib diisi.
                   paginate:
                     - Jumlah data per halaman harus berupa bilangan bulat.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /getScheduleById:
+    get:
+      tags:
+        - Schedule
+      summary: Mengambil detail jadwal berdasarkan ID
+      description: Endpoint untuk mengambil satu data jadwal berdasarkan `schedule_id`. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: getScheduleById
+      parameters:
+        - name: schedule_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+          description: ID jadwal yang ingin diambil.
+      responses:
+        '200':
+          description: Berhasil mengambil detail jadwal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScheduleByIdResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          description: Validasi gagal
+          content:
+            application/json:
+              example:
+                message: The given data was invalid.
+                errors:
+                  schedule_id:
+                    - The schedule id field is required.
         '500':
           $ref: '#/components/responses/ServerError'
 components:
@@ -2413,6 +2458,10 @@ components:
           type: string
           nullable: true
           example: null
+        address:
+          type: string
+          nullable: true
+          example: Jl. Contoh No. 10, Jakarta
         tutorName:
           type: string
           nullable: true
@@ -2433,6 +2482,14 @@ components:
           type: string
           nullable: true
           example: '081234567890'
+    GetScheduleByIdResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/ScheduleEntity'
     StudentScheduleListPayload:
       type: object
       properties:

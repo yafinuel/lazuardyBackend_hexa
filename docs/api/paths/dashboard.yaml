@@ -111,6 +111,7 @@ studentSchedulePage:
                     status: pending
                     learningMethod: online
                     meetingLink: null
+                    address: null
                     tutorName: Demo Tutor
                     subjectName: Matematika
                     studentName: Demo Student
