@@ -74,5 +74,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/student/dashboard/schedule', [DashboardController::class, 'studentSchedulePage']);
 
     // Schedule
-    Route::get('/getScheduleById', [ScheduleController::class, 'getScheduleById']);
+    Route::get('/schedule/getById', [ScheduleController::class, 'getScheduleById']);
+    Route::post('/schedule/cancel', [ScheduleController::class, 'cancelSchedule']);
 });

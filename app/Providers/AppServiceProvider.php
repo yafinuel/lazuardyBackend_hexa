@@ -27,9 +27,13 @@ use App\Domains\OtpManager\Ports\OtpRepositoryInterface;
 use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
 use App\Domains\Package\Ports\PackageRepositoryInterface;
 use App\Domains\Penalty\Infrastructure\Repository\EloquentPenaltyRepository;
+use App\Domains\Penalty\Infrastructure\Services\PenaltyServiceAdapter;
 use App\Domains\Penalty\Ports\PenaltyRepositoryInterface;
+use App\Domains\Penalty\Ports\PenaltyServicePort;
 use App\Domains\Schedule\Infrastructure\Repository\EloquentScheduleRepository;
+use App\Domains\Schedule\Infrastructure\Services\ScheduleServiceAdapter;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
+use App\Domains\Schedule\Ports\ScheduleServicePort;
 use App\Domains\Student\Infrastructure\Repository\EloquentStudentRepository;
 use App\Domains\Student\Ports\StudentRepositoryInterface;
 use App\Domains\Subject\Infrastructure\Repository\EloquentSubjectRepository;
@@ -136,6 +140,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             MailerInterface::class,
             LaravelMailer::class
+        );
+
+        $this->app->bind(
+            ScheduleServicePort::class,
+            ScheduleServiceAdapter::class
+        );
+
+        $this->app->bind(
+            PenaltyServicePort::class,
+            PenaltyServiceAdapter::class
         );
     }
 

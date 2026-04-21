@@ -3,6 +3,7 @@
 namespace App\Domains\User\Entities;
 
 use App\Shared\Enums\GenderEnum;
+use App\Shared\Enums\RoleEnum;
 use Carbon\Carbon;
 
 class UserEntity {
@@ -19,7 +20,7 @@ class UserEntity {
         public ?string $gender, 
         public ?string $religion,
         public ?array $homeAddress,
-        public ?string $role,
+        public ?RoleEnum $role,
         public ?int $warning,
         public ?Carbon $sanction,
         public ?string $latitude,

@@ -7,6 +7,7 @@ use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use App\Models\Schedule;
 use App\Models\Student;
 use App\Models\Tutor;
+use App\Shared\Enums\ScheduleStatusEnum;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -40,8 +41,8 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
             studentId: $schedule->student_id,
             subjectId: $schedule->subject_id,
             date: $schedule->date,
-            startTime: $schedule->time,
-            endTime: Carbon::createFromFormat('H:i:s', $schedule->time)->addHour()->format('H:i:s'),
+            startTime: Carbon::createFromFormat('H:i:s', $schedule->time),
+            endTime: Carbon::createFromFormat('H:i:s', $schedule->time)->addHour(),
             status: $schedule->status->value,
             learningMethod: $schedule->learning_method,
             meetingLink: $schedule->meeting_link,
@@ -52,5 +53,12 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
             tutorTelephoneNumber: $schedule->tutor?->user?->telephone_number,
             studentTelephoneNumber: $schedule->student?->user?->telephone_number
         );
+    }
+
+    public function cancelSchedule(int $scheduleId): bool
+    {
+        $schedule = Schedule::findOrFail($scheduleId);
+        $schedule->status = ScheduleStatusEnum::CANCELLED->value;
+        return $schedule->save();
     }
 }

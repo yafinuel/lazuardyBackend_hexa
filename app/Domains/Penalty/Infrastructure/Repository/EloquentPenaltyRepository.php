@@ -21,20 +21,16 @@ class EloquentPenaltyRepository implements PenaltyRepositoryInterface
         return $user->sanction;
     }
 
-    public function addWarning(string $userId): void
+    public function addWarning(string $userId): bool
     {
-        $student = Student::findOrFail($userId);
-        if ($student) {
-            $student->warning += 1;
-            $student->save();
-        }
+        $user = User::findOrFail($userId);
+        $user->warning += 1;
+        return $user->save();
     }
-    public function setSanction(string $userId, ?string $sanctionEndDate): void
+    public function setSanction(string $userId, Carbon $sanctionEndDate): bool
     {
-        $student = Student::findOrFail($userId);
-        if ($student) {
-            $student->sanction = $sanctionEndDate;
-            $student->save();
-        }
+        $user = User::findOrFail($userId);
+        $user->sanction = $sanctionEndDate;
+        return $user->save();
     }
 }

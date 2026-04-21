@@ -16,13 +16,13 @@ class GetUserWarningAction
         $sanction = $this->repository->getUserSanction($userId);
 
         if ($warning != 0){
+            $displayWarning = $warningOwned;
+        } else {
             if ($sanction != null && Carbon::now()->lessThan($sanction)) {
                 $displayWarning = 3;
             } else {
-                $displayWarning = $warningOwned;
+                $displayWarning = 0;
             }
-        } else {
-            $displayWarning = 0;
         }
         
         return $displayWarning;
