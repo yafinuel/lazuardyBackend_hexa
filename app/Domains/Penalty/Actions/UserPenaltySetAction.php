@@ -6,7 +6,7 @@ use App\Domains\Penalty\Ports\PenaltyRepositoryInterface;
 use App\Domains\Penalty\Ports\PenaltyServicePort;
 use Illuminate\Support\Facades\Log;
 
-class StudentPenaltySetAction
+class UserPenaltySetAction
 {
     public function __construct(protected PenaltyRepositoryInterface $repository,protected PenaltyServicePort $service) {}
 

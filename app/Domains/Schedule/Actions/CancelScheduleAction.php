@@ -4,31 +4,38 @@ namespace App\Domains\Schedule\Actions;
 
 use App\Domains\Schedule\Infrastructure\Services\ScheduleServiceAdapter;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
+use App\Domains\Student\Ports\StudentRepositoryInterface;
 use App\Shared\Enums\RoleEnum;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class CancelScheduleAction
 {
-    public function __construct(protected ScheduleRepositoryInterface $repository, protected ScheduleServiceAdapter $service) {}
+    public function __construct(protected ScheduleRepositoryInterface $repository, protected ScheduleServiceAdapter $service, protected StudentRepositoryInterface $studentRepository) {}
 
     public function execute(int $userId, int $scheduleId): bool
     {
         $user = $this->service->getUserById($userId);
         $schedule = $this->repository->getScheduleById($scheduleId);
 
-        if ($user->role === RoleEnum::STUDENT) {
-            $scheduleStartAt = $schedule->date->copy()->setTimeFrom($schedule->startTime);
-            $hoursUntilStart = Carbon::now()->diffInHours($scheduleStartAt, false);
+        $scheduleStartAt = $schedule->date->copy()->setTimeFrom($schedule->startTime);
+        $minutesUntilStart = Carbon::now()->diffInMinutes($scheduleStartAt, false);
 
-            if ($hoursUntilStart >= 0) {
-                if ($hoursUntilStart <= 12) {
-                    $this->service->studentPenaltySet($userId);
-                } else {
-                    // Untuk mengembalikan jatah sesi
+        if ($user->role === RoleEnum::TUTOR) {
+            if ($minutesUntilStart >= 0) {
+                if ($minutesUntilStart < 12 * 60) {
+                    $this->service->userPenaltySet($userId);
+                } 
+            }
+        } else if ($user->role === RoleEnum::STUDENT) {
+            $student = $this->studentRepository->getStudentById($userId);
+            if ($minutesUntilStart >= 0) {
+                if ($minutesUntilStart > 12 * 60) {
+                    $this->studentRepository->updateStudent($student->id, ['session' => $student->session + 1]);
                 }
             }
         }
-
+        Log::info("User {$userId} canceled schedule {$scheduleId} with {$minutesUntilStart} minutes until start. User role: {$user->role->value}");
         return $this->repository->cancelSchedule($scheduleId);
     }
 }

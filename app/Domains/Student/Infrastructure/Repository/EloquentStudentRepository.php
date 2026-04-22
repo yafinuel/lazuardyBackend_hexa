@@ -74,4 +74,16 @@ class EloquentStudentRepository implements StudentRepositoryInterface
 
         return $student->user_id;
     }
+
+    public function updateStudent(int $studentId, array $studentData): void
+    {
+        $student = Student::where('user_id', $studentId)->firstOrFail();
+
+        try {
+            $student->update($studentData);
+        } catch (Exception $e) {
+            Log::error("Message: " . $e->getMessage());
+            throw new Exception('Failed to update student');
+        }
+    }
 }

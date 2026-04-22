@@ -7,6 +7,6 @@ use Carbon\Carbon;
 
 interface ScheduleServicePort
 {
-    public function studentPenaltySet(int $userId);
+    public function userPenaltySet(int $userId);
     public function getUserById(int $userId): UserEntity;
 }

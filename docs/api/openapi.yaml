@@ -112,8 +112,10 @@ paths:
     $ref: './paths/dashboard.yaml#/studentHomepage'
   /student/dashboard/schedule:
     $ref: './paths/dashboard.yaml#/studentSchedulePage'
-  /getScheduleById:
+  /schedule/getById:
     $ref: './paths/schedule.yaml#/getScheduleById'
+  /schedule/cancel:
+    $ref: './paths/schedule.yaml#/cancelSchedule'
 
 components:
   securitySchemes:

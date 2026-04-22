@@ -1318,7 +1318,7 @@ paths:
                     - Jumlah data per halaman harus berupa bilangan bulat.
         '500':
           $ref: '#/components/responses/ServerError'
-  /getScheduleById:
+  /schedule/getById:
     get:
       tags:
         - Schedule
@@ -1343,6 +1343,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetScheduleByIdResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          description: Validasi gagal
+          content:
+            application/json:
+              example:
+                message: The given data was invalid.
+                errors:
+                  schedule_id:
+                    - The schedule id field is required.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /schedule/cancel:
+    post:
+      tags:
+        - Schedule
+      summary: Membatalkan jadwal berdasarkan ID
+      description: Endpoint untuk membatalkan jadwal berdasarkan `schedule_id`. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: cancelSchedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - schedule_id
+              properties:
+                schedule_id:
+                  type: integer
+                  minimum: 1
+                  example: 1
+            example:
+              schedule_id: 1
+      responses:
+        '200':
+          description: Berhasil membatalkan jadwal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Schedule cancelled successfully
         '401':
           description: Unauthorized
           content:
