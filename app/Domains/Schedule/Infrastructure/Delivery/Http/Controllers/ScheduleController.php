@@ -26,9 +26,10 @@ class ScheduleController extends Controller
     {
         $data = $request->validate([
             'schedule_id' => 'required|integer',
+            'reason' => 'required|string|max:255',
         ]);
         $userId = $request->user()->id;
-        $action->execute($userId, $data['schedule_id']);
+        $action->execute($userId, $data);
         
         return response()->json([
             'status' => 'success',

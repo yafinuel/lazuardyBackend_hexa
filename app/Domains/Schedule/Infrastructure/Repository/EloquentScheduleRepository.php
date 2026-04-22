@@ -55,10 +55,11 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
         );
     }
 
-    public function cancelSchedule(int $scheduleId): bool
+    public function cancelSchedule(int $scheduleId, string $reason): bool
     {
         $schedule = Schedule::findOrFail($scheduleId);
         $schedule->status = ScheduleStatusEnum::CANCELLED->value;
+        $schedule->reason = $reason;
         return $schedule->save();
     }
 }

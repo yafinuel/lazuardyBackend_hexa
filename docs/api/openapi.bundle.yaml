@@ -1365,7 +1365,7 @@ paths:
       tags:
         - Schedule
       summary: Membatalkan jadwal berdasarkan ID
-      description: Endpoint untuk membatalkan jadwal berdasarkan `schedule_id`. Membutuhkan autentikasi.
+      description: Endpoint untuk membatalkan jadwal berdasarkan `schedule_id` dengan menyertakan `reason`. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
       operationId: cancelSchedule
@@ -1377,13 +1377,19 @@ paths:
               type: object
               required:
                 - schedule_id
+                - reason
               properties:
                 schedule_id:
                   type: integer
                   minimum: 1
                   example: 1
+                reason:
+                  type: string
+                  maxLength: 255
+                  example: Tutor berhalangan hadir karena kondisi darurat
             example:
               schedule_id: 1
+              reason: Tutor berhalangan hadir karena kondisi darurat
       responses:
         '200':
           description: Berhasil membatalkan jadwal
@@ -1413,6 +1419,8 @@ paths:
                 errors:
                   schedule_id:
                     - The schedule id field is required.
+                  reason:
+                    - The reason field is required.
         '500':
           $ref: '#/components/responses/ServerError'
 components:

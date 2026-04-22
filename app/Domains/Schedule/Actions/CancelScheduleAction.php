@@ -13,10 +13,10 @@ class CancelScheduleAction
 {
     public function __construct(protected ScheduleRepositoryInterface $repository, protected ScheduleServiceAdapter $service, protected StudentRepositoryInterface $studentRepository) {}
 
-    public function execute(int $userId, int $scheduleId): bool
+    public function execute(int $userId, array $data): bool
     {
         $user = $this->service->getUserById($userId);
-        $schedule = $this->repository->getScheduleById($scheduleId);
+        $schedule = $this->repository->getScheduleById($data['schedule_id']);
 
         $scheduleStartAt = $schedule->date->copy()->setTimeFrom($schedule->startTime);
         $minutesUntilStart = Carbon::now()->diffInMinutes($scheduleStartAt, false);
@@ -35,7 +35,7 @@ class CancelScheduleAction
                 }
             }
         }
-        Log::info("User {$userId} canceled schedule {$scheduleId} with {$minutesUntilStart} minutes until start. User role: {$user->role->value}");
-        return $this->repository->cancelSchedule($scheduleId);
+        Log::info("User {$userId} canceled schedule {$data['schedule_id']} with {$minutesUntilStart} minutes until start. User role: {$user->role->value}");
+        return $this->repository->cancelSchedule($data['schedule_id'], $data['reason']);
     }
 }
