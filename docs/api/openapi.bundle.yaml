@@ -785,12 +785,22 @@ paths:
         - Course Catalog
       security: []
       summary: Filter data halaman kategori kursus
-      description: Mengembalikan level dan daftar subject berdasarkan kategori dan level.
+      description: |
+        Mengembalikan level dan daftar subject berdasarkan kategori dan level.
+        Catatan aturan domain:
+        - Sistem tidak memiliki kolom kategori akademik/non-akademik pada tabel kelas.
+        - Kategori non-akademik direpresentasikan dengan level `umum`.
+        Perilaku endpoint:
+        - Jika `category=akademik`, response `levels` hanya menampilkan jenjang akademik (mis. SD, SMP, SMA) dan mengecualikan `umum`.
+        - Jika `category=umum`, response `levels` bernilai `null` dan subject diambil untuk level `umum`.
       operationId: filterCategoryPage
       parameters:
         - name: category
           in: query
           required: false
+          description: |
+            Kategori kursus untuk kebutuhan filter UI.
+            Nilai `umum` dipakai sebagai representasi non-akademik.
           schema:
             type: string
             enum:
@@ -802,11 +812,14 @@ paths:
           required: false
           schema:
             type: string
-          description: Jika kosong, backend menggunakan default SD.
+          description: |
+            Jenjang yang dipakai saat `category=akademik`.
+            Jika kosong, backend menggunakan default `sd`.
+            Untuk `category=umum`, nilai ini diabaikan karena subject selalu diambil dari level `umum`.
           example: SD
       responses:
         '200':
-          description: Berhasil mengambil data filter kategori
+          description: Berhasil mengambil data filter kategori sesuai aturan akademik/non-akademik
           content:
             application/json:
               schema:
@@ -1726,6 +1739,9 @@ components:
         levels:
           type: array
           nullable: true
+          description: |
+            Daftar jenjang untuk kategori akademik (contoh: SD, SMP, SMA).
+            Bernilai null jika category=umum.
           items:
             type: string
           example:
@@ -1735,6 +1751,10 @@ components:
         subjects:
           type: object
           nullable: true
+          description: |
+            Daftar subject hasil filter.
+            Untuk category=umum, subject diambil dari level umum (representasi non-akademik).
+            Bernilai null jika category tidak dikirim.
           allOf:
             - $ref: '#/components/schemas/FilterCategorySubjects'
     FilterCategorySubjects:
@@ -1810,29 +1830,25 @@ components:
         id:
           type: integer
           example: 1
-        package_name:
+        name:
           type: string
           example: Paket Reguler
-        total_session:
-          type: string
-          example: 12 Sesi
-        base_price:
+        session:
+          type: integer
+          example: 12
+        price:
           type: number
           format: float
           example: 1500000
-        discount_rate:
+        discount:
           type: number
           format: float
           example: 0.1
-        final_price:
-          type: number
-          format: float
-          example: 1350000
-        info:
+        description:
           type: string
           nullable: true
           example: Paket belajar 3 bulan
-        image_url:
+        imagePath:
           type: string
           format: uri
           nullable: true

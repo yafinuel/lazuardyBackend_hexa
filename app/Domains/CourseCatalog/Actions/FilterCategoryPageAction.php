@@ -13,8 +13,10 @@ class FilterCategoryPageAction
 
     public function execute(?string $category, ?string $level)
     {
-        $level = $level ?? 'sd';
-        $data = $this->service->filterCategoryPage(strtolower($category), strtolower($level));
+        $normalizedCategory = $category !== null ? strtolower($category) : null;
+        $normalizedLevel = strtolower($level ?? 'sd');
+
+        $data = $this->service->filterCategoryPage($normalizedCategory, $normalizedLevel);
         if ($data['levels'] != null) {
             $level = array_map(function ($item) {
                 return strtoupper($item);

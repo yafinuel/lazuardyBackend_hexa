@@ -4,12 +4,22 @@ filterCategoryPage:
       - Course Catalog
     security: []
     summary: Filter data halaman kategori kursus
-    description: Mengembalikan level dan daftar subject berdasarkan kategori dan level.
+    description: |
+      Mengembalikan level dan daftar subject berdasarkan kategori dan level.
+      Catatan aturan domain:
+      - Sistem tidak memiliki kolom kategori akademik/non-akademik pada tabel kelas.
+      - Kategori non-akademik direpresentasikan dengan level `umum`.
+      Perilaku endpoint:
+      - Jika `category=akademik`, response `levels` hanya menampilkan jenjang akademik (mis. SD, SMP, SMA) dan mengecualikan `umum`.
+      - Jika `category=umum`, response `levels` bernilai `null` dan subject diambil untuk level `umum`.
     operationId: filterCategoryPage
     parameters:
       - name: category
         in: query
         required: false
+        description: |
+          Kategori kursus untuk kebutuhan filter UI.
+          Nilai `umum` dipakai sebagai representasi non-akademik.
         schema:
           type: string
           enum: [akademik, umum]
@@ -19,11 +29,14 @@ filterCategoryPage:
         required: false
         schema:
           type: string
-        description: Jika kosong, backend menggunakan default SD.
+        description: |
+          Jenjang yang dipakai saat `category=akademik`.
+          Jika kosong, backend menggunakan default `sd`.
+          Untuk `category=umum`, nilai ini diabaikan karena subject selalu diambil dari level `umum`.
         example: SD
     responses:
       '200':
-        description: Berhasil mengambil data filter kategori
+        description: Berhasil mengambil data filter kategori sesuai aturan akademik/non-akademik
         content:
           application/json:
             schema:

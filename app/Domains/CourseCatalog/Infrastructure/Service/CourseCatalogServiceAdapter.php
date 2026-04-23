@@ -18,7 +18,7 @@ class CourseCatalogServiceAdapter implements CourseCatalogServicePort
             $levels = collect($levels)->filter(function ($value) {
                 return $value !== CourseCategoryEnum::GENERAL->value;
             })->values()->toArray();
-            $subjects = $this->subjectAction->execute($level, CourseCategoryEnum::ACADEMIC->value);
+            $subjects = $this->subjectAction->execute($level);
         } else if ($category == CourseCategoryEnum::GENERAL->value) {
             $levels = null;
             $subjects = $this->subjectAction->execute(CourseCategoryEnum::GENERAL->value);

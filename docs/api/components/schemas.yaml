@@ -28,29 +28,25 @@ PackageItem:
     id:
       type: integer
       example: 1
-    package_name:
+    name:
       type: string
       example: "Paket Reguler"
-    total_session:
-      type: string
-      example: "12 Sesi"
-    base_price:
+    session:
+      type: integer
+      example: 12
+    price:
       type: number
       format: float
       example: 1500000
-    discount_rate:
+    discount:
       type: number
       format: float
       example: 0.1
-    final_price:
-      type: number
-      format: float
-      example: 1350000
-    info:
+    description:
       type: string
       nullable: true
       example: "Paket belajar 3 bulan"
-    image_url:
+    imagePath:
       type: string
       format: uri
       nullable: true
@@ -336,12 +332,19 @@ FilterCategoryPageData:
     levels:
       type: array
       nullable: true
+      description: |
+        Daftar jenjang untuk kategori akademik (contoh: SD, SMP, SMA).
+        Bernilai null jika category=umum.
       items:
         type: string
       example: ["SD", "SMP", "SMA"]
     subjects:
       type: object
       nullable: true
+      description: |
+        Daftar subject hasil filter.
+        Untuk category=umum, subject diambil dari level umum (representasi non-akademik).
+        Bernilai null jika category tidak dikirim.
       allOf:
         - $ref: '#/FilterCategorySubjects'
 
