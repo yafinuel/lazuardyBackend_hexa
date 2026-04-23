@@ -13,7 +13,7 @@ class EloquentStudentRepository implements StudentRepositoryInterface
 {
     public function getStudentById(int $studentId): ?StudentEntity
     {
-        $user = User::where('id', $studentId)->firstOrFail();
+        $user = User::with('student.class')->where('id', $studentId)->firstOrFail();
         $student = $user->student;
 
         return new StudentEntity(
@@ -35,33 +35,8 @@ class EloquentStudentRepository implements StudentRepositoryInterface
             longitude: $user->longitude,
             session: $student->session,
             classId: $student->class_id,
+            className: $student->class?->name,
         );
-    }
-
-    public function updateStudentProfile(int $studentId, array $data): void
-    {
-        $user = User::where('id', $studentId)->firstOrFail();
-
-        try {
-            $user->update([
-                'name' => $data['name'] ?? $user->name,
-                'date_of_birth' => $data['date_of_birth'] ?? $user->date_of_birth,
-                'gender' => $data['gender'] ?? $user->gender,
-                'religion' => $data['religion'] ?? $user->religion,
-                'home_address' => $data['home_address'] ?? $user->home_address,
-                'telephone_number' => $data['telephone_number'] ?? $user->telephone_number,
-                'latitude' => $data['latitude'] ?? $user->latitude,
-                'longitude' => $data['longitude'] ?? $user->longitude,
-            ]);
-            
-            $user->student()->update([
-                'class_id' => $data['class_id'] ?? $user->student->class_id,
-            ]);
-
-        } catch (Exception $e) {
-            Log::error("Message: " . $e->getMessage());
-            throw new Exception('Failed to update student profile');
-        }
     }
 
     public function createStudent(int $userId, array $studentData): int
@@ -75,15 +50,9 @@ class EloquentStudentRepository implements StudentRepositoryInterface
         return $student->user_id;
     }
 
-    public function updateStudent(int $studentId, array $studentData): void
+    public function update(int $userId, array $data): void
     {
-        $student = Student::where('user_id', $studentId)->firstOrFail();
-
-        try {
-            $student->update($studentData);
-        } catch (Exception $e) {
-            Log::error("Message: " . $e->getMessage());
-            throw new Exception('Failed to update student');
-        }
+        Student::where('user_id', $userId)->update($data);
     }
+
 }

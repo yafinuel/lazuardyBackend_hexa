@@ -27,5 +27,6 @@ class StudentEntity {
         // Student attributes
         public ?string $session,
         public ?int $classId,
+        public ?string $className,
     ) {}
 }

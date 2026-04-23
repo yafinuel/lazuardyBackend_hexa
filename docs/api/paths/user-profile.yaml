@@ -262,7 +262,14 @@ updateProfilePhoto:
             example:
               message: "Unauthenticated."
       '422':
-        $ref: '../components/responses.yaml#/ValidationError'
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: "Data tidak valid"
+              errors:
+                profile_picture:
+                  - "File foto profil wajib diisi."
       '500':
         description: Gagal memperbarui foto profil
         content:

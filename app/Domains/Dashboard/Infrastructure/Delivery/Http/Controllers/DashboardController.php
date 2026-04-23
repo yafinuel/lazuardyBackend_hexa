@@ -3,6 +3,7 @@
 namespace App\Domains\Dashboard\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Dashboard\Actions\StudentHomePageAction;
+use App\Domains\Dashboard\Actions\StudentProfilePageAction;
 use App\Domains\Dashboard\Actions\StudentSchedulePageAction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

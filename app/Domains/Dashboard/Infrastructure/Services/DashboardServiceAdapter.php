@@ -10,13 +10,14 @@ use App\Domains\Tutor\Actions\GetTutorByCriteria;
 use App\Domains\FileManager\Ports\FileRepositoryInterface;
 use App\Domains\FileManager\Ports\FileStorageInterface;
 use App\Domains\Schedule\Actions\GetStudentSchedulesByDateAction;
+use App\Domains\Student\Entities\StudentEntity;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class DashboardServiceAdapter implements DashboardServicePort
 {
     public function __construct(
-        protected GetStudentByIdAction $meAction,
+        protected GetStudentByIdAction $studentBiodata,
         protected GetTutorByCriteria $tutorAction,
         protected GetNotifByUserIdAction $notifAction,
         protected FileRepositoryInterface $fileRepository,
@@ -25,23 +26,29 @@ class DashboardServiceAdapter implements DashboardServicePort
         protected GetStudentSchedulesByDateAction $scheduleAction,
     ) {}
 
-    public function studentHomePage(int $studentId, int $notifPaginate, int $tutorPaginate)
+    public function getUserWarning(int $studentId): int
     {
-        $me = $this->meAction->execute($studentId);
-        $notifications = $this->notifAction->execute($studentId, $notifPaginate);
-        $tutors = $this->tutorAction->execute([], $tutorPaginate);
-        $warning = $this->userWarningAction->execute($studentId);
+        return $this->userWarningAction->execute($studentId);
         
-        return [
-            'me' => $me,
-            'notification' => $notifications,
-            'tutor_recomendation' => $tutors,
-            'warning' => $warning,
-        ];
     }
 
     public function studentSchedulePage(int $studentId, Carbon $date, int $paginate = 10): LengthAwarePaginator
     {
         return $this->scheduleAction->execute($studentId, $date, $paginate);
+    }
+
+    public function studentBiodata(int $studentId): StudentEntity
+    {
+        return $this->studentBiodata->execute($studentId);
+    }
+
+    public function getNotification(int $userId, int $paginate): LengthAwarePaginator
+    {
+        return $this->notifAction->execute($userId, $paginate);
+    }
+    
+    public function getTutorByCriteria(array $criteria, int $paginate)
+    {
+        return $this->tutorAction->execute($criteria, $paginate);
     }
 }

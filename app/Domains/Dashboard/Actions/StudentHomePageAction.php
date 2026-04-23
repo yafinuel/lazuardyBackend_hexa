@@ -11,9 +11,12 @@ class StudentHomePageAction
 
     public function execute(int $studentId,  int $notifPaginate = 2, int $tutorPaginate = 4)
     {
-        $result = $this->service->studentHomePage($studentId, $notifPaginate, $tutorPaginate);
+        $warning = $this->service->getUserWarning($studentId);
+        $studentBiodata = $this->service->studentBiodata($studentId);
+        $notificationData = $this->service->getNotification($studentId, $notifPaginate);
+        $tutorRecomendations = $this->service->getTutorByCriteria([], $tutorPaginate);
 
-        $notifications = $result['notification']->through(function ($notifEntity) {
+        $notifications = $notificationData->through(function ($notifEntity) {
             return [
                 'id' => $notifEntity->id,
                 'title' => $notifEntity->title,
@@ -22,7 +25,7 @@ class StudentHomePageAction
             ];
         });
 
-        $tutors = $result['tutor_recomendation']->through(function ($tutorEntity) {
+        $tutors = $tutorRecomendations->through(function ($tutorEntity) {
             if(!$tutorEntity->profilePhotoUrl) {
                 $tutorEntity->profilePhotoUrl = $this->storage->getMedia($tutorEntity->profilePhotoUrl);
             }
@@ -30,10 +33,10 @@ class StudentHomePageAction
         });
 
         return [
-            'user_name' => $result['me']->name,
-            'warning' => $result['warning'],
-            'sanction' => $result['me']->sanction,
-            'session' => $result['me']->session,
+            'user_name' => $studentBiodata->name,
+            'warning' => $warning,
+            'sanction' => $studentBiodata->sanction,
+            'session' => $studentBiodata->session,
             'notification' => $notifications,
             'tutor_recomendation' => $tutors,
         ];

@@ -9,7 +9,7 @@ class GetUserWarningAction
 {
     public function __construct(protected PenaltyRepositoryInterface $repository) {}
 
-    public function execute($userId)
+    public function execute($userId): int
     {
         $warning = $this->repository->getUserWarning($userId);
         $warningOwned = $warning % 3;

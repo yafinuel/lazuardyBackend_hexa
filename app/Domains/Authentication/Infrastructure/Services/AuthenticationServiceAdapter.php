@@ -58,7 +58,7 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
                     $this->moveToPermanentPathAction->execute($cv['id'], $cv['temp_path'], FileTypeEnum::CV->value . '/' . $user->id);
                     $this->moveToPermanentPathAction->execute($certificate['id'], $certificate['temp_path'], FileTypeEnum::CERTIFICATE->value . '/' . $user->id);
                     if(isset($userData['profile_photo'])) {
-                        $this->moveToPermanentPathAction->execute($user->id, $user->profilePhotoUrl, 'profile_photo/' . $user->id, true);
+                        $this->moveToPermanentPathAction->execute($user->id, $user->profilePhotoUrl, 'profile_photos/' . $user->id, true);
                     }
                 }
             );

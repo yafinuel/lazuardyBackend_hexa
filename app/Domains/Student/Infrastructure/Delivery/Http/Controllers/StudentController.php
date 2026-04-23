@@ -6,7 +6,6 @@ use App\Domains\Student\Actions\GetStudentByIdAction;
 use App\Domains\Student\Actions\UpdateStudentBiodataAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\GenderEnum;
-use App\Shared\Enums\ReligionEnum;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -35,18 +34,15 @@ class StudentController extends Controller
     public function updateBiodata(Request $request, UpdateStudentBiodataAction $action)
     {
         $data = $request->validate([
-            'name' => ['sometimes', 'string', 'max:255'],
-            'telephone_number' => ['sometimes', 'string', 'max:20'],
-            'date_of_birth' => ['sometimes', 'date'],
-            'gender' => ['sometimes', new Enum(GenderEnum::class)],
-            'religion' => ['sometimes', new Enum(ReligionEnum::class)],
+            'name' => ['required', 'string', 'max:255'],
+            'class_id' => ['required', 'integer', 'exists:classes,id'],
+            'gender' => ['required', new Enum(GenderEnum::class)],
+            'date_of_birth' => ['required', 'date'],
+            'telephone_number' => ['required', 'string', 'max:20'],
             'province' => ['required', 'string'],
             'regency' => ['required', 'string'],
             'district' => ['required', 'string'],
             'subdistrict' => ['required', 'string'],
-            'class_id' => ['sometimes', 'integer', 'exists:classes,id'],
-            'latitude' => ['nullable', 'numeric'],
-            'longitude' => ['nullable', 'numeric'],
         ]);
 
         try {

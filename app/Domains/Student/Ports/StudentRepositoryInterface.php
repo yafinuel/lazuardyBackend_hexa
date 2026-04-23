@@ -7,7 +7,6 @@ use App\Domains\Student\Entities\StudentEntity;
 interface StudentRepositoryInterface
 {
     public function getStudentById(int $studentId): ?StudentEntity;
-    public function updateStudentProfile(int $studentId, array $data): void;
     public function createStudent(int $userId, array $data): int;
-    public function updateStudent(int $studentId, array $data): void;
+    public function update(int $userId, array $data): void;
 }
