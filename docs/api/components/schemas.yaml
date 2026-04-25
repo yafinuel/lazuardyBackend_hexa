@@ -151,6 +151,100 @@ ClassListResponse:
           type: integer
           example: 10
 
+ReportEntity:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    scheduleId:
+      type: integer
+      example: 12
+    tutorId:
+      type: integer
+      example: 2
+    tutorName:
+      type: string
+      example: "Demo Tutor"
+    studentId:
+      type: integer
+      example: 1
+    studentName:
+      type: string
+      example: "Demo Student"
+    topic:
+      type: string
+      example: "Persamaan linear"
+    notes:
+      type: string
+      example: "Siswa aktif dan memahami materi dasar."
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-04-26T09:00:00Z"
+    updatedAt:
+      type: string
+      format: date-time
+      example: "2026-04-26T09:30:00Z"
+
+StudentReportResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: "success"
+    data:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/ReportEntity'
+        first_page_url:
+          type: string
+          nullable: true
+        from:
+          type: integer
+          nullable: true
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        next_page_url:
+          type: string
+          nullable: true
+        path:
+          type: string
+        per_page:
+          type: integer
+          example: 10
+        prev_page_url:
+          type: string
+          nullable: true
+        to:
+          type: integer
+          nullable: true
+        total:
+          type: integer
+          example: 10
+
 ClassByLevelResponse:
   type: object
   properties:

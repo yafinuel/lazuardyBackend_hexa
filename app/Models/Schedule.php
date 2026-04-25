@@ -38,4 +38,9 @@ class Schedule extends Model
     {
         return $this->belongsTo(Subject::class, 'subject_id');
     }
+
+    public function presence()
+    {
+        return $this->hasOne(Presence::class);
+    }
 }

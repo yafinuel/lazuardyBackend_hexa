@@ -49,9 +49,8 @@ class Student extends Model
         return $this->hasMany(Schedule::class, 'student_id', 'user_id');
     }
     
-    // public function studentPackages()
-    // {
-    //     return $this->hasMany(StudentPackage::class, 'student_user_id', 'user_id');
-    // }
-
+    public function presences()
+    {
+        return $this->hasMany(Presence::class, 'student_id', 'user_id');
+    }
 }

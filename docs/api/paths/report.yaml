@@ -1,0 +1,83 @@
+getAllReportsByStudentId:
+  get:
+    tags:
+      - Report
+    summary: Mengambil daftar laporan milik siswa
+    description: Endpoint untuk mengambil seluruh laporan milik siswa yang sedang login. Membutuhkan autentikasi dan role student.
+    security:
+      - bearerAuth: []
+    operationId: getAllReportsByStudentId
+    parameters:
+      - name: paginate
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 10
+        description: Jumlah data per halaman. Jika tidak diisi, default server adalah 10.
+    responses:
+      '200':
+        description: Berhasil mengambil daftar laporan siswa
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/StudentReportResponse'
+            example:
+              status: "success"
+              data:
+                current_page: 1
+                data:
+                  - id: 1
+                    scheduleId: 12
+                    tutorId: 2
+                    tutorName: "Demo Tutor"
+                    studentId: 1
+                    studentName: "Demo Student"
+                    topic: "Persamaan linear"
+                    notes: "Siswa aktif dan memahami materi dasar."
+                    createdAt: "2026-04-26T09:00:00Z"
+                    updatedAt: "2026-04-26T09:30:00Z"
+                first_page_url: "http://localhost:8000/api/student/reports?page=1"
+                from: 1
+                last_page: 1
+                last_page_url: "http://localhost:8000/api/student/reports?page=1"
+                links:
+                  - url: null
+                    label: "&laquo; Previous"
+                    active: false
+                  - url: "http://localhost:8000/api/student/reports?page=1"
+                    label: "1"
+                    active: true
+                  - url: null
+                    label: "Next &raquo;"
+                    active: false
+                next_page_url: null
+                path: "http://localhost:8000/api/student/reports"
+                per_page: 10
+                prev_page_url: null
+                to: 1
+                total: 1
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '403':
+        description: Forbidden - Endpoint hanya untuk role student
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "This page is Forbidden for tutor"
+      '404':
+        description: Data siswa tidak ditemukan
+        content:
+          application/json:
+            example:
+              message: "No query results for model [App\\Models\\Student]."
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

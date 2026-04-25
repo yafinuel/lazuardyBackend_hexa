@@ -29,6 +29,8 @@ use App\Domains\Penalty\Infrastructure\Repository\EloquentPenaltyRepository;
 use App\Domains\Penalty\Infrastructure\Services\PenaltyServiceAdapter;
 use App\Domains\Penalty\Ports\PenaltyRepositoryInterface;
 use App\Domains\Penalty\Ports\PenaltyServicePort;
+use App\Domains\Report\Infrastructure\Repository\EloquentReportRepository;
+use App\Domains\Report\Ports\ReportRepositoryInterface;
 use App\Domains\Schedule\Infrastructure\Repository\EloquentScheduleRepository;
 use App\Domains\Schedule\Infrastructure\Services\ScheduleServiceAdapter;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
@@ -156,6 +158,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             StudentServicePort::class,
             StudentServiceAdapter::class
+        );
+
+        $this->app->bind(
+            ReportRepositoryInterface::class,
+            EloquentReportRepository::class
         );
     }
 

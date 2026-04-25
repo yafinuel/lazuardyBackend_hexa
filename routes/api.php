@@ -8,6 +8,7 @@ use App\Domains\Dashboard\Infrastructure\Delivery\Http\Controllers\DashboardCont
 use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
 use App\Domains\Notification\Infrastructure\Delivery\Http\Controllers\NotificationController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
+use App\Domains\Report\Infrastructure\Delivery\Http\Controllers\ReportController;
 use App\Domains\Schedule\Infrastructure\Delivery\Http\Controllers\ScheduleController;
 use App\Domains\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
 use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
@@ -78,6 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
         Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
         Route::get('/student/dashboard/schedule', [DashboardController::class, 'studentSchedulePage']);
+        Route::get('/student/reports', [ReportController::class, 'getAllReportsByStudentId']);
     });
 
     Route::middleware('role:' . RoleEnum::TUTOR->value)->group(function (){

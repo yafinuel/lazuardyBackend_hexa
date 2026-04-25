@@ -34,6 +34,8 @@ tags:
     description: Endpoint untuk data dashboard pengguna
   - name: Schedule
     description: Endpoint untuk detail jadwal
+  - name: Report
+    description: Endpoint untuk laporan siswa
 
 paths:
   /registerOtpEmail:
@@ -114,6 +116,8 @@ paths:
     $ref: './paths/schedule.yaml#/getScheduleById'
   /schedule/cancel:
     $ref: './paths/schedule.yaml#/cancelSchedule'
+  /student/reports:
+    $ref: './paths/report.yaml#/getAllReportsByStudentId'
 
 components:
   securitySchemes:
@@ -201,3 +205,7 @@ components:
       $ref: './components/schemas.yaml#/StudentScheduleResponse'
     GetAllUserNotificationResponse:
       $ref: './components/schemas.yaml#/GetAllUserNotificationResponse'
+    ReportEntity:
+      $ref: './components/schemas.yaml#/ReportEntity'
+    StudentReportResponse:
+      $ref: './components/schemas.yaml#/StudentReportResponse'
