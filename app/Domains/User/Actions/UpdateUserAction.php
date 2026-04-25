@@ -10,14 +10,21 @@ class UpdateUserAction
 
     public function execute(int $userId, array $data): void
     {
-        if ($data['province'] || $data['regency'] || $data['district'] || $data['subdistrict']) {
+        $province = $data['province'] ?? null;
+        $regency = $data['regency'] ?? null;
+        $district = $data['district'] ?? null;
+        $subdistrict = $data['subdistrict'] ?? null;
+
+        if ($province || $regency || $district || $subdistrict) {
             $data['home_address'] = [
-                'province' => $data['province'],
-                'regency' => $data['regency'],
-                'district' => $data['district'],
-                'subdistrict' => $data['subdistrict'],
+                'province' => $province,
+                'regency' => $regency,
+                'district' => $district,
+                'subdistrict' => $subdistrict,
             ];
         }
+
+        unset($data['province'], $data['regency'], $data['district'], $data['subdistrict']);
 
         $this->repository->update($userId, $data);
     }

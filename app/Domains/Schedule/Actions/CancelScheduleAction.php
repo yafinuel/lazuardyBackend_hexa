@@ -31,7 +31,7 @@ class CancelScheduleAction
             $student = $this->studentRepository->getStudentById($userId);
             if ($minutesUntilStart >= 0) {
                 if ($minutesUntilStart > 12 * 60) {
-                    $this->studentRepository->updateStudent($student->id, ['session' => $student->session + 1]);
+                    $this->studentRepository->update($student->id, ['session' => $student->session + 1]);
                 }
             }
         }

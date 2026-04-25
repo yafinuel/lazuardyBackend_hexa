@@ -13,6 +13,7 @@ use App\Domains\Student\Infrastructure\Delivery\Http\Controllers\StudentControll
 use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
 use App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers\TutorController;
 use App\Domains\User\Infrastructure\Delivery\Http\Controllers\UserController;
+use App\Shared\Enums\RoleEnum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,28 +55,33 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // User Profile
-    Route::get('/meStudent', [StudentController::class, 'meStudent']);
-    Route::patch('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
-    Route::get('/meAsTutor', [TutorController::class, 'getTutorById']);
     Route::get('/getTutorById', [TutorController::class, 'getTutorById']);
-    Route::get('/getTutorFile', [TutorController::class, 'getTutorFile']);
-    Route::patch('/updateTutorBiodata', [TutorController::class, 'updateBiodata']);
     Route::patch('/updateProfilePhoto', [UserController::class, 'updateProfilePhoto']);
-
+    
     // Package
     Route::get('/getPackages', [PackageController::class, 'index']);
-
+    
     // Notification
     Route::get('/getNotificationByUserId', [NotificationController::class, 'getNotificationByUserId']);
     
     // Tutor
     Route::get('/getTutorByCriteria', [TutorController::class, 'getTutorByCriteria']);
-
+    
     // Dashboard
-    Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
-    Route::get('/student/dashboard/schedule', [DashboardController::class, 'studentSchedulePage']);
     
     // Schedule
     Route::get('/schedule/getById', [ScheduleController::class, 'getScheduleById']);
     Route::post('/schedule/cancel', [ScheduleController::class, 'cancelSchedule']);
+    
+    Route::middleware('role:' . RoleEnum::STUDENT->value)->group(function (){
+        Route::get('/meStudent', [StudentController::class, 'meStudent']);
+        Route::patch('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
+        Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
+        Route::get('/student/dashboard/schedule', [DashboardController::class, 'studentSchedulePage']);
+    });
+
+    Route::middleware('role:' . RoleEnum::TUTOR->value)->group(function (){
+        Route::get('/meAsTutor', [TutorController::class, 'getTutorById']);
+        Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
+    });
 });

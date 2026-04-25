@@ -49,35 +49,6 @@ class EloquentTutorRepository implements TutorRepositoryInterface
 
     public function updateTutorBiodata(int $tutorId, array $data): void
     {
-        $user = User::where('id', $tutorId)->firstOrFail();
-        
-        try {
-            $user->update([
-                'name' => $data['name'] ?? $user->name,
-                'date_of_birth' => $data['date_of_birth'] ?? $user->date_of_birth,
-                'gender' => $data['gender'] ?? $user->gender,
-                'religion' => $data['religion'] ?? $user->religion,
-                'home_address' => $data['home_address'] ?? $user->home_address,
-                'telephone_number' => $data['telephone_number'] ?? $user->telephone_number,
-                'latitude' => $data['latitude'] ?? $user->latitude,
-                'longitude' => $data['longitude'] ?? $user->longitude,
-            ]);
-
-            $user->tutor()->update([
-                'education' => $data['education'] ?? $user->tutor->education,
-                'description' => $data['description'] ?? $user->tutor->description,
-                'bank_code' => $data['bankCode'] ?? $user->tutor->bank_code,
-                'account_number' => $data['accountNumber'] ?? $user->tutor->account_number,
-                'learning_method' => $data['learningMethod'] ?? $user->tutor->learning_method,
-                'status' => $data['status'] ?? $user->tutor->status,
-            ]);
-
-        } catch (Exception $e) {
-
-            Log::error("Message: " . $e->getMessage());
-            throw new Exception('Failed to update student profile');
-            
-        }
     }
 
     public function getByCriteria(array $filters, int $paginate): LengthAwarePaginator

@@ -87,7 +87,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             profilePhotoUrl: $user->profile_photo_path,
             dateOfBirth: $user->date_of_birth, 
             gender: $user->gender?->displayName(),
-            religion: $user->religion,
+            religion: $user->religion?->displayName() ,
             homeAddress: $user->home_address,
             role: $user->role,
             warning: $user->warning,
@@ -96,7 +96,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             longitude: $user->longitude,
         );
     }
-
+    
     public function resetPassword(string $email, string $newPassword): void
     {
         $user = User::where('email', $email)->first();

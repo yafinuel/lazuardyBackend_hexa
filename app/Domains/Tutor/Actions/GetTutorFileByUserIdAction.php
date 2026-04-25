@@ -5,7 +5,7 @@ namespace App\Domains\Tutor\Actions;
 use App\Domains\FileManager\Ports\FileRepositoryInterface;
 use App\Domains\FileManager\Ports\FileStorageInterface;
 
-class GetTutorFileAction
+class GetTutorFileByUserIdAction
 {
     public function __construct(protected FileRepositoryInterface $repository, protected FileStorageInterface $storage) {}
 

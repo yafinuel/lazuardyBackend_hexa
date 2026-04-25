@@ -976,49 +976,15 @@ paths:
                 status: failed
                 message: Gagal mengambil biodata tutor
                 debug_error: Error message
-  /updateTutorBiodata:
-    patch:
-      tags:
-        - User Profile
-      summary: Memperbarui biodata tutor
-      description: Endpoint untuk memperbarui biodata tutor yang sedang login. Membutuhkan autentikasi.
-      security:
-        - bearerAuth: []
-      operationId: updateTutorBiodata
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateTutorBiodata'
-      responses:
-        '200':
-          description: Berhasil memperbarui biodata tutor
-          content:
-            application/json:
-              example:
-                status: success
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
-        '422':
-          $ref: '#/components/responses/ValidationError'
-        '500':
-          description: Gagal memperbarui biodata tutor
-          content:
-            application/json:
-              example:
-                status: failed
-                message: Gagal memperbarui biodata tutor
-                debug_error: Error message
-  /getTutorFile:
+  /tutor/get-my-files:
     get:
       tags:
         - User Profile
-      summary: Mengambil file tutor
-      description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor. Membutuhkan autentikasi.
+      summary: Mengambil file tutor milik user login
+      description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor yang sedang login melalui alias /tutor/get-my-files. Membutuhkan autentikasi.
       security:
         - bearerAuth: []
-      operationId: getTutorFile
+      operationId: getTutorFileByUserId
       responses:
         '200':
           description: Berhasil mengambil file tutor
@@ -1474,13 +1440,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateStudentBiodataRequest'
-    UpdateTutorBiodata:
-      description: Payload untuk memperbarui biodata tutor
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UpdateTutorBiodataRequest'
   schemas:
     ClassEntity:
       type: object
@@ -2139,79 +2098,6 @@ components:
           type: number
           format: float
           nullable: true
-    UpdateTutorBiodataRequest:
-      type: object
-      required:
-        - province
-        - regency
-        - district
-        - subdistrict
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          example: John Doe
-        date_of_birth:
-          type: string
-          format: date
-          example: '2000-05-15'
-        gender:
-          allOf:
-            - $ref: '#/components/schemas/GenderEnum'
-          example: male
-        religion:
-          allOf:
-            - $ref: '#/components/schemas/ReligionEnum'
-          example: islam
-        telephone_number:
-          type: string
-          example: '081234567890'
-        province:
-          type: string
-          example: DKI Jakarta
-        regency:
-          type: string
-          example: Jakarta Pusat
-        district:
-          type: string
-          example: Tanah Abang
-        subdistrict:
-          type: string
-          example: Bendungan Hilir
-        latitude:
-          type: number
-          format: float
-          example: -6.2088
-        longitude:
-          type: number
-          format: float
-          example: 106.8456
-        education:
-          type: array
-          items:
-            type: string
-          example:
-            - S1
-            - S2
-        description:
-          type: string
-          example: Tutor matematika berpengalaman
-        bankCode:
-          type: string
-          example: ID_BSI
-        accountNumber:
-          type: string
-          example: '7123456789'
-        learningMethod:
-          type: array
-          items:
-            type: string
-          example:
-            - online
-            - offline
-        status:
-          type: string
-          example: active
     UpdateStudentBiodataRequest:
       type: object
       required:

@@ -95,10 +95,8 @@ paths:
     $ref: './paths/user-profile.yaml#/meAsTutor'
   /getTutorById:
     $ref: './paths/user-profile.yaml#/getTutorById'
-  /updateTutorBiodata:
-    $ref: './paths/user-profile.yaml#/updateTutorBiodata'
-  /getTutorFile:
-    $ref: './paths/user-profile.yaml#/getTutorFile'
+  /tutor/get-my-files:
+    $ref: './paths/user-profile.yaml#/getTutorFileByUserId'
   /updateProfilePhoto:
     $ref: './paths/user-profile.yaml#/updateProfilePhoto'
 
@@ -133,8 +131,6 @@ components:
   requestBodies:
     UpdateStudentBiodata:
       $ref: './components/request-bodies.yaml#/UpdateStudentBiodata'
-    UpdateTutorBiodata:
-      $ref: './components/request-bodies.yaml#/UpdateTutorBiodata'
 
   schemas:
     ClassEntity:
@@ -181,8 +177,6 @@ components:
       $ref: './components/schemas.yaml#/StudentEntity'
     TutorEntity:
       $ref: './components/schemas.yaml#/TutorEntity'
-    UpdateTutorBiodataRequest:
-      $ref: './components/schemas.yaml#/UpdateTutorBiodataRequest'
     UpdateStudentBiodataRequest:
       $ref: './components/schemas.yaml#/UpdateStudentBiodataRequest'
     FileEntity:

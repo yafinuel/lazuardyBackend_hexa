@@ -35,7 +35,7 @@ class EloquentFileRepository implements FileRepositoryInterface
                 name: $file->name,
                 type: $file->type->displayName(),
                 url: $file->path,
-                status: $file->status,
+                status: $file->status->value,
             );
         });
     }

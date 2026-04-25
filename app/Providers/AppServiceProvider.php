@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Providers;
 
 use App\Domains\Authentication\Infrastructure\Services\AuthenticationServiceAdapter;
@@ -35,7 +34,9 @@ use App\Domains\Schedule\Infrastructure\Services\ScheduleServiceAdapter;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use App\Domains\Schedule\Ports\ScheduleServicePort;
 use App\Domains\Student\Infrastructure\Repository\EloquentStudentRepository;
+use App\Domains\Student\Infrastructure\Services\StudentServiceAdapter;
 use App\Domains\Student\Ports\StudentRepositoryInterface;
+use App\Domains\Student\Ports\StudentServicePort;
 use App\Domains\Subject\Infrastructure\Repository\EloquentSubjectRepository;
 use App\Domains\Subject\Ports\SubjectRepositoryInterface;
 use App\Domains\Tutor\Infrastructure\Repository\EloquentTutorRepository;
@@ -150,6 +151,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PenaltyServicePort::class,
             PenaltyServiceAdapter::class
+        );
+
+        $this->app->bind(
+            StudentServicePort::class,
+            StudentServiceAdapter::class
         );
     }
 

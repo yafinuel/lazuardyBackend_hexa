@@ -4,10 +4,11 @@ namespace App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Tutor\Actions\GetTutorByCriteria;
 use App\Domains\Tutor\Actions\GetTutorByIdAction;
-use App\Domains\Tutor\Actions\GetTutorFileAction;
+use App\Domains\Tutor\Actions\GetTutorFileByUserIdAction;
 use App\Domains\Tutor\Actions\UpdateTutorProfileAction;
 use App\Shared\Enums\GenderEnum;
 use App\Shared\Enums\ReligionEnum;
+use App\Shared\Enums\TutorStatusEnum;
 use Illuminate\Validation\Rules\Enum;
 use App\Http\Controllers\Controller;
 use Exception;
@@ -37,43 +38,9 @@ class TutorController extends Controller
 
     public function updateBiodata(Request $request, UpdateTutorProfileAction $action)
     {
-        $data = $request->validate([
-            'name' => ['sometimes', 'string', 'max:255'],
-            'date_of_birth' => ['sometimes', 'date'],
-            'gender' => ['sometimes', new Enum(GenderEnum::class)],
-            'religion' => ['sometimes', new Enum(ReligionEnum::class)],
-            'telephone_number' => ['sometimes', 'string', 'max:20'],
-            'latitude' => ['nullable', 'numeric'],
-            'longitude' => ['nullable', 'numeric'],
-
-            'province' => ['required', 'string'],
-            'regency' => ['required', 'string'],
-            'district' => ['required', 'string'],
-            'subdistrict' => ['required', 'string'],
-
-            'education' => ['sometimes', 'array'],
-            'description' => ['sometimes', 'string'],
-            'bankCode' => ['sometimes', 'string'],
-            'accountNumber' => ['sometimes', 'string'],
-            'learningMethod' => ['sometimes', 'array'],
-            'status' => ['sometimes', 'string'],
-        ]);
-        try {
-            $action->execute($request->user()->id, $data);
-
-            return response()->json([
-                'status' => 'success',
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Gagal memperbarui biodata tutor',
-                'debug_error' => $e->getMessage(),
-            ]);
-        }
     }
 
-    public function getTutorFile(Request $request, GetTutorFileAction $action)
+    public function getTutorFileByUserId(Request $request, GetTutorFileByUserIdAction $action)
     {
         try {
             $tutorId = $request->user()->id;

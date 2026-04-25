@@ -149,51 +149,15 @@ getTutorById:
               status: "failed"
               message: "Gagal mengambil biodata tutor"
               debug_error: "Error message"
-
-updateTutorBiodata:
-  patch:
-    tags:
-      - User Profile
-    summary: Memperbarui biodata tutor
-    description: Endpoint untuk memperbarui biodata tutor yang sedang login. Membutuhkan autentikasi.
-    security:
-      - bearerAuth: []
-    operationId: updateTutorBiodata
-    requestBody:
-      $ref: '../components/request-bodies.yaml#/UpdateTutorBiodata'
-    responses:
-      '200':
-        description: Berhasil memperbarui biodata tutor
-        content:
-          application/json:
-            example:
-              status: "success"
-      '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: "Unauthenticated."
-      '422':
-        $ref: '../components/responses.yaml#/ValidationError'
-      '500':
-        description: Gagal memperbarui biodata tutor
-        content:
-          application/json:
-            example:
-              status: "failed"
-              message: "Gagal memperbarui biodata tutor"
-              debug_error: "Error message"
-
-getTutorFile:
+getTutorFileByUserId:
   get:
     tags:
       - User Profile
-    summary: Mengambil file tutor
-    description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor. Membutuhkan autentikasi.
+    summary: Mengambil file tutor milik user login
+    description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor yang sedang login melalui alias /tutor/get-my-files. Membutuhkan autentikasi.
     security:
       - bearerAuth: []
-    operationId: getTutorFile
+    operationId: getTutorFileByUserId
     responses:
       '200':
         description: Berhasil mengambil file tutor

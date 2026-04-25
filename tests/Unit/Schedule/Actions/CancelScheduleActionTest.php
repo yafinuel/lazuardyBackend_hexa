@@ -17,6 +17,8 @@ use Tests\TestCase;
 
 class CancelScheduleActionTest extends TestCase
 {
+    private const CANCEL_REASON = 'Test cancel reason';
+
     private CancelScheduleAction $action;
     private ScheduleRepositoryInterface|MockInterface $scheduleRepository;
     private ScheduleServiceAdapter|MockInterface $scheduleService;
@@ -61,14 +63,17 @@ class CancelScheduleActionTest extends TestCase
             ->once();
 
         $this->scheduleRepository->shouldReceive('cancelSchedule')
-            ->with($scheduleId)
+            ->with($scheduleId, self::CANCEL_REASON)
             ->once()
             ->andReturn(true);
 
         Log::shouldReceive('info')->once();
 
         // Act
-        $result = $this->action->execute($userId, $scheduleId);
+        $result = $this->action->execute($userId, [
+            'schedule_id' => $scheduleId,
+            'reason' => self::CANCEL_REASON,
+        ]);
 
         // Assert
         $this->assertTrue($result);
@@ -96,14 +101,17 @@ class CancelScheduleActionTest extends TestCase
         $this->scheduleService->shouldReceive('userPenaltySet')->never();
 
         $this->scheduleRepository->shouldReceive('cancelSchedule')
-            ->with($scheduleId)
+            ->with($scheduleId, self::CANCEL_REASON)
             ->once()
             ->andReturn(true);
 
         Log::shouldReceive('info')->once();
 
         // Act
-        $result = $this->action->execute($userId, $scheduleId);
+        $result = $this->action->execute($userId, [
+            'schedule_id' => $scheduleId,
+            'reason' => self::CANCEL_REASON,
+        ]);
 
         // Assert
         $this->assertTrue($result);
@@ -135,17 +143,20 @@ class CancelScheduleActionTest extends TestCase
             ->andReturn($student);
 
         // Session should NOT be incremented
-        $this->studentRepository->shouldReceive('updateStudent')->never();
+        $this->studentRepository->shouldReceive('update')->never();
 
         $this->scheduleRepository->shouldReceive('cancelSchedule')
-            ->with($scheduleId)
+            ->with($scheduleId, self::CANCEL_REASON)
             ->once()
             ->andReturn(true);
 
         Log::shouldReceive('info')->once();
 
         // Act
-        $result = $this->action->execute($userId, $scheduleId);
+        $result = $this->action->execute($userId, [
+            'schedule_id' => $scheduleId,
+            'reason' => self::CANCEL_REASON,
+        ]);
 
         // Assert
         $this->assertTrue($result);
@@ -177,19 +188,25 @@ class CancelScheduleActionTest extends TestCase
             ->andReturn($student);
 
         // Session should be incremented (string session '5' + 1 = int 6)
-        $this->studentRepository->shouldReceive('updateStudent')
-            ->with((int)$student->id, ['session' => ((int)$student->session) + 1])
+        $this->studentRepository->shouldReceive('update')
+            ->withArgs(function ($id, $data) use ($student) {
+                return (int) $id === (int) $student->id
+                    && $data === ['session' => ((int) $student->session) + 1];
+            })
             ->once();
 
         $this->scheduleRepository->shouldReceive('cancelSchedule')
-            ->with($scheduleId)
+            ->with($scheduleId, self::CANCEL_REASON)
             ->once()
             ->andReturn(true);
 
         Log::shouldReceive('info')->once();
 
         // Act
-        $result = $this->action->execute($userId, $scheduleId);
+        $result = $this->action->execute($userId, [
+            'schedule_id' => $scheduleId,
+            'reason' => self::CANCEL_REASON,
+        ]);
 
         // Assert
         $this->assertTrue($result);
@@ -217,14 +234,17 @@ class CancelScheduleActionTest extends TestCase
         $this->scheduleService->shouldReceive('userPenaltySet')->never();
 
         $this->scheduleRepository->shouldReceive('cancelSchedule')
-            ->with($scheduleId)
+            ->with($scheduleId, self::CANCEL_REASON)
             ->once()
             ->andReturn(true);
 
         Log::shouldReceive('info')->once();
 
         // Act
-        $result = $this->action->execute($userId, $scheduleId);
+        $result = $this->action->execute($userId, [
+            'schedule_id' => $scheduleId,
+            'reason' => self::CANCEL_REASON,
+        ]);
 
         // Assert
         $this->assertTrue($result);
@@ -255,14 +275,17 @@ class CancelScheduleActionTest extends TestCase
             ->once();
 
         $this->scheduleRepository->shouldReceive('cancelSchedule')
-            ->with($scheduleId)
+            ->with($scheduleId, self::CANCEL_REASON)
             ->once()
             ->andReturn(true);
 
         Log::shouldReceive('info')->once();
 
         // Act
-        $result = $this->action->execute($userId, $scheduleId);
+        $result = $this->action->execute($userId, [
+            'schedule_id' => $scheduleId,
+            'reason' => self::CANCEL_REASON,
+        ]);
 
         // Assert
         $this->assertTrue($result);
@@ -291,14 +314,17 @@ class CancelScheduleActionTest extends TestCase
         $this->scheduleService->shouldReceive('userPenaltySet')->never();
 
         $this->scheduleRepository->shouldReceive('cancelSchedule')
-            ->with($scheduleId)
+            ->with($scheduleId, self::CANCEL_REASON)
             ->once()
             ->andReturn(true);
 
         Log::shouldReceive('info')->once();
 
         // Act
-        $result = $this->action->execute($userId, $scheduleId);
+        $result = $this->action->execute($userId, [
+            'schedule_id' => $scheduleId,
+            'reason' => self::CANCEL_REASON,
+        ]);
 
         // Assert
         $this->assertTrue($result);
@@ -371,6 +397,7 @@ class CancelScheduleActionTest extends TestCase
             longitude: null,
             session: (string) $session,
             classId: 1,
+            className: null,
         );
     }
 }
