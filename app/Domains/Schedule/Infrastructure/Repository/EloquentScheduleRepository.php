@@ -45,7 +45,6 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
             endTime: Carbon::createFromFormat('H:i:s', $schedule->time)->addHour(),
             status: $schedule->status->value,
             learningMethod: $schedule->learning_method,
-            meetingLink: $schedule->meeting_link,
             address: $schedule->address,
             tutorName: $schedule->tutor?->user?->name,
             subjectName: $schedule->subject?->name,
@@ -61,5 +60,32 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
         $schedule->status = ScheduleStatusEnum::CANCELLED->value;
         $schedule->reason = $reason;
         return $schedule->save();
+    }
+
+    public function createMeetingSchedule(array $data): void
+    {
+        Schedule::create([
+            'tutor_id' => $data['tutor_id'],
+            'student_id' => $data['student_id'],
+            'subject_id' => $data['subject_id'],
+            'date' => $data['date'],
+            'time' => $data['time'],
+            'status' => ScheduleStatusEnum::PENDING->value,
+            'learning_method' => $data['learning_method'],
+            'address' => $data['address'],
+        ]);
+    }
+
+    public function getTutorSchedulesByDay(int $tutorId, ?string $day, int $paginate = 10): LengthAwarePaginator
+    {
+        $tutor = Tutor::where('user_id', $tutorId)->firstOrFail();
+        
+        $query = $tutor->tutorSchedules();
+
+        if ($day !== null) {
+            $query->where('day', $day);
+        }
+
+        return $query->paginate($paginate);
     }
 }

@@ -25,11 +25,35 @@ enum DayEnum: string
             self::SATURDAY => 'Sabtu'
         };
     }
+
+    public function translateName() : string 
+    {
+        return match($this) 
+        {
+            self::SUNDAY => 'minggu',
+            self::MONDAY => 'senin',
+            self::TUESDAY => 'selasa',
+            self::WEDNESDAY => 'rabu',
+            self::THURSDAY => 'kamis',
+            self::FRIDAY => 'jumat',
+            self::SATURDAY => 'sabtu'
+        };
+    }
     
     public static function tryFromDisplayName(string $displayName): ?self
     {
         foreach (self::cases() as $case) {
             if ($case->displayName() === $displayName) {
+                return $case;
+            }
+        }
+        return null;
+    }
+    
+    public static function tryFromTranslateName(string $translateName): ?self
+    {
+        foreach (self::cases() as $case) {
+            if ($case->translateName() === $translateName) {
                 return $case;
             }
         }

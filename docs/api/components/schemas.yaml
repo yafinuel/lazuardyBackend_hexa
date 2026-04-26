@@ -1057,7 +1057,7 @@ ScheduleEntity:
     address:
       type: string
       nullable: true
-      example: Jl. Contoh No. 10, Jakarta
+      example: zoom meeting link atau alamat jika metode offline
     tutorName:
       type: string
       nullable: true
@@ -1158,3 +1158,129 @@ StudentScheduleResponse:
       example: success
     data:
       $ref: '#/StudentScheduleListPayload'
+
+CreateMeetingScheduleRequest:
+  type: object
+  required: [tutor_id, subject_id, date, time, learning_method, address]
+  properties:
+    tutor_id:
+      type: integer
+      minimum: 1
+      example: 2
+      description: ID user tutor yang dipilih.
+    subject_id:
+      type: integer
+      minimum: 1
+      example: 1
+      description: ID mata pelajaran yang akan dijadwalkan.
+    date:
+      type: string
+      format: date
+      example: '2026-04-21'
+      description: Tanggal meeting dalam format Y-m-d.
+    time:
+      type: string
+      example: '14:00:00'
+      description: Waktu meeting dalam format H:i:s.
+    learning_method:
+      type: string
+      enum: [online, offline]
+      example: online
+      description: Metode belajar yang dipilih.
+    address:
+      type: string
+      maxLength: 255
+      example: 'Jl. Contoh No. 10, Jakarta'
+      description: Alamat meeting jika metode offline, atau alamat default jika dibutuhkan aplikasi.
+
+CreateMeetingScheduleResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: success
+
+TutorScheduleEntity:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    tutorId:
+      type: integer
+      example: 2
+    day:
+      type: string
+      enum: [sunday, monday, tuesday, wednesday, thursday, friday, saturday]
+      example: monday
+    time:
+      type: string
+      example: '08:00:00'
+
+TutorScheduleListPayload:
+  type: object
+  properties:
+    current_page:
+      type: integer
+      example: 1
+    data:
+      type: array
+      items:
+        $ref: '#/TutorScheduleEntity'
+    first_page_url:
+      type: string
+      nullable: true
+      example: 'http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1'
+    from:
+      type: integer
+      nullable: true
+      example: 1
+    last_page:
+      type: integer
+      example: 1
+    last_page_url:
+      type: string
+      nullable: true
+      example: 'http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1'
+    links:
+      type: array
+      items:
+        type: object
+        properties:
+          url:
+            type: string
+            nullable: true
+          label:
+            type: string
+          active:
+            type: boolean
+    next_page_url:
+      type: string
+      nullable: true
+      example: null
+    path:
+      type: string
+      example: 'http://localhost:8000/api/schedule/getTutorSchedulesByDay'
+    per_page:
+      type: integer
+      example: 10
+    prev_page_url:
+      type: string
+      nullable: true
+      example: null
+    to:
+      type: integer
+      nullable: true
+      example: 2
+    total:
+      type: integer
+      example: 2
+
+TutorScheduleResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: success
+    data:
+      $ref: '#/TutorScheduleListPayload'

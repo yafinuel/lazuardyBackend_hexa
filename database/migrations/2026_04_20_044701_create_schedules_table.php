@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('date');
             $table->time('time');
             $table->string('reason')->nullable();
-            $table->string('learning_method');
+            $table->enum('learning_method', ['online', 'offline']);
             $table->string('address');
             $table->enum('status', $status)->default(ScheduleStatusEnum::PENDING->value);
             $table->timestamps();

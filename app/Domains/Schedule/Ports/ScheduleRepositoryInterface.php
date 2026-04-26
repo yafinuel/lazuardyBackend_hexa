@@ -12,4 +12,6 @@ interface ScheduleRepositoryInterface
     public function getStudentSchedulesByDate(int $studentId, Carbon $date, int $paginate = 10): LengthAwarePaginator;
     public function getScheduleById(int $scheduleId): ScheduleEntity;
     public function cancelSchedule(int $scheduleId, string $reason): bool;
+    public function createMeetingSchedule(array $data): void;
+    public function getTutorSchedulesByDay(int $tutorId, ?string $day, int $paginate = 10): LengthAwarePaginator;
 }

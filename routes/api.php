@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Schedule
     Route::get('/schedule/getById', [ScheduleController::class, 'getScheduleById']);
+    Route::get('/schedule/getTutorSchedulesByDay', [ScheduleController::class, 'getTutorSchedulesByDay']);
     Route::post('/schedule/cancel', [ScheduleController::class, 'cancelSchedule']);
     
     Route::middleware('role:' . RoleEnum::STUDENT->value)->group(function (){
@@ -80,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
         Route::get('/student/dashboard/schedule', [DashboardController::class, 'studentSchedulePage']);
         Route::get('/student/reports', [ReportController::class, 'getAllReportsByStudentId']);
+        Route::post('/schedule/takeMeeting', [ScheduleController::class, 'createMeetingSchedule']);
     });
 
     Route::middleware('role:' . RoleEnum::TUTOR->value)->group(function (){

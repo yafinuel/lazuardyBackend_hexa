@@ -15,7 +15,6 @@ class ScheduleEntity {
         public Carbon $endTime,
         public string $status,
         public string $learningMethod,
-        public ?string $meetingLink,
         public ?string $address,
         public ?string $tutorName,
         public ?string $subjectName,

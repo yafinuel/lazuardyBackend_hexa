@@ -27,7 +27,6 @@ class GetStudentSchedulesByDateAction
                 endTime: Carbon::createFromFormat('H:i:s', $schedule->time)->addHour(),
                 status: $schedule->status->value,
                 learningMethod: $schedule->learning_method,
-                meetingLink: $schedule->meeting_link,
                 address: $schedule->address,
                 tutorName: $schedule->tutor?->user?->name,
                 subjectName: $schedule->subject?->name,

@@ -104,3 +104,124 @@ cancelSchedule:
                   - The reason field is required.
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+
+getTutorSchedulesByDay:
+  get:
+    tags:
+      - Schedule
+    summary: Mengambil jadwal availability tutor berdasarkan hari
+    description: Endpoint untuk mengambil daftar jadwal availability milik tutor berdasarkan `tutor_id`. Parameter `day` bersifat opsional. Jika tidak diisi, semua jadwal tutor akan dikembalikan. Nilai `day` memakai format bahasa Indonesia lowercase seperti `senin`, `selasa`, dan seterusnya.
+    security:
+      - bearerAuth: []
+    operationId: getTutorSchedulesByDay
+    parameters:
+      - name: tutor_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          example: 2
+        description: ID user tutor yang jadwal availability-nya ingin diambil. Harus terdaftar di tabel tutors.
+      - name: day
+        in: query
+        required: false
+        schema:
+          type: string
+          enum: [senin, selasa, rabu, kamis, jumat, sabtu, minggu]
+          example: senin
+        description: Hari yang ingin difilter. Jika kosong, semua hari akan dikembalikan.
+    responses:
+      '200':
+        description: Berhasil mengambil daftar jadwal availability tutor
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/TutorScheduleResponse'
+            example:
+              status: success
+              data:
+                current_page: 1
+                data:
+                  - id: 1
+                    tutorId: 2
+                    day: monday
+                    time: '08:00:00'
+                  - id: 2
+                    tutorId: 2
+                    day: wednesday
+                    time: '10:00:00'
+                first_page_url: 'http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1'
+                from: 1
+                last_page: 1
+                last_page_url: 'http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1'
+                links:
+                  - url: null
+                    label: '&laquo; Previous'
+                    active: false
+                  - url: 'http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1'
+                    label: '1'
+                    active: true
+                  - url: null
+                    label: 'Next &raquo;'
+                    active: false
+                next_page_url: null
+                path: 'http://localhost:8000/api/schedule/getTutorSchedulesByDay'
+                per_page: 10
+                prev_page_url: null
+                to: 2
+                total: 2
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: 'Unauthenticated.'
+      '404':
+        description: Data tutor tidak ditemukan
+        content:
+          application/json:
+            example:
+              message: 'No query results for model [App\\Models\\Tutor].'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+takeMeeting:
+  post:
+    tags:
+      - Schedule
+    summary: Membuat jadwal meeting untuk siswa
+    description: Endpoint untuk membuat jadwal meeting baru. Data student diambil otomatis dari user yang sedang login, jadi client tidak perlu mengirim `student_id`. Membutuhkan autentikasi dan role student.
+    security:
+      - bearerAuth: []
+    operationId: takeMeeting
+    requestBody:
+      $ref: '../components/request-bodies.yaml#/CreateMeetingSchedule'
+    responses:
+      '200':
+        description: Meeting schedule berhasil dibuat
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/CreateMeetingScheduleResponse'
+            example:
+              status: success
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: 'Unauthenticated.'
+      '403':
+        description: Forbidden - Endpoint hanya untuk role student
+        content:
+          application/json:
+            example:
+              status: failed
+              message: 'This page is Forbidden for tutor'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

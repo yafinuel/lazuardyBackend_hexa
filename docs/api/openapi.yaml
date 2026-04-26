@@ -114,6 +114,10 @@ paths:
     $ref: './paths/dashboard.yaml#/studentSchedulePage'
   /schedule/getById:
     $ref: './paths/schedule.yaml#/getScheduleById'
+  /schedule/getTutorSchedulesByDay:
+    $ref: './paths/schedule.yaml#/getTutorSchedulesByDay'
+  /schedule/takeMeeting:
+    $ref: './paths/schedule.yaml#/takeMeeting'
   /schedule/cancel:
     $ref: './paths/schedule.yaml#/cancelSchedule'
   /student/reports:
@@ -135,6 +139,8 @@ components:
   requestBodies:
     UpdateStudentBiodata:
       $ref: './components/request-bodies.yaml#/UpdateStudentBiodata'
+    CreateMeetingSchedule:
+      $ref: './components/request-bodies.yaml#/CreateMeetingSchedule'
 
   schemas:
     ClassEntity:
@@ -199,6 +205,10 @@ components:
       $ref: './components/schemas.yaml#/ScheduleEntity'
     GetScheduleByIdResponse:
       $ref: './components/schemas.yaml#/GetScheduleByIdResponse'
+    CreateMeetingScheduleRequest:
+      $ref: './components/schemas.yaml#/CreateMeetingScheduleRequest'
+    CreateMeetingScheduleResponse:
+      $ref: './components/schemas.yaml#/CreateMeetingScheduleResponse'
     StudentScheduleListPayload:
       $ref: './components/schemas.yaml#/StudentScheduleListPayload'
     StudentScheduleResponse:

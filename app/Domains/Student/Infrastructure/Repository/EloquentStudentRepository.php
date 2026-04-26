@@ -6,8 +6,6 @@ use App\Domains\Student\Entities\StudentEntity;
 use App\Domains\Student\Ports\StudentRepositoryInterface;
 use App\Models\Student;
 use App\Models\User;
-use Exception;
-use Illuminate\Support\Facades\Log;
 
 class EloquentStudentRepository implements StudentRepositoryInterface
 {
@@ -54,5 +52,4 @@ class EloquentStudentRepository implements StudentRepositoryInterface
     {
         Student::where('user_id', $userId)->update($data);
     }
-
 }

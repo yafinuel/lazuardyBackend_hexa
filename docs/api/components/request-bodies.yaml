@@ -5,3 +5,11 @@ UpdateStudentBiodata:
     application/json:
       schema:
         $ref: './schemas.yaml#/UpdateStudentBiodataRequest'
+
+CreateMeetingSchedule:
+  description: "Payload untuk membuat jadwal meeting siswa"
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/CreateMeetingScheduleRequest'

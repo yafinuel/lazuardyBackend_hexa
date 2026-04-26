@@ -1348,6 +1348,132 @@ paths:
                     - The schedule id field is required.
         '500':
           $ref: '#/components/responses/ServerError'
+  /schedule/getTutorSchedulesByDay:
+    get:
+      tags:
+        - Schedule
+      summary: Mengambil jadwal availability tutor berdasarkan hari
+      description: Endpoint untuk mengambil daftar jadwal availability milik tutor berdasarkan `tutor_id`. Parameter `day` bersifat opsional. Jika tidak diisi, semua jadwal tutor akan dikembalikan. Nilai `day` memakai format bahasa Indonesia lowercase seperti `senin`, `selasa`, dan seterusnya.
+      security:
+        - bearerAuth: []
+      operationId: getTutorSchedulesByDay
+      parameters:
+        - name: tutor_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 2
+          description: ID user tutor yang jadwal availability-nya ingin diambil. Harus terdaftar di tabel tutors.
+        - name: day
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - senin
+              - selasa
+              - rabu
+              - kamis
+              - jumat
+              - sabtu
+              - minggu
+            example: senin
+          description: Hari yang ingin difilter. Jika kosong, semua hari akan dikembalikan.
+      responses:
+        '200':
+          description: Berhasil mengambil daftar jadwal availability tutor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TutorScheduleResponse'
+              example:
+                status: success
+                data:
+                  current_page: 1
+                  data:
+                    - id: 1
+                      tutorId: 2
+                      day: monday
+                      time: '08:00:00'
+                    - id: 2
+                      tutorId: 2
+                      day: wednesday
+                      time: '10:00:00'
+                  first_page_url: http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1
+                  from: 1
+                  last_page: 1
+                  last_page_url: http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1
+                  links:
+                    - url: null
+                      label: '&laquo; Previous'
+                      active: false
+                    - url: http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1
+                      label: '1'
+                      active: true
+                    - url: null
+                      label: Next &raquo;
+                      active: false
+                  next_page_url: null
+                  path: http://localhost:8000/api/schedule/getTutorSchedulesByDay
+                  per_page: 10
+                  prev_page_url: null
+                  to: 2
+                  total: 2
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '404':
+          description: Data tutor tidak ditemukan
+          content:
+            application/json:
+              example:
+                message: No query results for model [App\\Models\\Tutor].
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /schedule/takeMeeting:
+    post:
+      tags:
+        - Schedule
+      summary: Membuat jadwal meeting untuk siswa
+      description: Endpoint untuk membuat jadwal meeting baru. Data student diambil otomatis dari user yang sedang login, jadi client tidak perlu mengirim `student_id`. Membutuhkan autentikasi dan role student.
+      security:
+        - bearerAuth: []
+      operationId: takeMeeting
+      requestBody:
+        $ref: '#/components/requestBodies/CreateMeetingSchedule'
+      responses:
+        '200':
+          description: Meeting schedule berhasil dibuat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateMeetingScheduleResponse'
+              example:
+                status: success
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Forbidden - Endpoint hanya untuk role student
+          content:
+            application/json:
+              example:
+                status: failed
+                message: This page is Forbidden for tutor
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /schedule/cancel:
     post:
       tags:
@@ -1525,6 +1651,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateStudentBiodataRequest'
+    CreateMeetingSchedule:
+      description: Payload untuk membuat jadwal meeting siswa
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateMeetingScheduleRequest'
   schemas:
     ClassEntity:
       type: object
@@ -2518,7 +2651,7 @@ components:
         address:
           type: string
           nullable: true
-          example: Jl. Contoh No. 10, Jakarta
+          example: zoom meeting link atau alamat jika metode offline
         tutorName:
           type: string
           nullable: true
@@ -2547,6 +2680,53 @@ components:
           example: success
         data:
           $ref: '#/components/schemas/ScheduleEntity'
+    CreateMeetingScheduleRequest:
+      type: object
+      required:
+        - tutor_id
+        - subject_id
+        - date
+        - time
+        - learning_method
+        - address
+      properties:
+        tutor_id:
+          type: integer
+          minimum: 1
+          example: 2
+          description: ID user tutor yang dipilih.
+        subject_id:
+          type: integer
+          minimum: 1
+          example: 1
+          description: ID mata pelajaran yang akan dijadwalkan.
+        date:
+          type: string
+          format: date
+          example: '2026-04-21'
+          description: Tanggal meeting dalam format Y-m-d.
+        time:
+          type: string
+          example: '14:00:00'
+          description: Waktu meeting dalam format H:i:s.
+        learning_method:
+          type: string
+          enum:
+            - online
+            - offline
+          example: online
+          description: Metode belajar yang dipilih.
+        address:
+          type: string
+          maxLength: 255
+          example: Jl. Contoh No. 10, Jakarta
+          description: Alamat meeting jika metode offline, atau alamat default jika dibutuhkan aplikasi.
+    CreateMeetingScheduleResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
     StudentScheduleListPayload:
       type: object
       properties:
@@ -2716,3 +2896,92 @@ components:
             total:
               type: integer
               example: 10
+    TutorScheduleEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        tutorId:
+          type: integer
+          example: 2
+        day:
+          type: string
+          enum:
+            - sunday
+            - monday
+            - tuesday
+            - wednesday
+            - thursday
+            - friday
+            - saturday
+          example: monday
+        time:
+          type: string
+          example: '08:00:00'
+    TutorScheduleListPayload:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TutorScheduleEntity'
+        first_page_url:
+          type: string
+          nullable: true
+          example: http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1
+        from:
+          type: integer
+          nullable: true
+          example: 1
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+          example: http://localhost:8000/api/schedule/getTutorSchedulesByDay?tutor_id=2&page=1
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        next_page_url:
+          type: string
+          nullable: true
+          example: null
+        path:
+          type: string
+          example: http://localhost:8000/api/schedule/getTutorSchedulesByDay
+        per_page:
+          type: integer
+          example: 10
+        prev_page_url:
+          type: string
+          nullable: true
+          example: null
+        to:
+          type: integer
+          nullable: true
+          example: 2
+        total:
+          type: integer
+          example: 2
+    TutorScheduleResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/TutorScheduleListPayload'
