@@ -5,7 +5,7 @@ use App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers\Socialit
 use App\Domains\ClassDomain\Infrastructure\Delivery\Http\Controllers\ClassController;
 use App\Domains\CourseCatalog\Infrastructure\Delivery\Http\Controllers\CourseCatalogController;
 use App\Domains\Dashboard\Infrastructure\Delivery\Http\Controllers\DashboardController;
-use App\Domains\Finance\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
+use App\Domains\Commerce\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
 use App\Domains\Notification\Infrastructure\Delivery\Http\Controllers\NotificationController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
 use App\Domains\Report\Infrastructure\Delivery\Http\Controllers\ReportController;
@@ -34,7 +34,7 @@ Route::post('/forgotPasswordResetPassword', [AuthController::class, 'forgotPassw
 Route::post('/studentRegister', [AuthController::class, 'studentRegister']);
 Route::post('/tutorRegister', [AuthController::class, 'tutorRegister']);
 
-// Finance
+// Order
 Route::get('/getBankList', [PaymentGatewayController::class, 'getBankList']);
 Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateBankAccount']);
 
@@ -82,6 +82,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/student/dashboard/schedule', [DashboardController::class, 'studentSchedulePage']);
         Route::get('/student/reports', [ReportController::class, 'getAllReportsByStudentId']);
         Route::post('/schedule/takeMeeting', [ScheduleController::class, 'createMeetingSchedule']);
+
+        // Order
+        Route::post('/package/order', [PaymentGatewayController::class, 'orderPackage']);
     });
 
     Route::middleware('role:' . RoleEnum::TUTOR->value)->group(function (){

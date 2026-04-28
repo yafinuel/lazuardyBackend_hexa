@@ -626,6 +626,61 @@ paths:
                     error_code: API_ERROR
         '400':
           description: Permintaan tidak valid
+  /package/order:
+    post:
+      tags:
+        - Payment Gateway
+      security:
+        - bearerAuth: []
+      summary: Membuat order paket belajar
+      operationId: orderPackage
+      description: Endpoint untuk membuat order paket belajar dan mendapatkan URL checkout pembayaran melalui Xendit. Hanya dapat diakses oleh user dengan role student.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderPackageRequest'
+            example:
+              packages:
+                - id: 1
+                  quantity: 2
+                - id: 2
+                  quantity: 1
+      responses:
+        '200':
+          description: Order berhasil dibuat, mengembalikan checkout URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCheckoutResponse'
+              example:
+                status: success
+                data:
+                  order_id: 1
+                  checkout_url: https://xendit.co/web/invoices/...
+        '400':
+          description: Validasi request gagal atau data tidak valid
+          content:
+            application/json:
+              examples:
+                ValidationError:
+                  value:
+                    message: The packages field is required.
+                    errors:
+                      packages:
+                        - The packages field is required.
+        '401':
+          description: Unauthorized - Token tidak valid atau tidak ada
+        '403':
+          description: Forbidden - Hanya student yang dapat mengakses endpoint ini
+        '500':
+          description: Error saat membuat invoice atau database transaction gagal
+          content:
+            application/json:
+              example:
+                message: 'Gagal melakukan checkout: Gagal membuat invoice: Invalid input data'
+                exception: Exception
   /getPackages:
     get:
       tags:
@@ -2896,6 +2951,51 @@ components:
             total:
               type: integer
               example: 10
+    OrderPackageItem:
+      type: object
+      required:
+        - id
+        - quantity
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          example: 1
+          description: ID paket yang akan dibeli
+        quantity:
+          type: integer
+          minimum: 1
+          example: 2
+          description: Jumlah paket yang dibeli
+    OrderPackageRequest:
+      type: object
+      required:
+        - packages
+      properties:
+        packages:
+          type: array
+          minItems: 1
+          description: Daftar paket yang akan dibeli
+          items:
+            $ref: '#/components/schemas/OrderPackageItem'
+    OrderCheckoutResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            order_id:
+              type: integer
+              example: 1
+              description: ID order yang baru dibuat
+            checkout_url:
+              type: string
+              format: uri
+              example: https://xendit.co/web/invoices/...
+              description: URL untuk redirect ke halaman pembayaran Xendit
     TutorScheduleEntity:
       type: object
       properties:

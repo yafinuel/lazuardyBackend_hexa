@@ -68,6 +68,8 @@ paths:
     $ref: './paths/payment-gateway.yaml#/getBankList'
   /validateBankAccount:
     $ref: './paths/payment-gateway.yaml#/validateBankAccount'
+  /package/order:
+    $ref: './paths/payment-gateway.yaml#/orderPackage'
 
   /getPackages:
     $ref: './paths/package.yaml#/getPackages'
@@ -219,3 +221,9 @@ components:
       $ref: './components/schemas.yaml#/ReportEntity'
     StudentReportResponse:
       $ref: './components/schemas.yaml#/StudentReportResponse'
+    OrderPackageItem:
+      $ref: './components/schemas.yaml#/OrderPackageItem'
+    OrderPackageRequest:
+      $ref: './components/schemas.yaml#/OrderPackageRequest'
+    OrderCheckoutResponse:
+      $ref: './components/schemas.yaml#/OrderCheckoutResponse'

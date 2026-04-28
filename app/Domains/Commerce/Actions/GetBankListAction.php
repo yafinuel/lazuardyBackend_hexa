@@ -1,16 +1,13 @@
 <?php
 
-namespace App\Domains\Finance\Actions;
+namespace App\Domains\Commerce\Actions;
 
-use App\Domains\Finance\Ports\BankValidatorInterface;
+use App\Domains\Commerce\Ports\XenditBankPort;
 use Illuminate\Support\Facades\Cache;
 
 class GetBankListAction
 {
-    /**
-     * Create a new class instance.
-     */
-    public function __construct(protected BankValidatorInterface $validator) {}
+    public function __construct(protected XenditBankPort $validator) {}
 
     public function execute()
     {

@@ -1284,3 +1284,48 @@ TutorScheduleResponse:
       example: success
     data:
       $ref: '#/TutorScheduleListPayload'
+
+OrderPackageItem:
+  type: object
+  required: [id, quantity]
+  properties:
+    id:
+      type: integer
+      minimum: 1
+      example: 1
+      description: ID paket yang akan dibeli
+    quantity:
+      type: integer
+      minimum: 1
+      example: 2
+      description: Jumlah paket yang dibeli
+
+OrderPackageRequest:
+  type: object
+  required: [packages]
+  properties:
+    packages:
+      type: array
+      minItems: 1
+      description: Daftar paket yang akan dibeli
+      items:
+        $ref: '#/OrderPackageItem'
+
+OrderCheckoutResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: "success"
+    data:
+      type: object
+      properties:
+        order_id:
+          type: integer
+          example: 1
+          description: ID order yang baru dibuat
+        checkout_url:
+          type: string
+          format: uri
+          example: "https://xendit.co/web/invoices/..."
+          description: URL untuk redirect ke halaman pembayaran Xendit

@@ -50,3 +50,59 @@ validateBankAccount:
                 value: { status: "error", message: "Gagal memverifikasi rekening", error_code: "API_ERROR" }
       '400':
         description: Permintaan tidak valid
+
+orderPackage:
+  post:
+    tags:
+      - Payment Gateway
+    security:
+      - bearerAuth: []
+    summary: Membuat order paket belajar
+    operationId: orderPackage
+    description: Endpoint untuk membuat order paket belajar dan mendapatkan URL checkout pembayaran melalui Xendit. Hanya dapat diakses oleh user dengan role student.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/OrderPackageRequest'
+          example:
+            packages:
+              - id: 1
+                quantity: 2
+              - id: 2
+                quantity: 1
+    responses:
+      '200':
+        description: Order berhasil dibuat, mengembalikan checkout URL
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/OrderCheckoutResponse'
+            example:
+              status: "success"
+              data:
+                order_id: 1
+                checkout_url: "https://xendit.co/web/invoices/..."
+      '400':
+        description: Validasi request gagal atau data tidak valid
+        content:
+          application/json:
+            examples:
+              ValidationError:
+                value:
+                  message: "The packages field is required."
+                  errors:
+                    packages:
+                      - "The packages field is required."
+      '401':
+        description: Unauthorized - Token tidak valid atau tidak ada
+      '403':
+        description: Forbidden - Hanya student yang dapat mengakses endpoint ini
+      '500':
+        description: Error saat membuat invoice atau database transaction gagal
+        content:
+          application/json:
+            example:
+              message: "Gagal melakukan checkout: Gagal membuat invoice: Invalid input data"
+              exception: "Exception"

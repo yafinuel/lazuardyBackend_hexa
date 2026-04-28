@@ -5,6 +5,12 @@ use App\Domains\Authentication\Infrastructure\Services\AuthenticationServiceAdap
 use App\Domains\Authentication\Ports\AuthenticationServicePort;
 use App\Domains\ClassDomain\Infrastructure\Repository\EloquentClassRepository;
 use App\Domains\ClassDomain\Ports\ClassRepositoryInterface;
+use App\Domains\Commerce\Infrastructure\External\XenditBankAdapter as CommerceXenditBankAdapter;
+use App\Domains\Commerce\Infrastructure\Repository\EloquentCommerceRepository;
+use App\Domains\Commerce\Infrastructure\Services\CommerceServiceAdapter;
+use App\Domains\Commerce\Ports\CommerceRepositoryInterface;
+use App\Domains\Commerce\Ports\CommerceServicePort;
+use App\Domains\Commerce\Ports\XenditBankPort;
 use App\Domains\CourseCatalog\Infrastructure\Service\CourseCatalogServiceAdapter;
 use App\Domains\CourseCatalog\Ports\CourseCatalogServicePort;
 use App\Domains\Dashboard\Infrastructure\Services\DashboardServiceAdapter;
@@ -13,8 +19,6 @@ use App\Domains\FileManager\Infrastructure\Repository\EloquentFileRepository;
 use App\Domains\FileManager\Infrastructure\Storages\LaravelFileStorage;
 use App\Domains\FileManager\Ports\FileRepositoryInterface;
 use App\Domains\FileManager\Ports\FileStorageInterface;
-use App\Domains\Finance\Infrastructure\External\XenditBankAdapter;
-use App\Domains\Finance\Ports\BankValidatorInterface;
 use App\Domains\MailManager\Infrastructure\Messaging\LaravelMailer;
 use App\Domains\MailManager\Ports\MailerInterface;
 use App\Domains\Notification\Infrastructure\External\Firebase\FcmAdapter;
@@ -60,8 +64,18 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            BankValidatorInterface::class,
-            XenditBankAdapter::class
+            CommerceRepositoryInterface::class,
+            EloquentCommerceRepository::class
+        );
+
+        $this->app->bind(
+            CommerceServicePort::class,
+            CommerceServiceAdapter::class
+        );
+
+        $this->app->bind(
+            XenditBankPort::class,
+            CommerceXenditBankAdapter::class
         );
         
         $this->app->bind(

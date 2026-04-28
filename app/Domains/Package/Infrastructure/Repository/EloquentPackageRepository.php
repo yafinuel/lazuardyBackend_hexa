@@ -12,4 +12,9 @@ class EloquentPackageRepository implements PackageRepositoryInterface
     {
         return Package::latest()->paginate(10);
     }
+
+    public function getPackageById(int $id): ?Package
+    {
+        return Package::find($id);
+    }
 }

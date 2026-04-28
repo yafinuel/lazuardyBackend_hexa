@@ -1,23 +1,27 @@
 <?php
 
-namespace App\Domains\Finance\Infrastructure\External;
+namespace App\Domains\Commerce\Infrastructure\External;
 
-use App\Domains\Finance\Ports\BankValidatorInterface;
+use App\Domains\Commerce\Ports\XenditBankPort;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Xendit\Configuration;
+use Xendit\Invoice\InvoiceApi;
+use Xendit\Invoice\CreateInvoiceRequest;
 use Xendit\Payout\PayoutApi;
 use Xendit\Payout\CreatePayoutRequest;
 use Xendit\XenditSdkException;
 
-class XenditBankAdapter implements BankValidatorInterface
+class XenditBankAdapter implements XenditBankPort
 {
     protected PayoutApi $apiInstance;
+    protected InvoiceApi $invoiceApi;
 
     public function __construct()
     {
         Configuration::setXenditKey(config('services.xendit.secret_key'));
         $this->apiInstance = new PayoutApi();
+        $this->invoiceApi = new InvoiceApi();
     }
 
     public function getAvailableBanks(): array
@@ -89,4 +93,54 @@ class XenditBankAdapter implements BankValidatorInterface
             ];
         }
     }
+
+    public function createInvoice(
+        string $externalId,
+        int $amount,
+        string $description,
+        string $studentName,
+        string $studentEmail,
+        int $expiryDuration = 86400, // 24 jam
+        ?string $successRedirectUrl = null,
+        ?string $failureRedirectUrl = null
+    ): array
+    {
+        $params = [
+            'external_id' => $externalId,
+            'amount' => $amount,
+            'description' => $description,
+            'invoice_duration' => $expiryDuration,
+            'customer' => [
+                'given_name' => $studentName,
+                'email' => $studentEmail
+            ],
+        ];
+
+        if ($successRedirectUrl) {
+            $params['success_redirect_url'] = $successRedirectUrl;
+        }
+
+        if ($failureRedirectUrl) {
+            $params['failure_redirect_url'] = $failureRedirectUrl;
+        }
+
+        try {
+            $createRequest = new CreateInvoiceRequest($params);
+            $invoice = $this->invoiceApi->createInvoice($createRequest);
+
+            return [
+                'xendit_id' => $invoice->getId(),
+                'invoice_url' => $invoice->getInvoiceUrl()
+            ];
+        } catch (XenditSdkException $e) {
+            $error = json_decode(json_encode($e->getFullError()), true);
+            Log::error('Xendit Invoice Create Failed', $error ?: ['message' => $e->getMessage()]);
+            throw new Exception('Gagal membuat invoice: ' . ($error['message'] ?? $e->getMessage()), 500);
+        } catch (Exception $e) {
+            Log::error('General Invoice Create Error: ' . $e->getMessage());
+            throw new Exception('Terjadi kesalahan sistem saat membuat invoice', 500);
+        }
+    }
+
+
 }
