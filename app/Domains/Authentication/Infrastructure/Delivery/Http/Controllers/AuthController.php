@@ -5,18 +5,13 @@ namespace App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers;
 use App\Domains\Authentication\Actions\ForgotPasswordOtpEmailAction;
 use App\Domains\Authentication\Actions\LoginManualAction;
 use App\Domains\Authentication\Actions\RegisterOtpEmailAction;
-use App\Domains\Authentication\Actions\ResetPasswordAction;
 use App\Domains\Authentication\Actions\ResetPasswordAuthAction;
-use App\Domains\Authentication\Actions\SendOtpAction;
 use App\Domains\Authentication\Actions\StudentRegisterPageAction;
 use App\Domains\Authentication\Actions\TutorRegisterPageAction;
-use App\Domains\Authentication\Actions\VerifyOtpAction;
 use App\Domains\Authentication\Actions\VerifyOtpEmailForgotPasswordAction;
 use App\Domains\Authentication\Actions\VerifyOtpRegisterEmailAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\GenderEnum;
-use App\Shared\Enums\OtpIdentifierEnum;
-use App\Shared\Enums\OtpVerificationTypeEnum;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -52,7 +47,7 @@ class AuthController extends Controller
     public function registerOtpEmail(Request $request, RegisterOtpEmailAction $action)
     {
         $data = $request->validate([
-            "email" => ['required', 'email'],
+            "email" => ['required', 'email', 'unique:users,email'],
         ]);
         
         try {

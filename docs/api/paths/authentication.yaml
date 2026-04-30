@@ -21,12 +21,22 @@ registerOtpEmail:
           application/json:
             example: { status: "success" }
       '422':
-        $ref: '../components/responses.yaml#/ValidationError'
-      '500':
-        description: Gagal mengirim OTP
+        description: Validasi gagal saat mengirim OTP registrasi
         content:
           application/json:
-            example: { status: "error", message: "Gagal mengirim OTP", debug_error: "SMTP Error..." }
+            example:
+              message: "The email field is required."
+              errors:
+                email:
+                  - "The email field is required."
+      '500':
+        description: Gagal mengirim OTP. Status HTTP mengikuti exception code, dengan fallback 500.
+        content:
+          application/json:
+            example:
+              status: "error"
+              message: "Gagal mengirim OTP"
+              debug_error: "SMTP Error..."
 
 verifyOtpRegisterEmail:
   post:

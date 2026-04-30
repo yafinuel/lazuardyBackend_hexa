@@ -5,6 +5,7 @@ namespace App\Domains\Dashboard\Infrastructure\Delivery\Http\Controllers;
 use App\Domains\Dashboard\Actions\StudentHomePageAction;
 use App\Domains\Dashboard\Actions\StudentProfilePageAction;
 use App\Domains\Dashboard\Actions\StudentSchedulePageAction;
+use App\Domains\Dashboard\Actions\TutorHomePageAction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -31,10 +32,28 @@ class DashboardController extends Controller
             'paginate' => ['nullable', 'integer']
         ]);
         $userId = $request->user()->id;
+
         $result = $action->execute($userId, $data);
+        
         return response()->json([
             'status' => 'success',
             'data' => $result
+        ]);
+    }
+
+    public function tutorHomePage(Request $request, TutorHomePageAction $action)
+    {
+        $data = $request->validate([
+            'notification_paginate' => ['nullable', 'integer']
+        ]);
+        $userId = $request->user()->id;
+        if (!isset($data['notification_paginate'])) {
+            $data['notification_paginate'] = 2;
+        }
+        $data = $action->execute($userId, $data['notification_paginate']);
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
         ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Domains\Schedule\Infrastructure\Services;
 
 use App\Domains\Penalty\Actions\UserPenaltySetAction;
+use App\Domains\Schedule\Actions\GetSchedulesThisMonthByTutorIdAction;
 use App\Domains\Schedule\Ports\ScheduleServicePort;
 use App\Domains\Student\Actions\GetStudentByIdAction;
 use App\Domains\Student\Entities\StudentEntity;
@@ -16,7 +17,8 @@ class ScheduleServiceAdapter implements ScheduleServicePort
         protected UserPenaltySetAction $userPenaltySetAction,
         protected GetUserByIdAction $getUserByIdAction,
         protected GetStudentByIdAction $getStudentByIdAction,
-        protected StudentRepositoryInterface $studentRepository
+        protected StudentRepositoryInterface $studentRepository,
+        protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthAction
     ) {}
 
     public function userPenaltySet(int $userId)
@@ -37,5 +39,10 @@ class ScheduleServiceAdapter implements ScheduleServicePort
     public function updateStudent(int $studentId, array $data): void
     {
         $this->studentRepository->update($studentId, $data);
+    }
+
+    public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10)
+    {
+        return $this->getSchedulesThisMonthAction->execute($tutorId, $paginate);
     }
 }

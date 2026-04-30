@@ -43,7 +43,7 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
             date: $schedule->date,
             startTime: Carbon::createFromFormat('H:i:s', $schedule->time),
             endTime: Carbon::createFromFormat('H:i:s', $schedule->time)->addHour(),
-            status: $schedule->status->value,
+            status: $schedule->status,
             learningMethod: $schedule->learning_method,
             address: $schedule->address,
             tutorName: $schedule->tutor?->user?->name,
@@ -57,7 +57,7 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
     public function cancelSchedule(int $scheduleId, string $reason): bool
     {
         $schedule = Schedule::findOrFail($scheduleId);
-        $schedule->status = ScheduleStatusEnum::CANCELLED->value;
+        $schedule->status = ScheduleStatusEnum::CANCELLED;
         $schedule->reason = $reason;
         return $schedule->save();
     }
@@ -70,7 +70,7 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
             'subject_id' => $data['subject_id'],
             'date' => $data['date'],
             'time' => $data['time'],
-            'status' => ScheduleStatusEnum::PENDING->value,
+            'status' => ScheduleStatusEnum::PENDING,
             'learning_method' => $data['learning_method'],
             'address' => $data['address'],
         ]);
@@ -87,5 +87,23 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
         }
 
         return $query->paginate($paginate);
+    }
+
+    public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10): array
+    {
+        $tutor = Tutor::where('user_id', $tutorId)->firstOrFail();
+        
+        $query = $tutor->schedules()
+            ->whereYear('date', Carbon::now()->year)
+            ->whereMonth('date', Carbon::now()->month);
+        
+        $schedules = $query->paginate($paginate);
+
+        $studentCount = (clone $query)->distinct('student_id')->count('student_id');
+
+        return [
+            'schedules' => $schedules,
+            'studentCount' => $studentCount
+        ];
     }
 }

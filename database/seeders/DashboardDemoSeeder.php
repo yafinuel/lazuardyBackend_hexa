@@ -50,7 +50,6 @@ class DashboardDemoSeeder extends Seeder
             'user_id' => $tutorUser->id,
             'education' => [['level' => 'S1', 'major' => 'Pendidikan Matematika']],
             'salary' => 0,
-            'price' => 150000,
             'description' => 'Tutor demo untuk pengujian dashboard schedule.',
             'learning_method' => ['online', 'offline'],
             'status' => TutorStatusEnum::VERIFIED,

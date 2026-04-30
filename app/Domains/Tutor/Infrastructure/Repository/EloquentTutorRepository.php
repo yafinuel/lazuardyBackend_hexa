@@ -7,9 +7,7 @@ use App\Domains\Tutor\Ports\TutorRepositoryInterface;
 use App\Models\Tutor;
 use App\Models\User;
 use App\Shared\Enums\RoleEnum;
-use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Log;
 
 class EloquentTutorRepository implements TutorRepositoryInterface
 {
@@ -37,13 +35,13 @@ class EloquentTutorRepository implements TutorRepositoryInterface
             education: $tutor->education,
             salary: $tutor->salary,
             role: $user->role?->displayName(),
-            price: $tutor->price,
             description: $tutor->description,
             bankCode: $tutor->bank_code,
             accountNumber: $tutor->account_number,
             learningMethod: $tutor->learning_method,
-            status: $tutor->status?->displayName(),
+            status: $tutor->status?->value,
             avgRate: $tutor->reviews_avg_rate ?? null,
+            createdAt: $tutor->created_at,
         );
     }
 
@@ -100,13 +98,14 @@ class EloquentTutorRepository implements TutorRepositoryInterface
                 education: $tutor->education,
                 salary: $tutor->salary,
                 role: $user->role?->displayName(),
-                price: $tutor->price,
+
                 description: $tutor->description,
                 bankCode: $tutor->bank_code,
                 accountNumber: $tutor->account_number,
                 learningMethod: $tutor->learning_method,
-                status: $tutor->status?->displayName(),
+                status: $tutor->status?->value,
                 avgRate: $tutor->reviews_avg_rate ?? null,
+                createdAt: $tutor->created_at,
             );
         });
     }
@@ -131,5 +130,4 @@ class EloquentTutorRepository implements TutorRepositoryInterface
         return $tutor->user_id;
     }
 
-    
 }

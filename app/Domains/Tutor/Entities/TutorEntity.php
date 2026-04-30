@@ -28,12 +28,12 @@ class TutorEntity{
         // Tutor attributes
         public ?array $education,
         public ?int $salary,
-        public ?int $price,
         public ?string $description,
         public ?string $bankCode,
         public ?string $accountNumber,
         public ?array $learningMethod,
         public ?string $status,
-        public ?float $avgRate
+        public ?float $avgRate,
+        public ?Carbon $createdAt,
     ) {}
 }

@@ -159,3 +159,377 @@ studentSchedulePage:
                   - Jumlah data per halaman harus berupa bilangan bulat.
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+
+tutorHomepage:
+  get:
+    tags:
+      - Dashboard
+    summary: Mengambil data homepage tutor
+    description: |
+      Endpoint untuk mengambil ringkasan data homepage tutor yang sedang login. Menampilkan informasi profil tutor, 
+      statistik jadwal bulan ini, notifikasi terbaru, dan warning count.
+      
+      **Fitur:**
+      - Menampilkan data biodata tutor dengan foto profil
+      - Total jadwal dan jumlah siswa unik yang dijadwalkan bulan ini
+      - Notifikasi terakhir dengan pagination (default 2 item)
+      - Jumlah warning yang sedang aktif
+      
+      **Requirement:**
+      - Memerlukan autentikasi (Bearer Token)
+      - User harus memiliki role TUTOR
+      - Tutor harus terverifikasi (middleware verified.tutor)
+    security:
+      - bearerAuth: []
+    operationId: tutorHomepage
+    parameters:
+      - name: notification_paginate
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 2
+          example: 2
+        description: |
+          Jumlah notifikasi per halaman. 
+          - Minimum: 1
+          - Maximum: 100
+          - Default: 2 (jika tidak diisi)
+    responses:
+      '200':
+        description: Berhasil mengambil data homepage tutor
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+                - data
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - success
+                  example: success
+                data:
+                  type: object
+                  required:
+                    - tutor
+                    - schedules_total
+                    - student_total
+                    - notification_data
+                    - warning
+                  properties:
+                    tutor:
+                      type: object
+                      description: Data profil tutor yang sedang login
+                      required:
+                        - id
+                        - name
+                        - email
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          example: '8d2d9c4f-3a2e-4b9e-8c7f-2e4c1a5b9d3f'
+                          description: User ID
+                        name:
+                          type: string
+                          example: Demo Tutor
+                          description: Nama tutor
+                        email:
+                          type: string
+                          format: email
+                          example: demo.tutor@example.com
+                          description: Email tutor
+                        emailVerifiedAt:
+                          type: string
+                          format: date-time
+                          nullable: true
+                          example: '2026-04-30T12:00:00Z'
+                          description: Waktu verifikasi email
+                        telephoneNumber:
+                          type: string
+                          nullable: true
+                          example: '081234567890'
+                          description: Nomor telepon tutor
+                        profilePhotoUrl:
+                          type: string
+                          format: uri
+                          nullable: true
+                          example: 'http://localhost:8000/storage/profile/tutor.jpg'
+                          description: URL foto profil tutor
+                        education:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              level:
+                                type: string
+                                example: S1
+                              major:
+                                type: string
+                                example: Pendidikan Matematika
+                          description: Riwayat pendidikan tutor
+                        price:
+                          type: integer
+                          example: 150000
+                          description: Tarif per sesi mengajar (dalam rupiah)
+                        description:
+                          type: string
+                          nullable: true
+                          example: 'Tutor berpengalaman dalam mengajar matematika'
+                          description: Deskripsi profil tutor
+                        learningMethod:
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                              - online
+                              - offline
+                          example:
+                            - online
+                            - offline
+                          description: Metode pembelajaran yang ditawarkan
+                        avgRate:
+                          type: number
+                          format: float
+                          minimum: 0
+                          maximum: 5
+                          example: 4.5
+                          description: Rating rata-rata dari siswa
+                    schedules_total:
+                      type: integer
+                      minimum: 0
+                      example: 12
+                      description: Total jadwal mengajar yang dibuat bulan ini (diambil dari tabel schedules, bukan schedule_tutors)
+                    student_total:
+                      type: integer
+                      minimum: 0
+                      example: 5
+                      description: Total siswa unik yang dijadwalkan dengan tutor bulan ini
+                    notification_data:
+                      type: object
+                      description: Notifikasi dengan pagination metadata
+                      required:
+                        - current_page
+                        - data
+                        - first_page_url
+                        - from
+                        - last_page
+                        - last_page_url
+                        - links
+                        - next_page_url
+                        - path
+                        - per_page
+                        - prev_page_url
+                        - to
+                        - total
+                      properties:
+                        current_page:
+                          type: integer
+                          minimum: 1
+                          example: 1
+                          description: Halaman saat ini
+                        data:
+                          type: array
+                          description: Array notifikasi pada halaman ini
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                format: uuid
+                                example: '6e74dca4-5d7d-4f89-9f0d-427ac95df5fc'
+                                description: ID notifikasi
+                              title:
+                                type: string
+                                example: 'Jadwal Baru'
+                                description: Judul notifikasi
+                              body:
+                                type: string
+                                example: 'Anda memiliki jadwal mengajar baru dari siswa Budi'
+                                description: Isi notifikasi
+                              data:
+                                type: object
+                                nullable: true
+                                example: { schedule_id: 123 }
+                                description: Data tambahan notifikasi (JSON object)
+                        first_page_url:
+                          type: string
+                          format: uri
+                          example: 'http://127.0.0.1:8000/api/tutor/dashboard/homepage?page=1'
+                          description: URL halaman pertama
+                        from:
+                          type: integer
+                          nullable: true
+                          example: null
+                          description: Nomor item pertama pada halaman ini (null jika tidak ada data)
+                        last_page:
+                          type: integer
+                          minimum: 1
+                          example: 1
+                          description: Halaman terakhir
+                        last_page_url:
+                          type: string
+                          format: uri
+                          example: 'http://127.0.0.1:8000/api/tutor/dashboard/homepage?page=1'
+                          description: URL halaman terakhir
+                        links:
+                          type: array
+                          description: Array link navigasi pagination
+                          items:
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                                format: uri
+                                nullable: true
+                                example: null
+                                description: URL link (null jika link tidak tersedia)
+                              label:
+                                type: string
+                                example: '&laquo; Previous'
+                                description: Label link (HTML entities)
+                              page:
+                                type: integer
+                                nullable: true
+                                example: null
+                                description: Nomor halaman (null untuk previous/next)
+                              active:
+                                type: boolean
+                                example: false
+                                description: Apakah link adalah halaman aktif saat ini
+                        next_page_url:
+                          type: string
+                          format: uri
+                          nullable: true
+                          example: null
+                          description: URL halaman berikutnya (null jika sudah di halaman terakhir)
+                        path:
+                          type: string
+                          format: uri
+                          example: 'http://127.0.0.1:8000/api/tutor/dashboard/homepage'
+                          description: Base path endpoint
+                        per_page:
+                          type: integer
+                          minimum: 1
+                          example: 2
+                          description: Jumlah item per halaman
+                        prev_page_url:
+                          type: string
+                          format: uri
+                          nullable: true
+                          example: null
+                          description: URL halaman sebelumnya (null jika di halaman pertama)
+                        to:
+                          type: integer
+                          nullable: true
+                          example: null
+                          description: Nomor item terakhir pada halaman ini (null jika tidak ada data)
+                        total:
+                          type: integer
+                          minimum: 0
+                          example: 0
+                          description: Total jumlah notifikasi (seluruh halaman)
+                    warning:
+                      type: integer
+                      minimum: 0
+                      nullable: true
+                      example: 0
+                      description: Jumlah warning aktif yang dimiliki tutor
+            example:
+              status: success
+              data:
+                tutor:
+                  id: '8d2d9c4f-3a2e-4b9e-8c7f-2e4c1a5b9d3f'
+                  name: Demo Tutor
+                  email: demo.tutor@example.com
+                  emailVerifiedAt: '2026-04-30T12:00:00Z'
+                  telephoneNumber: '081234567890'
+                  profilePhotoUrl: 'http://localhost:8000/storage/profile/tutor.jpg'
+                  education:
+                    - level: S1
+                      major: Pendidikan Matematika
+                  price: 150000
+                  description: 'Tutor berpengalaman dalam mengajar matematika tingkat SMA'
+                  learningMethod:
+                    - online
+                    - offline
+                  avgRate: 4.5
+                schedules_total: 12
+                student_total: 5
+                notification_data:
+                  current_page: 1
+                  data:
+                    - id: '6e74dca4-5d7d-4f89-9f0d-427ac95df5fc'
+                      title: 'Jadwal Baru'
+                      body: 'Anda memiliki jadwal mengajar baru dari siswa Budi'
+                      data:
+                        schedule_id: 123
+                  first_page_url: 'http://127.0.0.1:8000/api/tutor/dashboard/homepage?page=1'
+                  from: 1
+                  last_page: 1
+                  last_page_url: 'http://127.0.0.1:8000/api/tutor/dashboard/homepage?page=1'
+                  links:
+                    - url: null
+                      label: '&laquo; Previous'
+                      page: null
+                      active: false
+                    - url: 'http://127.0.0.1:8000/api/tutor/dashboard/homepage?page=1'
+                      label: '1'
+                      page: 1
+                      active: true
+                    - url: null
+                      label: 'Next &raquo;'
+                      page: null
+                      active: false
+                  next_page_url: null
+                  path: 'http://127.0.0.1:8000/api/tutor/dashboard/homepage'
+                  per_page: 2
+                  prev_page_url: null
+                  to: 1
+                  total: 1
+                warning: 0
+      '400':
+        description: Bad Request - Parameter tidak valid
+        content:
+          application/json:
+            example:
+              message: 'The given data was invalid.'
+              errors:
+                notification_paginate:
+                  - 'The notification paginate must be at least 1.'
+      '401':
+        description: Unauthorized - Token tidak valid atau tidak ada
+        content:
+          application/json:
+            example:
+              message: 'Unauthenticated.'
+      '403':
+        description: |
+          Forbidden - User bukan tutor atau tutor belum terverifikasi.
+          
+          Kemungkinan error:
+          1. User memiliki role student, bukan tutor
+          2. Tutor belum melewati proses verifikasi (status != verified)
+        content:
+          application/json:
+            example:
+              message: 'Tutor belum terverifikasi atau akses ditolak.'
+      '404':
+        description: Not Found - Data tutor tidak ditemukan di database
+        content:
+          application/json:
+            example:
+              message: 'Tutor data not found.'
+      '500':
+        description: Internal Server Error - Kesalahan server saat memproses
+        content:
+          application/json:
+            example:
+              status: error
+              message: 'Terjadi kesalahan saat mengambil data homepage'
+              debug_error: 'Database connection error'

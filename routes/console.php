@@ -139,9 +139,7 @@ namespace App\Domains\\{$domainName}\Actions;
 
 class {$name}
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function execute()
     {
@@ -171,9 +169,7 @@ namespace App\Domains\\{$domainName}\Entities;
 
 class {$name}
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 }
 PHP;
 
@@ -347,9 +343,7 @@ class {$name} implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function handle(): void
     {

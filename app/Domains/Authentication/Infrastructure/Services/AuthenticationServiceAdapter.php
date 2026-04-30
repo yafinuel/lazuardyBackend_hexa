@@ -8,7 +8,6 @@ use App\Domains\FileManager\Actions\SaveJobApplicationLetterAction;
 use App\Domains\OtpManager\Actions\SendOtpAction;
 use App\Domains\OtpManager\Actions\VerifyOtpAction;
 use App\Domains\Schedule\Actions\CreateTutorAvailabilityScheduleAction;
-use App\Domains\Schedule\Actions\CreateTutorScheduleAction;
 use App\Domains\Subject\Actions\CreateTutorSubjectAction;
 use App\Domains\Tutor\Actions\CreateTutorAction;
 use App\Domains\User\Actions\CreateUserAction;

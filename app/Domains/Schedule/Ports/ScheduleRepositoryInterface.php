@@ -14,4 +14,5 @@ interface ScheduleRepositoryInterface
     public function cancelSchedule(int $scheduleId, string $reason): bool;
     public function createMeetingSchedule(array $data): void;
     public function getTutorSchedulesByDay(int $tutorId, ?string $day, int $paginate = 10): LengthAwarePaginator;
+    public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10): array;
 }

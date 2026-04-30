@@ -90,5 +90,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:' . RoleEnum::TUTOR->value)->group(function (){
         Route::get('/meAsTutor', [TutorController::class, 'getTutorById']);
         Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
+        
+        Route::get('/tutor/dashboard/homepage', [DashboardController::class, 'tutorHomepage']);
+        Route::middleware('verified.tutor')->group(function () {
+            // Route::patch('/updateTutorBiodata', [TutorController::class, 'updateBiodata']);
+            // Route::get('/tutor/dashboard/schedule', [DashboardController::class, 'tutorSchedulePage']);
+            // Route::get('/tutor/reports', [ReportController::class, 'getAllReportsByTutorId']);
+        });
     });
 });

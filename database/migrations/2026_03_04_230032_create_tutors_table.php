@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->json('education')->nullable();
             $table->integer('salary')->default(0);
-            $table->integer('price')->default(0);
             $table->longText('description')->nullable();
             $table->string('bank_code')->nullable();
             $table->string('account_number')->nullable();
