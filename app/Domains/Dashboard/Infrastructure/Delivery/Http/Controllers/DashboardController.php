@@ -2,8 +2,8 @@
 
 namespace App\Domains\Dashboard\Infrastructure\Delivery\Http\Controllers;
 
+use App\Domains\Dashboard\Actions\SchedulePageAction;
 use App\Domains\Dashboard\Actions\StudentHomePageAction;
-use App\Domains\Dashboard\Actions\StudentProfilePageAction;
 use App\Domains\Dashboard\Actions\StudentSchedulePageAction;
 use App\Domains\Dashboard\Actions\TutorHomePageAction;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function studentSchedulePage(Request $request, StudentSchedulePageAction $action)
+    public function studentSchedulePage(Request $request, SchedulePageAction $action)
     {
         $data = $request->validate([
             'date' => ['required', 'date'],
@@ -54,6 +54,22 @@ class DashboardController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $data
+        ]);
+    }
+
+    public function tutorSchedulePage(Request $request, SchedulePageAction $action)
+    {
+        $data = $request->validate([
+            'date' => ['required', 'date'],
+            'paginate' => ['nullable', 'integer']
+        ]);
+        $userId = $request->user()->id;
+
+        $result = $action->execute($userId, $data);
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => $result
         ]);
     }
 }

@@ -6,17 +6,15 @@ use App\Domains\Schedule\Entities\ScheduleEntity;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use Carbon\Carbon;
 
-class GetStudentSchedulesByDateAction
+class GetSchedulesByDateAction
 {
     public function __construct(protected ScheduleRepositoryInterface $repository) {}
 
-    public function execute(int $studentId, Carbon $date, int $paginate = 10)
+    public function execute(int $userId, Carbon $date, int $paginate = 10)
     {
-        $result = $this->repository->getStudentSchedulesByDate($studentId, $date, $paginate);
+        $result = $this->repository->getSchedulesByDate($userId, $date, $paginate);
         
         return $result->through(function ($schedule) {
-            $startTime = Carbon::createFromFormat('H:i:s', $schedule->time);
-            $endTime = (clone $startTime)->addHour();
             return new ScheduleEntity(
                 id: $schedule->id,
                 tutorId: $schedule->tutor_id,
@@ -25,7 +23,7 @@ class GetStudentSchedulesByDateAction
                 date: $schedule->date,
                 startTime: Carbon::createFromFormat('H:i:s', $schedule->time),
                 endTime: Carbon::createFromFormat('H:i:s', $schedule->time)->addHour(),
-                status: $schedule->status->value,
+                status: $schedule->status,
                 learningMethod: $schedule->learning_method,
                 address: $schedule->address,
                 tutorName: $schedule->tutor?->user?->name,

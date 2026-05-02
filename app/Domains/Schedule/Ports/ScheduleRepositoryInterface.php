@@ -9,7 +9,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface ScheduleRepositoryInterface
 {
     public function createTutorAvailabilitySchedule(int $tutorId, array $data): bool;
-    public function getStudentSchedulesByDate(int $studentId, Carbon $date, int $paginate = 10): LengthAwarePaginator;
+    public function getSchedulesByDate(int $userId, Carbon $date, int $paginate = 10): LengthAwarePaginator;
     public function getScheduleById(int $scheduleId): ScheduleEntity;
     public function cancelSchedule(int $scheduleId, string $reason): bool;
     public function createMeetingSchedule(array $data): void;

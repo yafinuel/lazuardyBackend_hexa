@@ -5,7 +5,6 @@ namespace App\Domains\Schedule\Infrastructure\Repository;
 use App\Domains\Schedule\Entities\ScheduleEntity;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use App\Models\Schedule;
-use App\Models\Student;
 use App\Models\Tutor;
 use App\Shared\Enums\ScheduleStatusEnum;
 use Carbon\Carbon;
@@ -19,14 +18,16 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
         $tutor->tutorSchedules()->createMany($data);
         return true;
     }
-
-    public function getStudentSchedulesByDate(int $studentId, Carbon $date, int $paginate = 10): LengthAwarePaginator
+    
+    public function getSchedulesByDate(int $userId, Carbon $date, int $paginate = 10): LengthAwarePaginator
     {
-        $student = Student::where('user_id', $studentId)->firstOrFail();
-        
-        return $student->schedules()
+        return Schedule::query()
+            ->where(function ($query) use ($userId) {
+                $query->where('tutor_id', $userId)
+                    ->orWhere('student_id', $userId);
+            })
             ->whereDate('date', $date->toDateString())
-            ->with('tutor.user', 'subject')
+            ->with(['tutor.user', 'student.user', 'subject'])
             ->paginate($paginate);
     }
 

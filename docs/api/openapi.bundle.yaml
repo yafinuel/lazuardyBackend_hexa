@@ -1425,6 +1425,8 @@ paths:
                     type: object
                     required:
                       - tutor
+                      - salary
+                      - salary_stats
                       - schedules_total
                       - student_total
                       - notification_data
@@ -1508,6 +1510,16 @@ paths:
                             maximum: 5
                             example: 4.5
                             description: Rating rata-rata dari siswa
+                      salary:
+                        type: integer
+                        nullable: true
+                        example: 150000
+                        description: Nominal gaji tutor saat ini
+                      salary_stats:
+                        type: integer
+                        minimum: 0
+                        example: 1800000
+                        description: Akumulasi gaji tutor pada bulan berjalan
                       schedules_total:
                         type: integer
                         minimum: 0
@@ -1668,6 +1680,8 @@ paths:
                       - online
                       - offline
                     avgRate: 4.5
+                  salary: 150000
+                  salary_stats: 1800000
                   schedules_total: 12
                   student_total: 5
                   notification_data:
@@ -1742,6 +1756,102 @@ paths:
                 status: error
                 message: Terjadi kesalahan saat mengambil data homepage
                 debug_error: Database connection error
+  /tutor/dashboard/schedule:
+    get:
+      tags:
+        - Dashboard
+      summary: Mengambil jadwal tutor pada tanggal tertentu
+      description: Endpoint untuk mengambil daftar jadwal milik tutor yang sedang login berdasarkan tanggal. Membutuhkan autentikasi dan role tutor.
+      security:
+        - bearerAuth: []
+      operationId: tutorSchedulePage
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: '2026-04-21'
+          description: Tanggal jadwal yang ingin diambil.
+        - name: paginate
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 10
+          description: Jumlah data per halaman. Jika tidak diisi, default server adalah 10.
+      responses:
+        '200':
+          description: Berhasil mengambil jadwal tutor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentScheduleResponse'
+              example:
+                status: success
+                data:
+                  current_page: 1
+                  data:
+                    - id: 1
+                      tutorId: 2
+                      studentId: 1
+                      subjectId: 1
+                      date: '2026-04-21 00:00:00'
+                      startTime: '14:00:00'
+                      endTime: '15:00:00'
+                      status: pending
+                      learningMethod: online
+                      meetingLink: null
+                      address: null
+                      tutorName: Demo Tutor
+                      subjectName: Matematika
+                      studentName: Demo Student
+                      tutorTelephoneNumber: '081234567890'
+                      studentTelephoneNumber: '081234567890'
+                  first_page_url: http://localhost:8000/api/tutor/dashboard/schedule?page=1
+                  from: 1
+                  last_page: 1
+                  last_page_url: http://localhost:8000/api/tutor/dashboard/schedule?page=1
+                  links:
+                    - url: null
+                      label: '&laquo; Previous'
+                      page: null
+                      active: false
+                    - url: http://localhost:8000/api/tutor/dashboard/schedule?page=1
+                      label: '1'
+                      page: 1
+                      active: true
+                    - url: null
+                      label: Next &raquo;
+                      page: null
+                      active: false
+                  next_page_url: null
+                  path: http://localhost:8000/api/tutor/dashboard/schedule
+                  per_page: 10
+                  prev_page_url: null
+                  to: 1
+                  total: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          description: Validasi gagal
+          content:
+            application/json:
+              example:
+                message: Data tidak valid
+                errors:
+                  date:
+                    - Tanggal jadwal wajib diisi.
+                  paginate:
+                    - Jumlah data per halaman harus berupa bilangan bulat.
+        '500':
+          $ref: '#/components/responses/ServerError'
   /schedule/getById:
     get:
       tags:

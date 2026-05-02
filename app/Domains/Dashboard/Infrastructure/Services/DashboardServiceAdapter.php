@@ -9,9 +9,9 @@ use App\Domains\Student\Actions\GetStudentByIdAction;
 use App\Domains\Tutor\Actions\GetTutorByCriteria;
 use App\Domains\FileManager\Ports\FileRepositoryInterface;
 use App\Domains\FileManager\Ports\FileStorageInterface;
+use App\Domains\Schedule\Actions\GetSchedulesByDateAction;
 use App\Domains\Schedule\Actions\GetSchedulesThisMonthByTutorIdAction;
 use App\Domains\Schedule\Actions\GetStudentCountThisMonthSchedulesByTutorId;
-use App\Domains\Schedule\Actions\GetStudentSchedulesByDateAction;
 use App\Domains\Student\Entities\StudentEntity;
 use App\Domains\Tutor\Actions\GetTutorByIdAction;
 use App\Domains\Tutor\Entities\TutorEntity;
@@ -29,7 +29,7 @@ class DashboardServiceAdapter implements DashboardServicePort
         protected FileRepositoryInterface $fileRepository,
         protected FileStorageInterface $storage,
         protected GetUserWarningAction $userWarningAction,
-        protected GetStudentSchedulesByDateAction $scheduleAction,
+        protected GetSchedulesByDateAction $schedulesByDateAction,
         protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthByTutorIdAction,
         protected GetStudentCountThisMonthSchedulesByTutorId $getStudentCountThisMonthSchedulesByTutorId,
     ) {}
@@ -40,9 +40,9 @@ class DashboardServiceAdapter implements DashboardServicePort
         
     }
 
-    public function studentSchedulePage(int $studentId, Carbon $date, int $paginate = 10): LengthAwarePaginator
+    public function schedulesByDate(int $userId, Carbon $date, int $paginate = 10): LengthAwarePaginator
     {
-        return $this->scheduleAction->execute($studentId, $date, $paginate);
+        return $this->schedulesByDateAction->execute($userId, $date, $paginate);
     }
 
     public function studentBiodata(int $studentId): StudentEntity

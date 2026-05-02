@@ -8,7 +8,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface DashboardServicePort
 {
     public function getUserWarning(int $studentId): int;
-    public function studentSchedulePage(int $studentId, Carbon $date, int $paginate): LengthAwarePaginator;
+    public function schedulesByDate(int $userId, Carbon $date, int $paginate): LengthAwarePaginator;
     public function studentBiodata(int $studentId);
     public function tutorBiodata(int $tutorId);
     public function getNotification(int $userId, int $paginate): LengthAwarePaginator;
