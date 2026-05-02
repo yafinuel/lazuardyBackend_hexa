@@ -10,18 +10,21 @@ class TutorHomePageAction
 
     public function execute(int $tutorId, int $notifPaginate = 2)
     {
-        $tutor = $this->service->tutorBiodata($tutorId);
+        $tutorBiodata = $this->service->tutorBiodata($tutorId);
         $thisMonthSchedules = $this->service->getSchedulesThisMonthByTutorId($tutorId);
         $notificationData = $this->service->getNotification($tutorId, $notifPaginate);
         $warning = $this->service->getUserWarning($tutorId);
+        $studentTotal = $this->service->getStudentCountThisMonthSchedulesByTutorId($tutorId);
+        $salaryStats = $this->service->salaryStats($tutorId);
 
-        $schedulesTotal = $thisMonthSchedules["total"];
-        $studentTotal = $thisMonthSchedules["student_count"];
+        
 
 
         return [
-            'tutor' => $tutor,
-            'schedules_total' => $schedulesTotal,
+            'tutor' => $tutorBiodata,
+            'salary' => $tutorBiodata->salary,
+            'salary_stats' => $salaryStats,
+            'schedules_total' => $thisMonthSchedules->total(),
             'student_total' => $studentTotal,
             'notification_data' => $notificationData,
             'warning' => $warning,

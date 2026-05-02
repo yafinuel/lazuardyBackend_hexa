@@ -89,21 +89,24 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
         return $query->paginate($paginate);
     }
 
-    public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10): array
+    public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10): LengthAwarePaginator
     {
         $tutor = Tutor::where('user_id', $tutorId)->firstOrFail();
         
-        $query = $tutor->schedules()
+        return $tutor->schedules()
             ->whereYear('date', Carbon::now()->year)
-            ->whereMonth('date', Carbon::now()->month);
+            ->whereMonth('date', Carbon::now()->month)
+            ->paginate($paginate);
+    }
+
+    public function getStudentCountThisMonthSchedulesByTutorId(int $tutorId): int
+    {
+        $tutor = Tutor::where('user_id', $tutorId)->firstOrFail();
         
-        $schedules = $query->paginate($paginate);
-
-        $studentCount = (clone $query)->distinct('student_id')->count('student_id');
-
-        return [
-            'schedules' => $schedules,
-            'studentCount' => $studentCount
-        ];
+        return $tutor->schedules()
+            ->whereYear('date', Carbon::now()->year)
+            ->whereMonth('date', Carbon::now()->month)
+            ->distinct('student_id')
+            ->count('student_id');
     }
 }

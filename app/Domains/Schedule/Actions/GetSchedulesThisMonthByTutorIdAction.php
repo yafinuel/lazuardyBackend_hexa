@@ -10,11 +10,9 @@ class GetSchedulesThisMonthByTutorIdAction
 {
     public function __construct(protected ScheduleRepositoryInterface $repository) {}
 
-    public function execute(int $tutorId, int $paginate = 10): array
+    public function execute(int $tutorId, int $paginate = 10): LengthAwarePaginator
     {
-        $result = $this->repository->getSchedulesThisMonthByTutorId($tutorId, $paginate);
-        $schedules = $result['schedules'];
-        $studentCount = $result['studentCount'];
+        $schedules = $this->repository->getSchedulesThisMonthByTutorId($tutorId, $paginate);
         
         $schedules = $schedules->through(function ($schedule) {
             return new ScheduleEntity(
@@ -35,9 +33,6 @@ class GetSchedulesThisMonthByTutorIdAction
                 studentTelephoneNumber: $schedule->student ? $schedule->student->user->telephone_number : null
             );
         });
-
-        $schedules = $schedules->toArray();
-        $schedules['student_count'] = $studentCount;
         
         return $schedules;
     }

@@ -10,10 +10,12 @@ use App\Domains\Tutor\Actions\GetTutorByCriteria;
 use App\Domains\FileManager\Ports\FileRepositoryInterface;
 use App\Domains\FileManager\Ports\FileStorageInterface;
 use App\Domains\Schedule\Actions\GetSchedulesThisMonthByTutorIdAction;
+use App\Domains\Schedule\Actions\GetStudentCountThisMonthSchedulesByTutorId;
 use App\Domains\Schedule\Actions\GetStudentSchedulesByDateAction;
 use App\Domains\Student\Entities\StudentEntity;
 use App\Domains\Tutor\Actions\GetTutorByIdAction;
 use App\Domains\Tutor\Entities\TutorEntity;
+use App\Shared\Core\ConstantValue;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -29,6 +31,7 @@ class DashboardServiceAdapter implements DashboardServicePort
         protected GetUserWarningAction $userWarningAction,
         protected GetStudentSchedulesByDateAction $scheduleAction,
         protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthByTutorIdAction,
+        protected GetStudentCountThisMonthSchedulesByTutorId $getStudentCountThisMonthSchedulesByTutorId,
     ) {}
 
     public function getUserWarning(int $studentId): int
@@ -62,8 +65,20 @@ class DashboardServiceAdapter implements DashboardServicePort
         return $this->tutorAction->execute($criteria, $paginate);
     }
 
-    public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10): array
+    public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10): LengthAwarePaginator
     {
         return $this->getSchedulesThisMonthByTutorIdAction->execute($tutorId, $paginate);
+    }
+
+    public function getStudentCountThisMonthSchedulesByTutorId(int $tutorId): int
+    {
+        return $this->getStudentCountThisMonthSchedulesByTutorId->execute($tutorId);
+    }
+
+    public function salaryStats(int $tutorId): int
+    {
+        $totalSchedulesThisMonth = $this->getSchedulesThisMonthByTutorIdAction->execute($tutorId, 10)->total();
+        $price = ConstantValue::TUTOR_PRICE;
+        return $totalSchedulesThisMonth * $price;
     }
 }

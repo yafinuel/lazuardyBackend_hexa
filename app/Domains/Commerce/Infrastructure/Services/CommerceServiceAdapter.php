@@ -4,14 +4,17 @@ namespace App\Domains\Commerce\Infrastructure\Services;
 
 use App\Domains\Commerce\Ports\CommerceServicePort;
 use App\Domains\Package\Actions\GetPackageByIdAction;
+use App\Domains\Schedule\Actions\GetSchedulesThisMonthByTutorIdAction;
 use App\Domains\User\Actions\GetUserByIdAction;
 use App\Domains\User\Entities\UserEntity;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CommerceServiceAdapter implements CommerceServicePort
 {
     public function __construct(
         protected GetPackageByIdAction $getPackageByIdAction,
-        protected GetUserByIdAction $getUserByIdAction
+        protected GetUserByIdAction $getUserByIdAction,
+        protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthByTutorIdAction
     ) {}
 
     public function getPackageByIdAction(int $packageId)
@@ -22,5 +25,10 @@ class CommerceServiceAdapter implements CommerceServicePort
     public function getUserByIdAction(int $userId): UserEntity
     {
         return $this->getUserByIdAction->execute($userId);
+    }
+
+    public function getSchedulesThisMonthByTutorId(int $tutorId): LengthAwarePaginator
+    {
+        return $this->getSchedulesThisMonthByTutorIdAction->execute($tutorId);
     }
 }
