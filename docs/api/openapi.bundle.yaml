@@ -2417,6 +2417,42 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
+  /tutor/presence/create:
+    post:
+      tags:
+        - Report
+      summary: Membuat laporan/presence oleh tutor
+      description: Endpoint untuk membuat presence/report setelah sesi tutor. Membutuhkan autentikasi dan role tutor.
+      security:
+        - bearerAuth: []
+      operationId: createTutorReport
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTutorPresence'
+      responses:
+        '200':
+          description: Report created successfully
+          content:
+            application/json:
+              example:
+                status: success
+                message: Report created successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Forbidden - Endpoint hanya untuk role tutor
+          content:
+            application/json:
+              example:
+                status: failed
+                message: This page is Forbidden for student
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
 components:
   securitySchemes:
     bearerAuth:
@@ -2455,6 +2491,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateMeetingScheduleRequest'
+    CreateTutorPresence:
+      description: Payload untuk membuat report/presence oleh tutor
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateTutorPresenceRequest'
     UpdateTutorBiodata:
       description: Payload untuk memperbarui biodata tutor
       required: true
@@ -3700,6 +3743,30 @@ components:
             total:
               type: integer
               example: 10
+    CreateTutorPresenceRequest:
+      type: object
+      required:
+        - schedule_id
+        - tutor_id
+        - student_id
+        - topic
+        - notes
+      properties:
+        schedule_id:
+          type: integer
+          example: 123
+        tutor_id:
+          type: integer
+          example: 45
+        student_id:
+          type: integer
+          example: 67
+        topic:
+          type: string
+          example: 'Kalkulus: Limit'
+        notes:
+          type: string
+          example: Siswa memahami konsep, lanjut ke tugas rumah
     OrderPackageItem:
       type: object
       required:

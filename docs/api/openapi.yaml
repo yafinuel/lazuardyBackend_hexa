@@ -134,6 +134,8 @@ paths:
     $ref: './paths/schedule.yaml#/cancelSchedule'
   /student/reports:
     $ref: './paths/report.yaml#/getAllReportsByStudentId'
+  /tutor/presence/create:
+    $ref: './paths/report.yaml#/createTutorReport'
 
 components:
   securitySchemes:
@@ -153,6 +155,8 @@ components:
       $ref: './components/request-bodies.yaml#/UpdateStudentBiodata'
     CreateMeetingSchedule:
       $ref: './components/request-bodies.yaml#/CreateMeetingSchedule'
+    CreateTutorPresence:
+      $ref: './components/request-bodies.yaml#/CreateTutorPresence'
 
   schemas:
     ClassEntity:
@@ -231,6 +235,8 @@ components:
       $ref: './components/schemas.yaml#/ReportEntity'
     StudentReportResponse:
       $ref: './components/schemas.yaml#/StudentReportResponse'
+    CreateTutorPresenceRequest:
+      $ref: './components/schemas.yaml#/CreateTutorPresenceRequest'
     OrderPackageItem:
       $ref: './components/schemas.yaml#/OrderPackageItem'
     OrderPackageRequest:

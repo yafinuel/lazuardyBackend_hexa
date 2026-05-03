@@ -21,3 +21,11 @@ CreateMeetingSchedule:
     application/json:
       schema:
         $ref: './schemas.yaml#/CreateMeetingScheduleRequest'
+
+CreateTutorPresence:
+  description: "Payload untuk membuat report/presence oleh tutor"
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/CreateTutorPresenceRequest'

@@ -236,6 +236,26 @@ ReportEntity:
       format: date-time
       example: "2026-04-26T09:30:00Z"
 
+CreateTutorPresenceRequest:
+  type: object
+  required: [schedule_id, tutor_id, student_id, topic, notes]
+  properties:
+    schedule_id:
+      type: integer
+      example: 123
+    tutor_id:
+      type: integer
+      example: 45
+    student_id:
+      type: integer
+      example: 67
+    topic:
+      type: string
+      example: "Kalkulus: Limit"
+    notes:
+      type: string
+      example: "Siswa memahami konsep, lanjut ke tugas rumah"
+
 StudentReportResponse:
   type: object
   properties:

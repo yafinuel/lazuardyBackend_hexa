@@ -81,3 +81,40 @@ getAllReportsByStudentId:
         $ref: '../components/responses.yaml#/ValidationError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+
+createTutorReport:
+  post:
+    tags:
+      - Report
+    summary: Membuat laporan/presence oleh tutor
+    description: Endpoint untuk membuat presence/report setelah sesi tutor. Membutuhkan autentikasi dan role tutor.
+    security:
+      - bearerAuth: []
+    operationId: createTutorReport
+    requestBody:
+      $ref: '../components/request-bodies.yaml#/CreateTutorPresence'
+    responses:
+      '200':
+        description: Report created successfully
+        content:
+          application/json:
+            example:
+              status: success
+              message: Report created successfully
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '403':
+        description: Forbidden - Endpoint hanya untuk role tutor
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "This page is Forbidden for student"
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
