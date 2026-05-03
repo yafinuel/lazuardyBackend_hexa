@@ -95,6 +95,8 @@ paths:
     $ref: './paths/user-profile.yaml#/studentBiodata'
   /updateStudentBiodata:
     $ref: './paths/user-profile.yaml#/updateStudentBiodata'
+  /tutor/profile:
+    $ref: './paths/user-profile.yaml#/updateTutorBiodata'
   /meAsTutor:
     $ref: './paths/user-profile.yaml#/meAsTutor'
   /getTutorById:

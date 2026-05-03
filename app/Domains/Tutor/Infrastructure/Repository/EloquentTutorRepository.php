@@ -45,8 +45,11 @@ class EloquentTutorRepository implements TutorRepositoryInterface
         );
     }
 
-    public function updateTutorBiodata(int $tutorId, array $data): void
+    public function update(int $tutorId, array $data): void
     {
+        $tutor = Tutor::where('user_id', $tutorId)->firstOrFail();
+
+        $tutor->update($data);
     }
 
     public function getByCriteria(array $filters, int $paginate): LengthAwarePaginator

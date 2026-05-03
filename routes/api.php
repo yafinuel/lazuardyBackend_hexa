@@ -77,7 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::middleware('role:' . RoleEnum::STUDENT->value)->group(function (){
         Route::get('/meStudent', [StudentController::class, 'meStudent']);
-        Route::patch('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
+        Route::put('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
         Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
         Route::get('/student/dashboard/schedule', [DashboardController::class, 'studentSchedulePage']);
         Route::get('/student/reports', [ReportController::class, 'getAllReportsByStudentId']);
@@ -88,13 +88,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('role:' . RoleEnum::TUTOR->value)->group(function (){
-        Route::get('/meAsTutor', [TutorController::class, 'getTutorById']);
+        Route::get('/meTutor', [TutorController::class, 'getTutorById']);
+        Route::put('/tutor/profile', [TutorController::class, 'updateBiodata']);
         Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
         
         Route::get('/tutor/dashboard/homepage', [DashboardController::class, 'tutorHomepage']);
         Route::get('/tutor/dashboard/schedule', [DashboardController::class, 'tutorSchedulePage']);
         Route::middleware('verified.tutor')->group(function () {
-            // Route::patch('/updateTutorBiodata', [TutorController::class, 'updateBiodata']);
             // Route::get('/tutor/dashboard/schedule', [DashboardController::class, 'tutorSchedulePage']);
             // Route::get('/tutor/reports', [ReportController::class, 'getAllReportsByTutorId']);
         });

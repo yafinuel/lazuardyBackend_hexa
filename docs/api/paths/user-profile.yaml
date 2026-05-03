@@ -72,6 +72,49 @@ updateStudentBiodata:
               message: "Gagal memperbarui biodata siswa"
               debug_error: "Error message"
 
+updateTutorBiodata:
+  put:
+    tags:
+      - User Profile
+    summary: Memperbarui biodata tutor
+    description: Endpoint untuk memperbarui biodata tutor yang sedang login. Membutuhkan autentikasi dan role tutor.
+    security:
+      - bearerAuth: []
+    operationId: updateTutorBiodata
+    requestBody:
+      $ref: '../components/request-bodies.yaml#/UpdateTutorBiodata'
+    responses:
+      '200':
+        description: Berhasil memperbarui biodata tutor
+        content:
+          application/json:
+            example:
+              status: "success"
+              message: "Biodata tutor berhasil diperbarui"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '403':
+        description: Forbidden - Endpoint hanya untuk role tutor
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "This page is Forbidden for student"
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        description: Gagal memperbarui biodata tutor
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Failed to update tutor profile"
+              debug_error: "Error message"
+
 meAsTutor:
   get:
     tags:

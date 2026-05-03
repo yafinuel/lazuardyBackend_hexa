@@ -46,7 +46,9 @@ use App\Domains\Student\Ports\StudentServicePort;
 use App\Domains\Subject\Infrastructure\Repository\EloquentSubjectRepository;
 use App\Domains\Subject\Ports\SubjectRepositoryInterface;
 use App\Domains\Tutor\Infrastructure\Repository\EloquentTutorRepository;
+use App\Domains\Tutor\Infrastructure\Services\TutorServiceAdapter;
 use App\Domains\Tutor\Ports\TutorRepositoryInterface;
+use App\Domains\Tutor\Ports\TutorServicePort;
 use App\Domains\User\Infrastructure\Repository\EloquentUserRepository;
 use App\Domains\User\Ports\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -177,6 +179,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ReportRepositoryInterface::class,
             EloquentReportRepository::class
+        );
+
+        $this->app->bind(
+            TutorServicePort::class,
+            TutorServiceAdapter::class
         );
     }
 

@@ -16,6 +16,55 @@ StudentRegisterRequest:
     google_id: { type: string, nullable: true, example: null }
     facebook_id: { type: string, nullable: true, example: null }
 
+UpdateTutorBiodataRequest:
+  type: object
+  required:
+    - name
+    - gender
+    - date_of_birth
+    - telephone_number
+    - bank_code
+    - account_number
+    - province
+    - regency
+    - district
+    - subdistrict
+  properties:
+    name:
+      type: string
+      maxLength: 255
+      example: Demo Tutor
+    gender:
+      type: string
+      enum: [male, female]
+      example: male
+    date_of_birth:
+      type: string
+      format: date
+      example: '1998-05-14'
+    telephone_number:
+      type: string
+      maxLength: 20
+      example: '081234567890'
+    bank_code:
+      type: string
+      example: 'BCA'
+    account_number:
+      type: string
+      example: '1234567890'
+    province:
+      type: string
+      example: 'DKI Jakarta'
+    regency:
+      type: string
+      example: 'Jakarta Selatan'
+    district:
+      type: string
+      example: 'Kebayoran Baru'
+    subdistrict:
+      type: string
+      example: 'Gunung'
+
 Bank:
   type: object
   properties:
