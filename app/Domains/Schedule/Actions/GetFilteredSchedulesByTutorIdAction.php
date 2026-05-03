@@ -7,15 +7,15 @@ use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class GetSchedulesThisMonthByTutorIdAction
+class GetFilteredSchedulesByTutorIdAction
 {
     public function __construct(protected ScheduleRepositoryInterface $repository) {}
 
-    public function execute(int $tutorId, int $paginate = 10): LengthAwarePaginator
+    public function execute(int $tutorId, array $filters, int $paginate = 10): LengthAwarePaginator
     {
-        $schedules = $this->repository->getSchedulesThisMonthByTutorId($tutorId, $paginate);
-        
-        $schedules = $schedules->through(function ($schedule) {
+        $result = $this->repository->getFilteredSchedulesByTutorId($tutorId, $filters, $paginate);
+
+        return $result->through(function ($schedule) {
             return new ScheduleEntity(
                 id: $schedule->id,
                 tutorId: $schedule->tutor_id,
@@ -34,7 +34,5 @@ class GetSchedulesThisMonthByTutorIdAction
                 studentTelephoneNumber: $schedule->student?->user?->telephone_number
             );
         });
-        
-        return $schedules;
     }
 }

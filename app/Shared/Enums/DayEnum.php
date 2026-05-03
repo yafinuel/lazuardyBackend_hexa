@@ -69,4 +69,9 @@ enum DayEnum: string
     {
         return array_map(fn($case) => $case->displayName(), self::cases());
     }
+
+    public static function translateList() : array 
+    {
+        return array_map(fn($case) => $case->translateName(), self::cases());
+    }
 }

@@ -91,6 +91,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/meTutor', [TutorController::class, 'getTutorById']);
         Route::put('/tutor/profile', [TutorController::class, 'updateBiodata']);
         Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
+
+        Route::get('/schedule/filter', [ScheduleController::class, 'getFilteredSchedulesByTutorId']);
         
         Route::get('/tutor/dashboard/homepage', [DashboardController::class, 'tutorHomepage']);
         Route::get('/tutor/dashboard/schedule', [DashboardController::class, 'tutorSchedulePage']);

@@ -2025,6 +2025,140 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
+  /schedule/filter:
+    get:
+      tags:
+        - Schedule
+      summary: Mengambil daftar jadwal tutor berdasarkan filter
+      description: Endpoint untuk mengambil daftar jadwal milik tutor yang sedang login dengan filter `status`, `learning_method`, `student_id`, `subject_id`, dan `date`.
+      security:
+        - bearerAuth: []
+      operationId: getFilteredSchedulesByTutorId
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - pending
+              - active
+              - completed
+              - expired
+              - cancelled
+              - rejected
+            example: active
+          description: Status jadwal yang ingin difilter.
+        - name: learning_method
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - online
+              - offline
+            example: online
+          description: Metode pembelajaran yang ingin difilter.
+        - name: student_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+          description: ID user student yang ingin difilter. Harus terdaftar di tabel students.
+        - name: subject_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+          description: ID mata pelajaran yang ingin difilter.
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2026-04-21'
+          description: Tanggal jadwal yang ingin difilter dalam format Y-m-d.
+      responses:
+        '200':
+          description: Berhasil mengambil daftar jadwal tutor berdasarkan filter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentScheduleResponse'
+              example:
+                status: success
+                data:
+                  current_page: 1
+                  data:
+                    - id: 1
+                      tutorId: 2
+                      studentId: 1
+                      subjectId: 1
+                      date: '2026-04-21 00:00:00'
+                      startTime: '14:00:00'
+                      endTime: '15:00:00'
+                      status: active
+                      learningMethod: online
+                      meetingLink: null
+                      address: null
+                      tutorName: Demo Tutor
+                      subjectName: Matematika
+                      studentName: Demo Student
+                      tutorTelephoneNumber: '081234567890'
+                      studentTelephoneNumber: '081234567890'
+                  first_page_url: http://localhost:8000/api/schedule/filter?page=1
+                  from: 1
+                  last_page: 1
+                  last_page_url: http://localhost:8000/api/schedule/filter?page=1
+                  links:
+                    - url: null
+                      label: '&laquo; Previous'
+                      page: null
+                      active: false
+                    - url: http://localhost:8000/api/schedule/filter?page=1
+                      label: '1'
+                      page: 1
+                      active: true
+                    - url: null
+                      label: Next &raquo;
+                      page: null
+                      active: false
+                  next_page_url: null
+                  path: http://localhost:8000/api/schedule/filter
+                  per_page: 10
+                  prev_page_url: null
+                  to: 1
+                  total: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          description: Validasi gagal
+          content:
+            application/json:
+              example:
+                message: The given data was invalid.
+                errors:
+                  status:
+                    - The selected status is invalid.
+                  learning_method:
+                    - The selected learning method is invalid.
+                  student_id:
+                    - The selected student id is invalid.
+                  subject_id:
+                    - The selected subject id is invalid.
+                  date:
+                    - The date field must match the format Y-m-d.
+        '500':
+          $ref: '#/components/responses/ServerError'
   /schedule/takeMeeting:
     post:
       tags:
