@@ -2,6 +2,7 @@
 
 namespace App\Domains\Schedule\Infrastructure\Delivery\Http\Controllers;
 
+use App\Domains\Schedule\Actions\BookingConfirmationAction;
 use App\Domains\Schedule\Actions\CancelScheduleAction;
 use App\Domains\Schedule\Actions\CreateMeetingScheduleAction;
 use App\Domains\Schedule\Actions\GetFilteredSchedulesByTutorIdAction;
@@ -94,6 +95,21 @@ class ScheduleController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $result,
+        ]);
+    }
+
+    public function bookingConfirmation(Request $request, BookingConfirmationAction $action)
+    {
+        $data = $request->validate([
+            'schedule_id' => 'required|integer',
+            'decision' => 'required|string|in:accept,reject',
+        ]);
+
+        $action->execute($data['schedule_id'], $data['decision']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Booking decision processed successfully',
         ]);
     }
 }

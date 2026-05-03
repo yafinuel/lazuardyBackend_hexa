@@ -352,3 +352,77 @@ takeMeeting:
         $ref: '../components/responses.yaml#/ValidationError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+
+bookingConfirmation:
+  patch:
+    tags:
+      - Schedule
+    summary: Konfirmasi booking jadwal
+    description: Endpoint untuk tutor menerima atau menolak booking jadwal dari siswa. Membutuhkan autentikasi dan role tutor.
+    security:
+      - bearerAuth: []
+    operationId: bookingConfirmation
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - schedule_id
+              - decision
+            properties:
+              schedule_id:
+                type: integer
+                minimum: 1
+                example: 1
+                description: ID jadwal yang akan dikonfirmasi
+              decision:
+                type: string
+                enum: [accept, reject]
+                example: accept
+                description: Keputusan tutor untuk menerima (accept) atau menolak (reject) booking jadwal
+          example:
+            schedule_id: 1
+            decision: accept
+    responses:
+      '200':
+        description: Konfirmasi booking berhasil diproses
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: success
+                message:
+                  type: string
+                  example: Booking decision processed successfully
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: 'Unauthenticated.'
+      '403':
+        description: Forbidden - Endpoint hanya untuk role tutor
+        content:
+          application/json:
+            example:
+              status: failed
+              message: 'This page is Forbidden for student'
+      '422':
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: The given data was invalid.
+              errors:
+                schedule_id:
+                  - The schedule id field is required.
+                decision:
+                  - The decision field is required.
+                  - The selected decision is invalid.
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

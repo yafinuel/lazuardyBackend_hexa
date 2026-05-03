@@ -124,10 +124,12 @@ paths:
     $ref: './paths/schedule.yaml#/getScheduleById'
   /schedule/getTutorSchedulesByDay:
     $ref: './paths/schedule.yaml#/getTutorSchedulesByDay'
-  /schedule/filter:
+  /tutor/schedules:
     $ref: './paths/schedule.yaml#/getFilteredSchedulesByTutorId'
   /schedule/takeMeeting:
     $ref: './paths/schedule.yaml#/takeMeeting'
+  /tutor/schedule/booking-confirmation:
+    $ref: './paths/schedule.yaml#/bookingConfirmation'
   /schedule/cancel:
     $ref: './paths/schedule.yaml#/cancelSchedule'
   /student/reports:

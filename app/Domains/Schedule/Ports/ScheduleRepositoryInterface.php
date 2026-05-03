@@ -17,4 +17,5 @@ interface ScheduleRepositoryInterface
     public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10): LengthAwarePaginator;
     public function getStudentCountThisMonthSchedulesByTutorId(int $tutorId): int;
     public function getFilteredSchedulesByTutorId(int $tutorId, array $filters, int $paginate = 10): LengthAwarePaginator;
+    public function updateSchedule(int $scheduleId, array $data): bool;
 }

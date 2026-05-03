@@ -111,27 +111,33 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
             ->count('student_id');
     }
 
-public function getFilteredSchedulesByTutorId(int $tutorId, ?array $data, int $paginate = 10): LengthAwarePaginator
-{
-    $tutor = Tutor::where('user_id', $tutorId)->firstOrFail();
-    
-    return $tutor->schedules()
-        ->when($data['student_id'] ?? null, function ($query, $studentId) {
-            $query->where('student_id', $studentId);
-        })
-        ->when($data['subject_id'] ?? null, function ($query, $subjectId) {
-            $query->where('subject_id', $subjectId);
-        })
-        ->when($data['date'] ?? null, function ($query, $date) {
-            $query->whereDate('date', Carbon::parse($date)->toDateString());
-        })
-        ->when($data['status'] ?? null, function ($query, $status) {
-            $query->where('status', $status);
-        })
-        ->when($data['learning_method'] ?? null, function ($query, $method) {
-            $query->where('learning_method', $method);
-        })
-        ->with(['student.user', 'subject']) // Jangan lupa eager loading!
-        ->paginate($paginate);
-}
+    public function getFilteredSchedulesByTutorId(int $tutorId, ?array $data, int $paginate = 10): LengthAwarePaginator
+    {
+        $tutor = Tutor::where('user_id', $tutorId)->firstOrFail();
+        
+        return $tutor->schedules()
+            ->when($data['student_id'] ?? null, function ($query, $studentId) {
+                $query->where('student_id', $studentId);
+            })
+            ->when($data['subject_id'] ?? null, function ($query, $subjectId) {
+                $query->where('subject_id', $subjectId);
+            })
+            ->when($data['date'] ?? null, function ($query, $date) {
+                $query->whereDate('date', Carbon::parse($date)->toDateString());
+            })
+            ->when($data['status'] ?? null, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->when($data['learning_method'] ?? null, function ($query, $method) {
+                $query->where('learning_method', $method);
+            })
+            ->with(['student.user', 'subject']) // Jangan lupa eager loading!
+            ->paginate($paginate);
+    }
+
+    public function updateSchedule(int $scheduleId, array $data): bool
+    {
+        $schedule = Schedule::findOrFail($scheduleId);
+        return $schedule->update($data);
+    }
 }
