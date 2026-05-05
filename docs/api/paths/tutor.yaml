@@ -50,3 +50,71 @@ getTutorByCriteria:
               message: "Unauthenticated."
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+
+updateTeachingProfile:
+  put:
+    tags:
+      - Tutor
+    summary: Memperbarui profil mengajar tutor
+    description: |
+      Endpoint untuk memperbarui profil mengajar tutor termasuk deskripsi, metode pembelajaran, dan jadwal ketersediaan mengajar. Membutuhkan autentikasi dan role tutor.
+      
+      **Catatan:**
+      - Field `description` dan `learning_method` bersifat opsional dan bisa di-set ke null
+      - Field `schedules` bersifat opsional namun jika disediakan harus berisi minimal 1 item
+      - Field `learning_method` adalah array of strings (contoh: ["online"], ["online", "offline", "hybrid"])
+      - Setiap schedule harus memiliki `day` (nama hari) dan `time` (format HH:mm)
+      - Operasi update jadwal menggunakan transaksi database - jika ada error, semua perubahan akan di-rollback
+    security:
+      - bearerAuth: []
+    operationId: updateTeachingProfile
+    requestBody:
+      $ref: '../components/request-bodies.yaml#/UpdateTeachingProfile'
+    responses:
+      '200':
+        description: Berhasil memperbarui profil mengajar tutor
+        content:
+          application/json:
+            example:
+              status: "success"
+              message: "Profil mengajar berhasil diperbarui"
+      '400':
+        description: Permintaan tidak valid
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Bad request"
+      '401':
+        description: Unauthorized - Token tidak valid atau kadaluarsa
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '403':
+        description: Forbidden - Endpoint hanya untuk role tutor
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "This page is Forbidden for student"
+      '422':
+        description: Unprocessable Entity - Validasi data gagal
+        content:
+          application/json:
+            example:
+              message: "The given data was invalid."
+              errors:
+                description: ["The description field must not be greater than 1000 characters."]
+                learning_method: ["The learning method field must be an array."]
+                schedules: ["The schedules field must be an array.", "The schedules field must have at least 1 items."]
+                'schedules.*.day': ["The schedules.*.day field is required."]
+                'schedules.*.time': ["The schedules.*.time field must be a valid date in the format H:i."]
+      '500':
+        description: Internal Server Error - Gagal memperbarui profil mengajar
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal memperbarui profil mengajar"
+              debug_error: "Failed to update teaching profile: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'tutor_schedules.tutor_id' in 'where clause'"

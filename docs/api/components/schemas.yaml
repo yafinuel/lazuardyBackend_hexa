@@ -65,6 +65,38 @@ UpdateTutorBiodataRequest:
       type: string
       example: 'Gunung'
 
+UpdateTeachingProfileRequest:
+  type: object
+  properties:
+    description:
+      type: string
+      nullable: true
+      maxLength: 1000
+      example: "Saya mengajar dengan metode interaktif dan menyenangkan"
+    learning_method:
+      type: array
+      nullable: true
+      items:
+        type: string
+      example: ["online", "offline"]
+    schedules:
+      type: array
+      nullable: true
+      minItems: 1
+      items:
+        type: object
+        required: [day, time]
+        properties:
+          day:
+            type: string
+            example: "Monday"
+            description: "Nama hari (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)"
+          time:
+            type: string
+            format: time
+            pattern: '^\d{2}:\d{2}$'
+            example: "09:00"
+
 Bank:
   type: object
   properties:

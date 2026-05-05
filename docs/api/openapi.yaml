@@ -112,6 +112,9 @@ paths:
   /getTutorByCriteria:
     $ref: './paths/tutor.yaml#/getTutorByCriteria'
 
+  /tutor/teaching-profile:
+    $ref: './paths/tutor.yaml#/updateTeachingProfile'
+
   /student/dashboard/homepage:
     $ref: './paths/dashboard.yaml#/studentHomepage'
   /student/dashboard/schedule:
@@ -205,6 +208,8 @@ components:
       $ref: './components/schemas.yaml#/TutorEntity'
     UpdateStudentBiodataRequest:
       $ref: './components/schemas.yaml#/UpdateStudentBiodataRequest'
+    UpdateTeachingProfileRequest:
+      $ref: './components/schemas.yaml#/UpdateTeachingProfileRequest'
     FileEntity:
       $ref: './components/schemas.yaml#/FileEntity'
     NotificationEntity:

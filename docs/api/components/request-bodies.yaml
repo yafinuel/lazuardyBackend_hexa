@@ -14,6 +14,14 @@ UpdateTutorBiodata:
       schema:
         $ref: './schemas.yaml#/UpdateTutorBiodataRequest'
 
+UpdateTeachingProfile:
+  description: "Payload untuk memperbarui profil mengajar tutor (deskripsi, metode pembelajaran, dan jadwal ketersediaan)"
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/UpdateTeachingProfileRequest'
+
 CreateMeetingSchedule:
   description: "Payload untuk membuat jadwal meeting siswa"
   required: true

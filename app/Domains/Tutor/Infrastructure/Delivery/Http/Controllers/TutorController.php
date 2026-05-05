@@ -5,6 +5,7 @@ namespace App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers;
 use App\Domains\Tutor\Actions\GetTutorByCriteria;
 use App\Domains\Tutor\Actions\GetTutorByIdAction;
 use App\Domains\Tutor\Actions\GetTutorFileByUserIdAction;
+use App\Domains\Tutor\Actions\UpdateTeachingProfileAction;
 use App\Domains\Tutor\Actions\UpdateTutorProfileAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\GenderEnum;
@@ -85,5 +86,30 @@ class TutorController extends Controller
             'status' => 'success',
             'data' => $tutors,
         ]);
+    }
+
+    public function updateTeachingProfile(Request $request, UpdateTeachingProfileAction $action)
+    {
+        $data = $request->validate([
+            'description' => ['nullable', 'string'],
+            'learning_method' => ['nullable', 'array'],
+            'schedules' => ['nullable', 'array'],
+            'schedules.*.day' => ['required_with:schedules', 'string'],
+            'schedules.*.time' => ['required_with:schedules', 'date_format:H:i'],
+        ]);
+
+        try {
+            $action->execute($request->user()->id, $data);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Profil mengajar berhasil diperbarui',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Gagal memperbarui profil mengajar',
+                'debug_error' => $e->getMessage(),
+            ]);
+        }
     }
 }

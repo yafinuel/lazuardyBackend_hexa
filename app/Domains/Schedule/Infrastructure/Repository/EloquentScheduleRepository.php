@@ -5,10 +5,12 @@ namespace App\Domains\Schedule\Infrastructure\Repository;
 use App\Domains\Schedule\Entities\ScheduleEntity;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use App\Models\Schedule;
+use App\Models\ScheduleTutor;
 use App\Models\Tutor;
 use App\Shared\Enums\ScheduleStatusEnum;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class EloquentScheduleRepository implements ScheduleRepositoryInterface
 {
@@ -139,5 +141,36 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
     {
         $schedule = Schedule::findOrFail($scheduleId);
         return $schedule->update($data);
+    }
+
+    public function updateTutorSchedule(int $tutorId, array $data): bool
+    {
+        return DB::transaction(function () use ($tutorId, $data) {
+            $newItems = collect($data);
+
+            $oldSchedules = ScheduleTutor::where('tutor_id', $tutorId)->get();
+
+            foreach ($oldSchedules as $oldSchedule) {
+                $exists = $newItems->contains(function ($item) use ($oldSchedule) {
+                    return $item['day'] === $oldSchedule->day && $item['time'] === $oldSchedule->time;
+                });
+
+                if (!$exists) {
+                    $oldSchedule->delete();
+                }
+            }
+
+            ScheduleTutor::upsert(
+                $newItems->map(fn($item) => [
+                    'tutor_id' => $tutorId,
+                    'day' => $item['day'],
+                    'time' => $item['time']
+                ])->toArray(),
+                ['tutor_id', 'day', 'time'],
+                ['day', 'time']
+            );
+
+            return true;
+        });
     }
 }
