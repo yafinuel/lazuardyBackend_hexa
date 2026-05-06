@@ -8,6 +8,7 @@ enum RoleEnum: string
     case ADMIN = 'admin';
     case STUDENT = 'student';
     case TUTOR = 'tutor';
+    case PARENT = 'parent';
 
     public function displayName() : string 
     {
@@ -16,7 +17,8 @@ enum RoleEnum: string
             
             self::ADMIN => 'Admin',
             self::TUTOR => 'Mentor',
-            self::STUDENT => 'Siswa'
+            self::STUDENT => 'Siswa',
+            self::PARENT => 'Orang Tua',
         };
     }
         public static function tryFromDisplayName(string $displayName): ?self

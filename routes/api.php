@@ -35,6 +35,10 @@ Route::post('/forgotPasswordResetPassword', [AuthController::class, 'forgotPassw
 Route::post('/studentRegister', [AuthController::class, 'studentRegister']);
 Route::post('/tutorRegister', [AuthController::class, 'tutorRegister']);
 
+Route::post('/register-otp/student-parents', [AuthController::class, 'registerParentStudentOtpEmail']);
+Route::post('/verify-otp/student-parents', [AuthController::class, 'verifyOtpEmailForStudentParents']);
+Route::post('/register/parent', [AuthController::class, 'parentRegister']);
+
 // Order
 Route::get('/getBankList', [PaymentGatewayController::class, 'getBankList']);
 Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateBankAccount']);

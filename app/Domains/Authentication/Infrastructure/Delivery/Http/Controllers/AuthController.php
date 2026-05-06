@@ -4,12 +4,15 @@ namespace App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Authentication\Actions\ForgotPasswordOtpEmailAction;
 use App\Domains\Authentication\Actions\LoginManualAction;
+use App\Domains\Authentication\Actions\ParentRegisterPageAction;
 use App\Domains\Authentication\Actions\RegisterOtpEmailAction;
+use App\Domains\Authentication\Actions\RegisterStudentParentOtpAction;
 use App\Domains\Authentication\Actions\ResetPasswordAuthAction;
 use App\Domains\Authentication\Actions\StudentRegisterPageAction;
 use App\Domains\Authentication\Actions\TutorRegisterPageAction;
 use App\Domains\Authentication\Actions\VerifyOtpEmailForgotPasswordAction;
 use App\Domains\Authentication\Actions\VerifyOtpRegisterEmailAction;
+use App\Domains\Authentication\Actions\VerifyStudentParentOtpAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\GenderEnum;
 use Exception;
@@ -81,6 +84,49 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => "Gagal mengirim OTP",
+                'debug_error' => $e->getMessage(),
+            ], $e->getCode()?: 500);
+        }
+    }
+
+    public function registerParentStudentOtpEmail(Request $request, RegisterStudentParentOtpAction $action)
+    {
+        $data = $request->validate([
+            "email" => ['required', 'email', 'exists:users,email'],
+        ]);
+        
+        try {
+            $action->execute($data);
+
+            return response()->json([
+                'status' => 'success'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Gagal mengirim OTP",
+                'debug_error' => $e->getMessage(),
+            ], $e->getCode()?: 500);
+        }
+    }
+
+    public function verifyOtpEmailForStudentParents(Request $request, VerifyStudentParentOtpAction $action)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'otp' => ['required', 'string']
+        ]);
+
+        try {
+            $resetToken = $action->execute($data);
+            
+            return response()->json([
+                'status' => 'success',
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Gagal memverifikasi OTP",
                 'debug_error' => $e->getMessage(),
             ], $e->getCode()?: 500);
         }
@@ -235,5 +281,19 @@ class AuthController extends Controller
                 'debug_error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function parentRegister(Request $request, ParentRegisterPageAction $action)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8'],
+            'student_id' => ['required', 'integer', 'exists:students,user_id'],
+        ]);
+
+        $action->execute($data);
+        return response()->json([
+            'status' => 'success',
+        ], 201);
     }
 }

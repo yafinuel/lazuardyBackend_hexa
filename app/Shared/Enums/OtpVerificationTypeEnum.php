@@ -7,6 +7,7 @@ enum OtpVerificationTypeEnum: string
     case REGISTER = 'register';
     case UPDATE_PASSWORD = 'update_password';
     case FORGOT_PASSWORD = 'forgot_password';
+    case VERIFY_PARENT = 'verify_parent';
 
     public function displayName() : string 
     {
@@ -15,6 +16,7 @@ enum OtpVerificationTypeEnum: string
             self::REGISTER => 'Registrasi',
             self::UPDATE_PASSWORD => 'Ubah password',
             self::FORGOT_PASSWORD => 'Lupa password',
+            self::VERIFY_PARENT => 'Verifikasi orang tua',
         };
     }
     

@@ -12,6 +12,7 @@ use App\Domains\Subject\Actions\CreateTutorSubjectAction;
 use App\Domains\Tutor\Actions\CreateTutorAction;
 use App\Domains\User\Actions\CreateUserAction;
 use App\Domains\User\Actions\ResetPasswordAction;
+use App\Models\ParentModel;
 use App\Models\User;
 use App\Shared\Enums\FileTypeEnum;
 use App\Shared\Enums\OtpIdentifierEnum;
@@ -82,6 +83,23 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
         }
     }
 
+    public function parentRegister(array $data): int
+    {
+        DB::beginTransaction();
+        try {
+            $user = $this->createUserAction->execute($data);
+            ParentModel::create([
+                'user_id' => $user->id,
+                'student_id' => $data['student_id'],
+            ]);
+            DB::commit();
+            return $user->id;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
     public function getToken(int $userId): string
     {
         User::find($userId)->tokens()->delete();
@@ -103,4 +121,5 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
     {
         $this->resetPasswordAction->execute($email, $resetToken, $newPassword);
     }
+
 }
