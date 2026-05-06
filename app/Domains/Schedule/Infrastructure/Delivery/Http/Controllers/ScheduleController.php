@@ -8,6 +8,7 @@ use App\Domains\Schedule\Actions\CreateMeetingScheduleAction;
 use App\Domains\Schedule\Actions\GetFilteredSchedulesByTutorIdAction;
 use App\Domains\Schedule\Actions\GetScheduleByIdAction;
 use App\Domains\Schedule\Actions\GetTutorSchedulesByDayAction;
+use App\Domains\Schedule\Actions\MarkAsCompleteScheduleAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\DayEnum;
 use App\Shared\Enums\ScheduleStatusEnum;
@@ -110,6 +111,20 @@ class ScheduleController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Booking decision processed successfully',
+        ]);
+    }
+
+    public function markAsComplete(Request $request, MarkAsCompleteScheduleAction $action)
+    {
+        $data = $request->validate([
+            'schedule_id' => 'required|integer',
+        ]);
+
+        $action->execute($data['schedule_id']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Schedule marked as complete successfully',
         ]);
     }
 }

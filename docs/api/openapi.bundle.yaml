@@ -34,6 +34,8 @@ tags:
     description: Endpoint untuk detail jadwal
   - name: Report
     description: Endpoint untuk laporan siswa
+  - name: Review
+    description: Endpoint untuk ulasan tutor
 paths:
   /registerOtpEmail:
     post:
@@ -2269,6 +2271,69 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
+  /student/schedule/mark-as-complete:
+    patch:
+      tags:
+        - Schedule
+      summary: Menandai jadwal siswa sebagai selesai
+      description: Endpoint untuk menandai jadwal sebagai selesai berdasarkan `schedule_id`. Membutuhkan autentikasi dan role student.
+      security:
+        - bearerAuth: []
+      operationId: markAsComplete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - schedule_id
+              properties:
+                schedule_id:
+                  type: integer
+                  minimum: 1
+                  example: 1
+                  description: ID jadwal yang akan ditandai selesai.
+            example:
+              schedule_id: 1
+      responses:
+        '200':
+          description: Jadwal berhasil ditandai selesai
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Schedule marked as complete successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Forbidden - Endpoint hanya untuk role student
+          content:
+            application/json:
+              example:
+                status: failed
+                message: This page is Forbidden for tutor
+        '422':
+          description: Validasi gagal
+          content:
+            application/json:
+              example:
+                message: The given data was invalid.
+                errors:
+                  schedule_id:
+                    - The schedule id field is required.
+        '500':
+          $ref: '#/components/responses/ServerError'
   /tutor/schedule/booking-confirmation:
     patch:
       tags:
@@ -2524,6 +2589,197 @@ paths:
                 message: This page is Forbidden for student
         '422':
           $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /tutor/review:
+    get:
+      tags:
+        - Review
+      summary: Mengambil daftar review untuk tutor yang sedang login
+      description: Endpoint untuk menampilkan review milik tutor yang sedang login dengan filter opsional dan pagination.
+      security:
+        - bearerAuth: []
+      operationId: getTutorReviewsAsTutor
+      parameters:
+        - name: student_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 12
+          description: Filter review berdasarkan ID student.
+        - name: min_rating
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+            example: 3
+          description: Filter rating minimum (1 sampai 5).
+        - name: max_rating
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+            example: 5
+          description: Filter rating maksimum (1 sampai 5).
+        - name: pagination
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+            example: 10
+          description: Jumlah item per halaman.
+      responses:
+        '200':
+          description: Berhasil mengambil review tutor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTutorReviewsResponse'
+              example:
+                status: success
+                avg_rating: 4.5
+                data:
+                  current_page: 1
+                  data:
+                    - id: 9
+                      studentId: 12
+                      tutorId: 7
+                      rate: 5
+                      comment: Penjelasan mudah dipahami
+                      createdAt: '2026-05-06T09:00:00Z'
+                      updatedAt: '2026-05-06T09:15:00Z'
+                    - id: 10
+                      studentId: 15
+                      tutorId: 7
+                      rate: 4
+                      comment: Tutor komunikatif
+                      createdAt: '2026-05-05T08:30:00Z'
+                      updatedAt: '2026-05-05T08:45:00Z'
+                  first_page_url: http://localhost:8000/api/tutor/review?page=1
+                  from: 1
+                  last_page: 1
+                  last_page_url: http://localhost:8000/api/tutor/review?page=1
+                  links:
+                    - url: null
+                      label: '&laquo; Previous'
+                      active: false
+                    - url: http://localhost:8000/api/tutor/review?page=1
+                      label: '1'
+                      active: true
+                    - url: null
+                      label: Next &raquo;
+                      active: false
+                  next_page_url: null
+                  path: http://localhost:8000/api/tutor/review
+                  per_page: 10
+                  prev_page_url: null
+                  to: 2
+                  total: 2
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Forbidden - Endpoint hanya untuk role tutor
+          content:
+            application/json:
+              example:
+                status: failed
+                message: This page is Forbidden for student
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /student/review/create:
+    post:
+      tags:
+        - Review
+      summary: Membuat review untuk tutor
+      description: Endpoint untuk mengirim review dari student yang sedang login ke tutor. Membutuhkan autentikasi dan role student.
+      security:
+        - bearerAuth: []
+      operationId: createReview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tutor_id
+                - rating
+              properties:
+                tutor_id:
+                  type: integer
+                  minimum: 1
+                  example: 7
+                  description: ID tutor yang akan diberi review.
+                rating:
+                  type: number
+                  minimum: 0
+                  maximum: 5
+                  example: 4.5
+                  description: Nilai rating review.
+                comment:
+                  type: string
+                  nullable: true
+                  maxLength: 1000
+                  example: Tutor sangat membantu dan jelas menjelaskan materi.
+            example:
+              tutor_id: 7
+              rating: 4.5
+              comment: Tutor sangat membantu dan jelas menjelaskan materi.
+      responses:
+        '200':
+          description: Review berhasil dibuat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Review created successfully
+              example:
+                status: success
+                message: Review created successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Forbidden - Endpoint hanya untuk role student
+          content:
+            application/json:
+              example:
+                status: failed
+                message: This page is Forbidden for tutor
+        '422':
+          description: Validasi gagal
+          content:
+            application/json:
+              example:
+                message: The given data was invalid.
+                errors:
+                  tutor_id:
+                    - The tutor id field is required.
+                  rating:
+                    - The rating field is required.
         '500':
           $ref: '#/components/responses/ServerError'
 components:
@@ -3927,6 +4183,108 @@ components:
               format: uri
               example: https://xendit.co/web/invoices/...
               description: URL untuk redirect ke halaman pembayaran Xendit
+    ReviewEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+          example: 9
+        studentId:
+          type: integer
+          example: 12
+        tutorId:
+          type: integer
+          example: 7
+        rate:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5
+        comment:
+          type: string
+          nullable: true
+          example: Penjelasan mudah dipahami
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2026-05-06T09:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2026-05-06T09:15:00Z'
+    TutorReviewListPayload:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewEntity'
+        first_page_url:
+          type: string
+          nullable: true
+          example: http://localhost:8000/api/tutor/review?page=1
+        from:
+          type: integer
+          nullable: true
+          example: 1
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+          example: http://localhost:8000/api/tutor/review?page=1
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        next_page_url:
+          type: string
+          nullable: true
+          example: null
+        path:
+          type: string
+          example: http://localhost:8000/api/tutor/review
+        per_page:
+          type: integer
+          example: 10
+        prev_page_url:
+          type: string
+          nullable: true
+          example: null
+        to:
+          type: integer
+          nullable: true
+          example: 2
+        total:
+          type: integer
+          example: 2
+    GetTutorReviewsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        avg_rating:
+          type: number
+          format: float
+          example: 4.5
+        data:
+          $ref: '#/components/schemas/TutorReviewListPayload'
     UpdateTutorBiodataRequest:
       type: object
       required:

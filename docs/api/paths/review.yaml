@@ -1,0 +1,192 @@
+getTutorReviewsAsTutor:
+  get:
+    tags:
+      - Review
+    summary: Mengambil daftar review untuk tutor yang sedang login
+    description: Endpoint untuk menampilkan review milik tutor yang sedang login dengan filter opsional dan pagination.
+    security:
+      - bearerAuth: []
+    operationId: getTutorReviewsAsTutor
+    parameters:
+      - name: student_id
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 12
+        description: Filter review berdasarkan ID student.
+      - name: min_rating
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 3
+        description: Filter rating minimum (1 sampai 5).
+      - name: max_rating
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5
+        description: Filter rating maksimum (1 sampai 5).
+      - name: pagination
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 10
+          example: 10
+        description: Jumlah item per halaman.
+    responses:
+      '200':
+        description: Berhasil mengambil review tutor
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/GetTutorReviewsResponse'
+            example:
+              status: success
+              avg_rating: 4.5
+              data:
+                current_page: 1
+                data:
+                  - id: 9
+                    studentId: 12
+                    tutorId: 7
+                    rate: 5
+                    comment: "Penjelasan mudah dipahami"
+                    createdAt: "2026-05-06T09:00:00Z"
+                    updatedAt: "2026-05-06T09:15:00Z"
+                  - id: 10
+                    studentId: 15
+                    tutorId: 7
+                    rate: 4
+                    comment: "Tutor komunikatif"
+                    createdAt: "2026-05-05T08:30:00Z"
+                    updatedAt: "2026-05-05T08:45:00Z"
+                first_page_url: "http://localhost:8000/api/tutor/review?page=1"
+                from: 1
+                last_page: 1
+                last_page_url: "http://localhost:8000/api/tutor/review?page=1"
+                links:
+                  - url: null
+                    label: "&laquo; Previous"
+                    active: false
+                  - url: "http://localhost:8000/api/tutor/review?page=1"
+                    label: "1"
+                    active: true
+                  - url: null
+                    label: "Next &raquo;"
+                    active: false
+                next_page_url: null
+                path: "http://localhost:8000/api/tutor/review"
+                per_page: 10
+                prev_page_url: null
+                to: 2
+                total: 2
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '403':
+        description: Forbidden - Endpoint hanya untuk role tutor
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "This page is Forbidden for student"
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+createReview:
+  post:
+    tags:
+      - Review
+    summary: Membuat review untuk tutor
+    description: Endpoint untuk mengirim review dari student yang sedang login ke tutor. Membutuhkan autentikasi dan role student.
+    security:
+      - bearerAuth: []
+    operationId: createReview
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - tutor_id
+              - rating
+            properties:
+              tutor_id:
+                type: integer
+                minimum: 1
+                example: 7
+                description: ID tutor yang akan diberi review.
+              rating:
+                type: number
+                minimum: 0
+                maximum: 5
+                example: 4.5
+                description: Nilai rating review.
+              comment:
+                type: string
+                nullable: true
+                maxLength: 1000
+                example: Tutor sangat membantu dan jelas menjelaskan materi.
+          example:
+            tutor_id: 7
+            rating: 4.5
+            comment: Tutor sangat membantu dan jelas menjelaskan materi.
+    responses:
+      '200':
+        description: Review berhasil dibuat
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: success
+                message:
+                  type: string
+                  example: Review created successfully
+            example:
+              status: success
+              message: Review created successfully
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: 'Unauthenticated.'
+      '403':
+        description: Forbidden - Endpoint hanya untuk role student
+        content:
+          application/json:
+            example:
+              status: failed
+              message: 'This page is Forbidden for tutor'
+      '422':
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: The given data was invalid.
+              errors:
+                tutor_id:
+                  - The tutor id field is required.
+                rating:
+                  - The rating field is required.
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

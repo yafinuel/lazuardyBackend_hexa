@@ -9,6 +9,7 @@ use App\Domains\Commerce\Infrastructure\Delivery\Http\Controllers\PaymentGateway
 use App\Domains\Notification\Infrastructure\Delivery\Http\Controllers\NotificationController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
 use App\Domains\Report\Infrastructure\Delivery\Http\Controllers\ReportController;
+use App\Domains\Review\Infrastructure\Delivery\Http\Controllers\ReviewController;
 use App\Domains\Schedule\Infrastructure\Delivery\Http\Controllers\ScheduleController;
 use App\Domains\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
 use App\Domains\Subject\Infrastructure\Delivery\Http\Controllers\SubjectController;
@@ -83,6 +84,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/student/reports', [ReportController::class, 'getAllReportsByStudentId']);
         Route::post('/schedule/takeMeeting', [ScheduleController::class, 'createMeetingSchedule']);
 
+        Route::patch('/student/schedule/mark-as-complete', [ScheduleController::class, 'markAsComplete']);
+
+        Route::post('/student/review/create', [ReviewController::class, 'createReview']);
+
         // Order
         Route::post('/package/order', [PaymentGatewayController::class, 'orderPackage']);
     });
@@ -101,6 +106,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/tutor/dashboard/homepage', [DashboardController::class, 'tutorHomepage']);
         Route::get('/tutor/dashboard/schedule', [DashboardController::class, 'tutorSchedulePage']);
+
+        Route::get('/tutor/review', [ReviewController::class, 'getTutorReviewsAsTutor']);
+        
         Route::middleware('verified.tutor')->group(function () {
             // Route::get('/tutor/dashboard/schedule', [DashboardController::class, 'tutorSchedulePage']);
             // Route::get('/tutor/reports', [ReportController::class, 'getAllReportsByTutorId']);

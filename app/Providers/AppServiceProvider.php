@@ -35,6 +35,8 @@ use App\Domains\Penalty\Ports\PenaltyRepositoryInterface;
 use App\Domains\Penalty\Ports\PenaltyServicePort;
 use App\Domains\Report\Infrastructure\Repository\EloquentReportRepository;
 use App\Domains\Report\Ports\ReportRepositoryInterface;
+use App\Domains\Review\Infrastructure\Repository\EloquentReviewRepository;
+use App\Domains\Review\Ports\ReviewRepositoryInterface;
 use App\Domains\Schedule\Infrastructure\Repository\EloquentScheduleRepository;
 use App\Domains\Schedule\Infrastructure\Services\ScheduleServiceAdapter;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
@@ -179,6 +181,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ReportRepositoryInterface::class,
             EloquentReportRepository::class
+        );
+
+        $this->app->bind(
+            ReviewRepositoryInterface::class,
+            EloquentReviewRepository::class
         );
 
         $this->app->bind(

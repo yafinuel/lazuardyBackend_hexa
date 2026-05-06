@@ -353,6 +353,70 @@ takeMeeting:
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
+markAsComplete:
+  patch:
+    tags:
+      - Schedule
+    summary: Menandai jadwal siswa sebagai selesai
+    description: Endpoint untuk menandai jadwal sebagai selesai berdasarkan `schedule_id`. Membutuhkan autentikasi dan role student.
+    security:
+      - bearerAuth: []
+    operationId: markAsComplete
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - schedule_id
+            properties:
+              schedule_id:
+                type: integer
+                minimum: 1
+                example: 1
+                description: ID jadwal yang akan ditandai selesai.
+          example:
+            schedule_id: 1
+    responses:
+      '200':
+        description: Jadwal berhasil ditandai selesai
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: success
+                message:
+                  type: string
+                  example: Schedule marked as complete successfully
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: 'Unauthenticated.'
+      '403':
+        description: Forbidden - Endpoint hanya untuk role student
+        content:
+          application/json:
+            example:
+              status: failed
+              message: 'This page is Forbidden for tutor'
+      '422':
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: The given data was invalid.
+              errors:
+                schedule_id:
+                  - The schedule id field is required.
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
 bookingConfirmation:
   patch:
     tags:
