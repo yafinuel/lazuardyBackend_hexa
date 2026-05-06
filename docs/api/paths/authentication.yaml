@@ -217,6 +217,168 @@ forgotPasswordResetPassword:
       '422':
         $ref: '../components/responses.yaml#/ValidationError'
 
+registerOtpStudentParents:
+  post:
+    tags: [Authentication]
+    security: []
+    summary: Mengirim OTP untuk verifikasi orang tua siswa
+    description: Endpoint untuk mengirim OTP ke email orang tua yang sudah terdaftar di sistem. Email harus sudah terdaftar sebagai user dengan role student.
+    operationId: registerOtpStudentParents
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+            properties:
+              email:
+                type: string
+                format: email
+                example: "parent@example.com"
+          example:
+            email: "parent@example.com"
+    responses:
+      '201':
+        description: OTP berhasil dikirim
+        content:
+          application/json:
+            example:
+              status: "success"
+      '422':
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: "The given data was invalid."
+              errors:
+                email:
+                  - "The email field is required."
+                  - "The email must be a valid email address."
+                  - "The email does not exist."
+      '500':
+        description: Gagal mengirim OTP
+        content:
+          application/json:
+            example:
+              status: "error"
+              message: "Gagal mengirim OTP"
+              debug_error: "Terjadi kesalahan sistem saat memproses OTP."
+
+verifyOtpStudentParents:
+  post:
+    tags: [Authentication]
+    security: []
+    summary: Verifikasi OTP orang tua siswa
+    description: Endpoint untuk memverifikasi OTP yang telah dikirim ke email orang tua. Jika verifikasi berhasil, akan mengembalikan reset_token yang dapat digunakan untuk registrasi orang tua.
+    operationId: verifyOtpStudentParents
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - otp
+            properties:
+              email:
+                type: string
+                format: email
+                example: "parent@example.com"
+              otp:
+                type: string
+                example: "1234"
+          example:
+            email: "parent@example.com"
+            otp: "1234"
+    responses:
+      '200':
+        description: Verifikasi OTP berhasil
+        content:
+          application/json:
+            example:
+              status: "success"
+              reset_token: "abcd1234..."
+      '404':
+        description: OTP tidak ditemukan atau sudah kedaluwarsa
+        content:
+          application/json:
+            example:
+              status: "error"
+              message: "Gagal memverifikasi OTP"
+              debug_error: "OTP tidak ditemukan atau sudah kedaluwarsa."
+      '403':
+        description: OTP tidak valid atau terlalu banyak percobaan
+        content:
+          application/json:
+            example:
+              status: "error"
+              message: "Gagal memverifikasi OTP"
+              debug_error: "Kode OTP yang Anda masukkan salah."
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+parentRegister:
+  post:
+    tags: [Authentication]
+    security: []
+    summary: Registrasi orang tua siswa
+    description: Endpoint untuk melakukan registrasi orang tua yang telah diverifikasi melalui OTP. Harus memiliki email unik dan student_id yang valid (sudah terdaftar di sistem).
+    operationId: parentRegister
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+              - student_id
+            properties:
+              email:
+                type: string
+                format: email
+                example: "parent@example.com"
+              password:
+                type: string
+                minLength: 8
+                example: "password123"
+              student_id:
+                type: integer
+                minimum: 1
+                example: 1
+          example:
+            email: "parent@example.com"
+            password: "password123"
+            student_id: 1
+    responses:
+      '201':
+        description: Registrasi orang tua berhasil
+        content:
+          application/json:
+            example:
+              status: "success"
+      '422':
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: "The given data was invalid."
+              errors:
+                email:
+                  - "The email has already been taken."
+                password:
+                  - "The password must be at least 8 characters."
+                student_id:
+                  - "The selected student id is invalid."
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
 authProviderRedirect:
   get:
     tags: [Authentication]

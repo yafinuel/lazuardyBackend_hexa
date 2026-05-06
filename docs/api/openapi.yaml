@@ -50,6 +50,12 @@ paths:
     $ref: './paths/authentication.yaml#/forgotPasswordVerifyOtpEmail'
   /forgotPasswordResetPassword:
     $ref: './paths/authentication.yaml#/forgotPasswordResetPassword'
+  /register-otp/student-parents:
+    $ref: './paths/authentication.yaml#/registerOtpStudentParents'
+  /verify-otp/student-parents:
+    $ref: './paths/authentication.yaml#/verifyOtpStudentParents'
+  /register/parent:
+    $ref: './paths/authentication.yaml#/parentRegister'
   /auth/{provider}/redirect:
     $ref: './paths/authentication.yaml#/authProviderRedirect'
   /auth/{provider}/callback:
