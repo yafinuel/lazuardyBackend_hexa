@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ClassModel;
+use App\Models\ParentModel;
 use App\Models\Schedule;
 use App\Models\Student;
 use App\Models\Subject;
@@ -33,6 +34,12 @@ class DashboardDemoSeeder extends Seeder
             'role' => RoleEnum::TUTOR,
         ]);
 
+        $parentUser = User::factory()->create([
+            'name' => 'Demo Parent',
+            'email' => 'demo.parent@example.com',
+            'role' => RoleEnum::PARENT,
+        ]);
+
         $studentClassId = ClassModel::where('level', 'sd')->orderBy('id')->value('id');
         $subject = Subject::where('class_id', $studentClassId)->orderBy('id')->first();
 
@@ -53,6 +60,11 @@ class DashboardDemoSeeder extends Seeder
             'description' => 'Tutor demo untuk pengujian dashboard schedule.',
             'learning_method' => ['online', 'offline'],
             'status' => TutorStatusEnum::VERIFIED,
+        ]);
+
+        ParentModel::create([
+            'user_id' => $parentUser->id,
+            'student_id' => $studentUser->id,
         ]);
 
         Schedule::create([

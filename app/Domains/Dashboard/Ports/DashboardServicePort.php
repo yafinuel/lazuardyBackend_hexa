@@ -2,6 +2,7 @@
 
 namespace App\Domains\Dashboard\Ports;
 
+use App\Domains\Parent\Entities\ParentEntity;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -16,4 +17,6 @@ interface DashboardServicePort
     public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10): LengthAwarePaginator;
     public function getStudentCountThisMonthSchedulesByTutorId(int $tutorId): int;
     public function salaryStats(int $tutorId): int;
+    public function getParentById(int $parentId): ParentEntity;
+    public function getFilteredSchedulesByStudentId(int $studentId, ?array $filters, int $paginate = 10);
 }

@@ -1,16 +1,230 @@
-ValidationError:
-  description: Validasi Gagal
+# 2xx Success Responses
+SuccessResponse:
+  description: Permintaan berhasil diproses
   content:
     application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [success]
+          message:
+            type: string
+          data:
+            type: object
+      example:
+        status: "success"
+        message: "Operasi berhasil dilakukan"
+        data: {}
+
+CreatedResponse:
+  description: Resource berhasil dibuat
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [success]
+          message:
+            type: string
+          data:
+            type: object
+      example:
+        status: "success"
+        message: "Resource berhasil dibuat"
+        data: {}
+
+# 4xx Client Error Responses
+BadRequest:
+  description: Permintaan tidak valid atau format salah
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [error]
+          message:
+            type: string
+          debug_error:
+            type: string
+      example:
+        status: "error"
+        message: "Permintaan tidak valid"
+        debug_error: "Format data tidak sesuai dengan yang diharapkan"
+
+UnauthorizedError:
+  description: Token tidak valid, expired, atau tidak dikirim
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          message:
+            type: string
+          status:
+            type: string
+            enum: [error]
+      example:
+        message: "Unauthorized"
+        status: "error"
+
+ForbiddenError:
+  description: User tidak memiliki akses ke resource ini (role/permission denied)
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [error]
+          message:
+            type: string
+          debug_error:
+            type: string
+      example:
+        status: "error"
+        message: "Akses ditolak"
+        debug_error: "User harus memiliki role tertentu untuk mengakses resource ini"
+
+NotFoundError:
+  description: Resource tidak ditemukan
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [error]
+          message:
+            type: string
+          debug_error:
+            type: string
+      example:
+        status: "error"
+        message: "Resource tidak ditemukan"
+        debug_error: "Data dengan ID tersebut tidak ada dalam sistem"
+
+ConflictError:
+  description: Data sudah ada atau terjadi konflik (duplikasi, status incompatible, dll)
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [error]
+          message:
+            type: string
+          debug_error:
+            type: string
+      example:
+        status: "error"
+        message: "Data sudah ada dalam sistem"
+        debug_error: "Email atau resource sudah terdaftar"
+
+ValidationError:
+  description: Validasi gagal - input data tidak sesuai requirement
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          message:
+            type: string
+          errors:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
       example:
         message: "Data tidak valid"
         errors:
-          email: ["Email sudah terdaftar"]
+          email: ["Email sudah terdaftar", "Format email tidak valid"]
+          password: ["Password minimal 8 karakter"]
 
-ServerError:
-  description: Internal Server Error
+UnprocessableEntityError:
+  description: Data valid secara format tapi tidak bisa diproses (business logic error)
   content:
     application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [error]
+          message:
+            type: string
+          debug_error:
+            type: string
+      example:
+        status: "error"
+        message: "Data tidak bisa diproses"
+        debug_error: "Status jadwal harus 'pending' untuk dapat dibatalkan"
+
+TooManyRequestsError:
+  description: Terlalu banyak permintaan (rate limiting/throttling)
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [error]
+          message:
+            type: string
+          retry_after:
+            type: integer
+            description: Detik sampai bisa mencoba lagi
+      example:
+        status: "error"
+        message: "Terlalu banyak permintaan"
+        retry_after: 60
+
+# 5xx Server Error Responses
+ServerError:
+  description: Terjadi kesalahan pada server (5xx)
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [error]
+          message:
+            type: string
+          debug_error:
+            type: string
       example:
         status: "error"
         message: "Terjadi kesalahan pada server"
+        debug_error: "Exception error atau database error"
+
+ServiceUnavailableError:
+  description: Service tidak tersedia (maintenance, overload, external service down)
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [error]
+          message:
+            type: string
+          debug_error:
+            type: string
+      example:
+        status: "error"
+        message: "Service sedang tidak tersedia"
+        debug_error: "Database connection failed atau external service timeout"

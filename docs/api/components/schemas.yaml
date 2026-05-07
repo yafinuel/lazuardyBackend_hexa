@@ -93,9 +93,9 @@ UpdateTeachingProfileRequest:
             description: "Nama hari (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)"
           time:
             type: string
-            format: time
             pattern: '^\d{2}:\d{2}$'
             example: "09:00"
+            description: "Waktu dalam format HH:mm (24-jam)"
 
 Bank:
   type: object

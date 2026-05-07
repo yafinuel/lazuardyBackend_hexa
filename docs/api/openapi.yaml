@@ -131,6 +131,8 @@ paths:
     $ref: './paths/dashboard.yaml#/tutorHomepage'
   /tutor/dashboard/schedule:
     $ref: './paths/dashboard.yaml#/tutorSchedulePage'
+  /parent/dashboard/homepage:
+    $ref: './paths/dashboard.yaml#/parentHomepage'
   /schedule/getById:
     $ref: './paths/schedule.yaml#/getScheduleById'
   /schedule/getTutorSchedulesByDay:

@@ -118,4 +118,7 @@ Route::middleware('auth:sanctum')->group(function () {
             // Route::get('/tutor/reports', [ReportController::class, 'getAllReportsByTutorId']);
         });
     });
+    Route::middleware('role:'. RoleEnum::PARENT->value)->group(function (){
+        Route::get('/parent/dashboard/homepage', [DashboardController::class, 'parentHomepage']);
+    });
 });

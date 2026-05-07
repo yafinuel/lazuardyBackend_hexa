@@ -9,6 +9,9 @@ use App\Domains\Student\Actions\GetStudentByIdAction;
 use App\Domains\Tutor\Actions\GetTutorByCriteria;
 use App\Domains\FileManager\Ports\FileRepositoryInterface;
 use App\Domains\FileManager\Ports\FileStorageInterface;
+use App\Domains\Parent\Actions\GetParentByIdAction;
+use App\Domains\Parent\Entities\ParentEntity;
+use App\Domains\Schedule\Actions\GetFilteredSchedulesByStudentId;
 use App\Domains\Schedule\Actions\GetSchedulesByDateAction;
 use App\Domains\Schedule\Actions\GetSchedulesThisMonthByTutorIdAction;
 use App\Domains\Schedule\Actions\GetStudentCountThisMonthSchedulesByTutorId;
@@ -32,6 +35,8 @@ class DashboardServiceAdapter implements DashboardServicePort
         protected GetSchedulesByDateAction $schedulesByDateAction,
         protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthByTutorIdAction,
         protected GetStudentCountThisMonthSchedulesByTutorId $getStudentCountThisMonthSchedulesByTutorId,
+        protected GetParentByIdAction $getParentByIdAction,
+        protected GetFilteredSchedulesByStudentId $getFilteredSchedulesByStudentId
     ) {}
 
     public function getUserWarning(int $studentId): int
@@ -80,5 +85,15 @@ class DashboardServiceAdapter implements DashboardServicePort
         $totalSchedulesThisMonth = $this->getSchedulesThisMonthByTutorIdAction->execute($tutorId, 10)->total();
         $price = ConstantValue::TUTOR_PRICE;
         return $totalSchedulesThisMonth * $price;
+    }
+
+    public function getParentById(int $parentId): ParentEntity
+    {
+        return $this->getParentByIdAction->execute($parentId);
+    }
+
+    public function getFilteredSchedulesByStudentId(int $studentId, ?array $filters, int $paginate = 10)
+    {
+        return $this->getFilteredSchedulesByStudentId->execute($studentId, $filters, $paginate);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Dashboard\Infrastructure\Delivery\Http\Controllers;
 
+use App\Domains\Dashboard\Actions\ParentHomePageAction;
 use App\Domains\Dashboard\Actions\SchedulePageAction;
 use App\Domains\Dashboard\Actions\StudentHomePageAction;
 use App\Domains\Dashboard\Actions\StudentSchedulePageAction;
@@ -70,6 +71,22 @@ class DashboardController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $result
+        ]);
+    }
+
+    public function parentHomePage(Request $request, ParentHomePageAction $action)
+    {
+        $data = $request->validate([
+            'notification_paginate' => ['nullable', 'integer']
+        ]);
+        $userId = $request->user()->id;
+        if (!isset($data['notification_paginate'])) {
+            $data['notification_paginate'] = 2;
+        }
+        $data = $action->execute($userId, $data['notification_paginate']);
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
         ]);
     }
 }

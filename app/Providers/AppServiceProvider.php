@@ -29,6 +29,8 @@ use App\Domains\OtpManager\Infrastructure\Repository\EloquentOtpRepository;
 use App\Domains\OtpManager\Ports\OtpRepositoryInterface;
 use App\Domains\Package\Infrastructure\Repository\EloquentPackageRepository;
 use App\Domains\Package\Ports\PackageRepositoryInterface;
+use App\Domains\Parent\Infrastructure\Repository\EloquentParentRepository;
+use App\Domains\Parent\Ports\ParentRepositoryInterface;
 use App\Domains\Penalty\Infrastructure\Repository\EloquentPenaltyRepository;
 use App\Domains\Penalty\Infrastructure\Services\PenaltyServiceAdapter;
 use App\Domains\Penalty\Ports\PenaltyRepositoryInterface;
@@ -191,6 +193,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             TutorServicePort::class,
             TutorServiceAdapter::class
+        );
+
+        $this->app->bind(
+            ParentRepositoryInterface::class,
+            EloquentParentRepository::class
         );
     }
 

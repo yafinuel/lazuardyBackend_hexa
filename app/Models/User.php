@@ -84,6 +84,11 @@ class User extends Authenticatable
         return $this->hasOne(Tutor::class);
     }
 
+    public function parent(): HasOne
+    {
+        return $this->hasOne(ParentModel::class);
+    }
+
     // public function takenSchedules(): HasMany
     // {
     //     return $this->hasMany(TakenSchedule::class);
