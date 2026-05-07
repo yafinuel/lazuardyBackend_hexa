@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domains\Report\Entities;
+namespace App\Domains\Presence\Entities;
 
-class ReportEntity {
+class PresenceEntity {
     public function __construct(
         public readonly int $id,
         public readonly int $scheduleId,

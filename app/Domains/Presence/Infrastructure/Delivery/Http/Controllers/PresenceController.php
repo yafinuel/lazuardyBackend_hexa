@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Domains\Report\Infrastructure\Delivery\Http\Controllers;
+namespace App\Domains\Presence\Infrastructure\Delivery\Http\Controllers;
 
-use App\Domains\Report\Actions\CreateTutorReportAction;
-use App\Domains\Report\Actions\GetAllReportsByStudentIdAction;
+use App\Domains\Presence\Actions\CreatePresenceAction;
+use App\Domains\Presence\Actions\GetPresenceByUserId;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ReportController extends Controller
+class PresenceController extends Controller
 {
-    public function getAllReportsByStudentId(Request $request, GetAllReportsByStudentIdAction $action)
+    public function getPresenceByUserId(Request $request, GetPresenceByUserId $action)
     {
         $data = $request->validate([
             'paginate' => ['nullable', 'integer']
@@ -22,7 +22,7 @@ class ReportController extends Controller
         ]);
     }
 
-    public function createTutorReport(Request $request, CreateTutorReportAction $action)
+    public function createPresence(Request $request, CreatePresenceAction $action)
     {
         $data = $request->validate([
             'schedule_id' => ['required', 'integer', 'exists:schedules,id'],

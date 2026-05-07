@@ -6,11 +6,11 @@ use App\Domains\Schedule\Entities\ScheduleEntity;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use App\Models\Schedule;
 use App\Models\ScheduleTutor;
-use App\Models\Student;
 use App\Models\Tutor;
 use App\Shared\Enums\ScheduleStatusEnum;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class EloquentScheduleRepository implements ScheduleRepositoryInterface
@@ -22,18 +22,6 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
         return true;
     }
     
-    public function getSchedulesByDate(int $userId, Carbon $date, int $paginate = 10): LengthAwarePaginator
-    {
-        return Schedule::query()
-            ->where(function ($query) use ($userId) {
-                $query->where('tutor_id', $userId)
-                    ->orWhere('student_id', $userId);
-            })
-            ->whereDate('date', $date->toDateString())
-            ->with(['tutor.user', 'student.user', 'subject'])
-            ->paginate($paginate);
-    }
-
     public function getScheduleById(int $scheduleId): ScheduleEntity
     {
         $schedule = Schedule::with('tutor.user', 'student.user', 'subject')
@@ -61,9 +49,10 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
     public function cancelSchedule(int $scheduleId, string $reason): bool
     {
         $schedule = Schedule::findOrFail($scheduleId);
-        $schedule->status = ScheduleStatusEnum::CANCELLED;
-        $schedule->reason = $reason;
-        return $schedule->save();
+        return $schedule->update([
+            'status' => ScheduleStatusEnum::CANCELLED,
+            'reason' => $reason
+        ]);
     }
 
     public function createMeetingSchedule(array $data): void
@@ -113,78 +102,50 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
             ->distinct('student_id')
             ->count('student_id');
     }
-
-    public function getFilteredSchedulesByTutorId(int $tutorId, ?array $data, int $paginate = 10): LengthAwarePaginator
+    
+    public function getSchedulesByUserId(int $userId, ?array $filters, int $paginate = 10): LengthAwarePaginator
     {
-        $tutor = Tutor::where('user_id', $tutorId)->firstOrFail();
-        
-        return $tutor->schedules()
-            ->when($data['student_id'] ?? null, function ($query, $studentId) {
-                $query->where('student_id', $studentId);
-            })
-            ->when($data['subject_id'] ?? null, function ($query, $subjectId) {
-                if (is_array($subjectId)) {
-                    return $query->whereIn('subject_id', $subjectId);
-                }
-                $query->where('subject_id', $subjectId);
-            })
-            ->when($data['date'] ?? null, function ($query, $date) {
-                $query->whereDate('date', Carbon::parse($date)->toDateString());
-            })  
-            ->when($data['status'] ?? null, function ($query, $status) {
-                if (is_array($status)) {
-                    return $query->whereIn('status', $status);
-                }
-                
-                return $query->where('status', $status);
-            })
-            ->when($data['learning_method'] ?? null, function ($query, $method) {
-                if (is_array($method)) {
-                    return $query->whereIn('learning_method', $method);
-                }
-                
-                $query->where('learning_method', $method);
-            })
-            ->with(['student.user', 'subject']) // Jangan lupa eager loading!
-            ->paginate($paginate);
-    }
-
-    public function getFilteredSchedulesByStudentId(int $studentId, ?array $data, int $paginate = 10): LengthAwarePaginator
-    {
-        $student = Student::where('user_id', $studentId)->firstOrFail();
-        
-        return $student->schedules()
-            ->when($data['tutor_id'] ?? null, function ($query, $tutorId) {
+        $query = Schedule::where(function ($q) use ($userId) {
+            $q->where('tutor_id', $userId)->orWhere('student_id', $userId);
+        });
+        return $query
+            ->when($filters['tutor_id'] ?? null, function ($q, $tutorId) {
                 if (is_array($tutorId)) {
-                    return $query->whereIn('tutor_id', $tutorId);
+                    return $q->whereIn('tutor_id', $tutorId);
                 }
-                $query->where('tutor_id', $tutorId);
+                return $q->where('tutor_id', $tutorId);
             })
-            ->when($data['subject_id'] ?? null, function ($query, $subjectId) {
+            ->when($filters['student_id'] ?? null, function ($q, $studentId) {
+                if (is_array($studentId)) {
+                    return $q->whereIn('student_id', $studentId);
+                }
+                return $q->where('student_id', $studentId);
+            })
+            ->when($filters['subject_id'] ?? null, function ($q, $subjectId) {
                 if (is_array($subjectId)) {
-                    return $query->whereIn('subject_id', $subjectId);
+                    return $q->whereIn('subject_id', $subjectId);
                 }
-                $query->where('subject_id', $subjectId);
+                return $q->where('subject_id', $subjectId);
             })
-            ->when($data['date'] ?? null, function ($query, $date) {
-                $query->whereDate('date', Carbon::parse($date)->toDateString());
-            })  
-            ->when($data['status'] ?? null, function ($query, $status) {
+            ->when($filters['date'] ?? null, function ($q, $date) {
+                return $q->whereDate('date', Carbon::parse($date)->toDateString());
+            })
+            ->when($filters['status'] ?? null, function ($q, $status) {
                 if (is_array($status)) {
-                    return $query->whereIn('status', $status);
+                    return $q->whereIn('status', $status);
                 }
-                $query->where('status', $status);
+                return $q->where('status', $status);
             })
-            ->when($data['learning_method'] ?? null, function ($query, $method) {
+            ->when($filters['learning_method'] ?? null, function ($q, $method) {
                 if (is_array($method)) {
-                    return $query->whereIn('learning_method', $method);
+                    return $q->whereIn('learning_method', $method);
                 }
-                $query->where('learning_method', $method);
+                return $q->where('learning_method', $method);
             })
-            ->with(['student.user', 'subject']) // Jangan lupa eager loading!
+            ->with(['tutor.user', 'student.user', 'subject'])
             ->paginate($paginate);
     }
-
+    
     public function updateSchedule(int $scheduleId, array $data): bool
     {
         $schedule = Schedule::findOrFail($scheduleId);

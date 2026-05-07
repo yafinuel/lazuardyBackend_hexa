@@ -35,8 +35,10 @@ use App\Domains\Penalty\Infrastructure\Repository\EloquentPenaltyRepository;
 use App\Domains\Penalty\Infrastructure\Services\PenaltyServiceAdapter;
 use App\Domains\Penalty\Ports\PenaltyRepositoryInterface;
 use App\Domains\Penalty\Ports\PenaltyServicePort;
-use App\Domains\Report\Infrastructure\Repository\EloquentReportRepository;
-use App\Domains\Report\Ports\ReportRepositoryInterface;
+use App\Domains\Presence\Infrastructure\Repository\EloquentPresenceRepository;
+use App\Domains\Presence\Infrastructure\Services\PresenceServiceAdapter;
+use App\Domains\Presence\Ports\PresenceRepositoryInterface;
+use App\Domains\Presence\Ports\PresenceServicePort;
 use App\Domains\Review\Infrastructure\Repository\EloquentReviewRepository;
 use App\Domains\Review\Ports\ReviewRepositoryInterface;
 use App\Domains\Schedule\Infrastructure\Repository\EloquentScheduleRepository;
@@ -181,8 +183,8 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            ReportRepositoryInterface::class,
-            EloquentReportRepository::class
+            PresenceRepositoryInterface::class,
+            EloquentPresenceRepository::class
         );
 
         $this->app->bind(
@@ -198,6 +200,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ParentRepositoryInterface::class,
             EloquentParentRepository::class
+        );
+
+        $this->app->bind(
+            PresenceServicePort::class,
+            PresenceServiceAdapter::class
         );
     }
 

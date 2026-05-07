@@ -8,7 +8,7 @@ use App\Domains\Dashboard\Infrastructure\Delivery\Http\Controllers\DashboardCont
 use App\Domains\Commerce\Infrastructure\Delivery\Http\Controllers\PaymentGatewayController;
 use App\Domains\Notification\Infrastructure\Delivery\Http\Controllers\NotificationController;
 use App\Domains\Package\Infrastructure\Delivery\Http\Controllers\PackageController;
-use App\Domains\Report\Infrastructure\Delivery\Http\Controllers\ReportController;
+use App\Domains\Presence\Infrastructure\Delivery\Http\Controllers\PresenceController;
 use App\Domains\Review\Infrastructure\Delivery\Http\Controllers\ReviewController;
 use App\Domains\Schedule\Infrastructure\Delivery\Http\Controllers\ScheduleController;
 use App\Domains\Student\Infrastructure\Delivery\Http\Controllers\StudentController;
@@ -79,13 +79,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/schedule/getById', [ScheduleController::class, 'getScheduleById']);
     Route::get('/schedule/getTutorSchedulesByDay', [ScheduleController::class, 'getTutorSchedulesByDay']);
     Route::post('/schedule/cancel', [ScheduleController::class, 'cancelSchedule']);
+    Route::get('/reports', [PresenceController::class, 'getPresenceByUserId']);
+    Route::get('/schedules', [DashboardController::class, 'schedulePage']);
     
     Route::middleware('role:' . RoleEnum::STUDENT->value)->group(function (){
         Route::get('/meStudent', [StudentController::class, 'meStudent']);
         Route::put('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
         Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
-        Route::get('/student/dashboard/schedule', [DashboardController::class, 'studentSchedulePage']);
-        Route::get('/student/reports', [ReportController::class, 'getAllReportsByStudentId']);
         Route::post('/schedule/takeMeeting', [ScheduleController::class, 'createMeetingSchedule']);
 
         Route::patch('/student/schedule/mark-as-complete', [ScheduleController::class, 'markAsComplete']);
@@ -101,7 +101,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/tutor/profile', [TutorController::class, 'updateBiodata']);
         Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
 
-        Route::post('tutor/presence/create', [ReportController::class, 'createTutorReport']);
+        Route::post('tutor/presence/create', [PresenceController::class, 'createTutorReport']);
 
         Route::get('tutor/schedules', [ScheduleController::class, 'getFilteredSchedulesByTutorId']);
         Route::patch('tutor/schedule/booking-confirmation', [ScheduleController::class, 'bookingConfirmation']);
@@ -109,13 +109,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/tutor/teaching-profile', [TutorController::class, 'updateTeachingProfile']);
 
         Route::get('/tutor/dashboard/homepage', [DashboardController::class, 'tutorHomepage']);
-        Route::get('/tutor/dashboard/schedule', [DashboardController::class, 'tutorSchedulePage']);
 
         Route::get('/tutor/review', [ReviewController::class, 'getTutorReviewsAsTutor']);
         
         Route::middleware('verified.tutor')->group(function () {
             // Route::get('/tutor/dashboard/schedule', [DashboardController::class, 'tutorSchedulePage']);
-            // Route::get('/tutor/reports', [ReportController::class, 'getAllReportsByTutorId']);
+            // Route::get('/tutor/reports', [PresenceController::class, 'getAllReportsByTutorId']);
         });
     });
     Route::middleware('role:'. RoleEnum::PARENT->value)->group(function (){

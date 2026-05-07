@@ -10,12 +10,12 @@ class ParentHomePageAction
 
     public function execute(int $parentId, int $notifPaginate = 2): array
     {
-        $parent = $this->service->getParentById($parentId);
+        $parent = $this->service->parentBiodata($parentId);
 
         $warning = $this->service->getUserWarning($parent->studentId);
         $studentBiodata = $this->service->studentBiodata($parent->studentId);
         $notificationData = $this->service->getNotification($parent->studentId, $notifPaginate);
-        $schedulesHistory = $this->service->getFilteredSchedulesByStudentId(
+        $schedulesHistory = $this->service->getSchedulesByUserId(
             $parent->studentId, 
             ['status' => ['completed', 'cancelled','expired', 'rejected']],
             2

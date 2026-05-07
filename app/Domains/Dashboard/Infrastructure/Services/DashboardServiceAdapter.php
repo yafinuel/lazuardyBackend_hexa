@@ -11,15 +11,15 @@ use App\Domains\FileManager\Ports\FileRepositoryInterface;
 use App\Domains\FileManager\Ports\FileStorageInterface;
 use App\Domains\Parent\Actions\GetParentByIdAction;
 use App\Domains\Parent\Entities\ParentEntity;
-use App\Domains\Schedule\Actions\GetFilteredSchedulesByStudentId;
-use App\Domains\Schedule\Actions\GetSchedulesByDateAction;
+use App\Domains\Schedule\Actions\GetSchedulesByUserId;
 use App\Domains\Schedule\Actions\GetSchedulesThisMonthByTutorIdAction;
 use App\Domains\Schedule\Actions\GetStudentCountThisMonthSchedulesByTutorId;
 use App\Domains\Student\Entities\StudentEntity;
 use App\Domains\Tutor\Actions\GetTutorByIdAction;
 use App\Domains\Tutor\Entities\TutorEntity;
+use App\Domains\User\Actions\GetUserByIdAction;
+use App\Domains\User\Entities\UserEntity;
 use App\Shared\Core\ConstantValue;
-use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class DashboardServiceAdapter implements DashboardServicePort
@@ -32,22 +32,26 @@ class DashboardServiceAdapter implements DashboardServicePort
         protected FileRepositoryInterface $fileRepository,
         protected FileStorageInterface $storage,
         protected GetUserWarningAction $userWarningAction,
-        protected GetSchedulesByDateAction $schedulesByDateAction,
         protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthByTutorIdAction,
         protected GetStudentCountThisMonthSchedulesByTutorId $getStudentCountThisMonthSchedulesByTutorId,
         protected GetParentByIdAction $getParentByIdAction,
-        protected GetFilteredSchedulesByStudentId $getFilteredSchedulesByStudentId
+        protected GetSchedulesByUserId $getSchedulesByUserId,
+        protected GetUserByIdAction $getUserById,
     ) {}
 
     public function getUserWarning(int $studentId): int
     {
         return $this->userWarningAction->execute($studentId);
-        
     }
 
-    public function schedulesByDate(int $userId, Carbon $date, int $paginate = 10): LengthAwarePaginator
+    public function getUserById(int $userId): UserEntity
     {
-        return $this->schedulesByDateAction->execute($userId, $date, $paginate);
+        return $this->getUserById->execute($userId);
+    }
+
+    public function getSchedulesByUserId(int $userId, ?array $filters, int $paginate = 10): LengthAwarePaginator
+    {
+        return $this->getSchedulesByUserId->execute($userId, $filters, $paginate);
     }
 
     public function studentBiodata(int $studentId): StudentEntity
@@ -58,6 +62,11 @@ class DashboardServiceAdapter implements DashboardServicePort
     public function tutorBiodata(int $tutorId): TutorEntity
     {
         return $this->tutorBiodata->execute($tutorId);
+    }
+
+    public function parentBiodata(int $parentId): ParentEntity
+    {
+        return $this->getParentByIdAction->execute($parentId);
     }
 
     public function getNotification(int $userId, int $paginate): LengthAwarePaginator
@@ -85,15 +94,5 @@ class DashboardServiceAdapter implements DashboardServicePort
         $totalSchedulesThisMonth = $this->getSchedulesThisMonthByTutorIdAction->execute($tutorId, 10)->total();
         $price = ConstantValue::TUTOR_PRICE;
         return $totalSchedulesThisMonth * $price;
-    }
-
-    public function getParentById(int $parentId): ParentEntity
-    {
-        return $this->getParentByIdAction->execute($parentId);
-    }
-
-    public function getFilteredSchedulesByStudentId(int $studentId, ?array $filters, int $paginate = 10)
-    {
-        return $this->getFilteredSchedulesByStudentId->execute($studentId, $filters, $paginate);
     }
 }

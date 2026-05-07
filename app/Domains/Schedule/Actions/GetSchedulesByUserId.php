@@ -7,13 +7,13 @@ use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class GetFilteredSchedulesByTutorIdAction
+class GetSchedulesByUserId
 {
     public function __construct(protected ScheduleRepositoryInterface $repository) {}
 
-    public function execute(int $tutorId, array $filters, int $paginate = 10): LengthAwarePaginator
+    public function execute(int $userId, ?array $filters, int $paginate = 10): LengthAwarePaginator
     {
-        $result = $this->repository->getFilteredSchedulesByTutorId($tutorId, $filters, $paginate);
+        $result = $this->repository->getSchedulesByUserId($userId, $filters, $paginate);
 
         return $result->through(function ($schedule) {
             return new ScheduleEntity(

@@ -7,6 +7,7 @@ use App\Domains\Schedule\Actions\CancelScheduleAction;
 use App\Domains\Schedule\Actions\CreateMeetingScheduleAction;
 use App\Domains\Schedule\Actions\GetFilteredSchedulesByTutorIdAction;
 use App\Domains\Schedule\Actions\GetScheduleByIdAction;
+use App\Domains\Schedule\Actions\GetSchedulesByUserId;
 use App\Domains\Schedule\Actions\GetTutorSchedulesByDayAction;
 use App\Domains\Schedule\Actions\MarkAsCompleteScheduleAction;
 use App\Http\Controllers\Controller;
@@ -81,7 +82,7 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function getFilteredSchedulesByTutorId(Request $request, GetFilteredSchedulesByTutorIdAction $action)
+    public function getFilteredSchedulesByTutorId(Request $request, GetSchedulesByUserId $action)
     {
         $data = $request->validate([
             'status' => ['nullable', new Enum(ScheduleStatusEnum::class)],
@@ -89,9 +90,10 @@ class ScheduleController extends Controller
             'student_id' => ['nullable', 'integer', 'exists:students,user_id'],
             'subject_id' => ['nullable', 'integer', 'exists:subjects,id'],
             'date' => ['nullable', 'date_format:Y-m-d'],
+            'paginate' => ['nullable', 'integer', 'min:1'],
         ]);
 
-        $result = $action->execute($request->user()->id, $data);
+        $result = $action->execute($request->user()->id, $data, $data['paginate'] ?? 10);
 
         return response()->json([
             'status' => 'success',
