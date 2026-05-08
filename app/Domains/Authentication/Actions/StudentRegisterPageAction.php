@@ -23,7 +23,7 @@ class StudentRegisterPageAction
                 'district' => $data["district"],
                 'subdistrict' => $data["subdistrict"],
             ],
-            'role' => RoleEnum::TUTOR,
+            'role' => RoleEnum::STUDENT,
             'google_id' => $data['google_id'] ?? null,
             'facebook_id' => $data['facebook_id'] ?? null,
             'gender' => $data['gender'],

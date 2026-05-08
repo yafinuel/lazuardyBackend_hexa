@@ -75,7 +75,7 @@ studentSchedulePage:
     parameters:
       - name: date
         in: query
-        required: true
+        required: false
         schema:
           type: string
           format: date
@@ -105,18 +105,17 @@ studentSchedulePage:
                     tutorId: 2
                     studentId: 1
                     subjectId: 1
-                    date: '2026-04-21 00:00:00'
-                    startTime: '14:00:00'
-                    endTime: '15:00:00'
-                    status: pending
+                    date: '2026-05-08T00:00:00.000000Z'
+                    startTime: '2026-05-08T21:00:00.000000Z'
+                    endTime: '2026-05-08T22:00:00.000000Z'
+                    status: completed
                     learningMethod: online
-                    meetingLink: null
-                    address: null
+                    address: 'Google Meet'
                     tutorName: Demo Tutor
                     subjectName: Matematika
-                    studentName: Demo Student
-                    tutorTelephoneNumber: '081234567890'
-                    studentTelephoneNumber: '081234567890'
+                    studentName: Demo student
+                    tutorTelephoneNumber: null
+                    studentTelephoneNumber: '098766222'
                 first_page_url: 'http://localhost:8000/api/student/dashboard/schedule?page=1'
                 from: 1
                 last_page: 1
@@ -151,10 +150,10 @@ studentSchedulePage:
         content:
           application/json:
             example:
-              message: Data tidak valid
+              message: The given data was invalid.
               errors:
                 date:
-                  - Tanggal jadwal wajib diisi.
+                  - Tanggal jadwal harus berupa format tanggal.
                 paginate:
                   - Jumlah data per halaman harus berupa bilangan bulat.
       '500':
@@ -172,7 +171,7 @@ tutorSchedulePage:
     parameters:
       - name: date
         in: query
-        required: true
+        required: false
         schema:
           type: string
           format: date
@@ -202,18 +201,17 @@ tutorSchedulePage:
                     tutorId: 2
                     studentId: 1
                     subjectId: 1
-                    date: '2026-04-21 00:00:00'
-                    startTime: '14:00:00'
-                    endTime: '15:00:00'
-                    status: pending
+                    date: '2026-05-08T00:00:00.000000Z'
+                    startTime: '2026-05-08T21:00:00.000000Z'
+                    endTime: '2026-05-08T22:00:00.000000Z'
+                    status: completed
                     learningMethod: online
-                    meetingLink: null
-                    address: null
+                    address: 'Google Meet'
                     tutorName: Demo Tutor
                     subjectName: Matematika
-                    studentName: Demo Student
-                    tutorTelephoneNumber: '081234567890'
-                    studentTelephoneNumber: '081234567890'
+                    studentName: Demo student
+                    tutorTelephoneNumber: null
+                    studentTelephoneNumber: '098766222'
                 first_page_url: 'http://localhost:8000/api/tutor/dashboard/schedule?page=1'
                 from: 1
                 last_page: 1
@@ -248,10 +246,10 @@ tutorSchedulePage:
         content:
           application/json:
             example:
-              message: Data tidak valid
+              message: The given data was invalid.
               errors:
                 date:
-                  - Tanggal jadwal wajib diisi.
+                  - Tanggal jadwal harus berupa format tanggal.
                 paginate:
                   - Jumlah data per halaman harus berupa bilangan bulat.
       '500':
@@ -651,14 +649,14 @@ parentHomepage:
       - Dashboard
     summary: Mengambil data homepage orang tua
     description: |
-      Endpoint untuk mengambil ringkasan data dashboard orang tua siswa yang sedang login. 
-      Menampilkan informasi overview anak (siswa), jadwal belajar terbaru, notifikasi, dan statistik pembelajaran.
+      Endpoint untuk mengambil ringkasan data dashboard orang tua siswa yang sedang login.
+      Menampilkan profil parent, warning/sanction/session milik siswa terkait, notifikasi, dan riwayat jadwal.
       
       **Fitur:**
-      - Menampilkan daftar anak (siswa) yang terdaftar dengan akun parent ini
-      - Jadwal belajar anak pada periode tertentu
-      - Notifikasi terbaru dengan pagination
-      - Performa akademik anak jika tersedia
+      - Menampilkan identitas parent yang sedang login
+      - Menampilkan warning, sanction, dan session milik siswa yang terhubung ke parent
+      - Menampilkan notifikasi terbaru dengan pagination
+      - Menampilkan riwayat jadwal siswa sebagai paginator
       
       **Requirement:**
       - Memerlukan autentikasi (Bearer Token)
@@ -686,6 +684,9 @@ parentHomepage:
           application/json:
             schema:
               type: object
+              required:
+                - status
+                - data
               properties:
                 status:
                   type: string
@@ -694,18 +695,28 @@ parentHomepage:
                 data:
                   type: object
                   description: Data homepage orang tua beserta notifikasi dan riwayat jadwal anak
+                  required:
+                    - me
+                    - warning
+                    - sanction
+                    - session
+                    - notification
+                    - schedules_history
                   properties:
                     me:
                       type: object
                       description: Profil parent yang sedang login
+                      required:
+                        - id
+                        - email
                       properties:
                         id:
                           type: integer
-                          example: 1
+                          example: 3
                         email:
                           type: string
                           format: email
-                          example: parent@example.com
+                          example: demo.parent@example.com
                     warning:
                       type: integer
                       minimum: 0
@@ -718,271 +729,98 @@ parentHomepage:
                       example: null
                       description: Tanggal sanction anak jika ada, null jika tidak ada
                     session:
-                      type: integer
+                      type: string
                       nullable: true
-                      example: 5
+                      example: '0'
                       description: Sisa session/saldo belajar anak
                     notification:
-                      type: object
-                      description: Notifikasi anak dengan struktur pagination (berdasarkan notifPaginate parameter, default 2)
-                      properties:
-                        current_page:
-                          type: integer
-                          example: 1
-                        data:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                format: uuid
-                                example: '7f8e9d0a-1b2c-3d4e-5f6a-7b8c9d0a1b2c'
-                              title:
-                                type: string
-                                example: Jadwal Belajar Baru
-                              body:
-                                type: string
-                                example: Anak Anda memiliki jadwal belajar baru
-                              data:
-                                type: object
-                                nullable: true
-                                example: null
-                        total:
-                          type: integer
-                          example: 5
-                        per_page:
-                          type: integer
-                          example: 2
-                        last_page:
-                          type: integer
-                          example: 3
+                      $ref: '../components/schemas.yaml#/DashboardNotificationListPayload'
                     schedules_history:
-                      type: object
-                      description: Riwayat jadwal anak dengan status completed, cancelled, expired, atau rejected (pagination default 2 item)
-                      properties:
-                        current_page:
-                          type: integer
-                          example: 1
-                        data:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                                example: 1
-                              student_id:
-                                type: integer
-                                example: 1
-                              tutor_id:
-                                type: integer
-                                example: 2
-                              subject_id:
-                                type: integer
-                                example: 1
-                              date:
-                                type: string
-                                format: date-time
-                                example: '2026-05-10T14:00:00Z'
-                              time:
-                                type: string
-                                pattern: '^\d{2}:\d{2}:\d{2}$'
-                                example: '14:00:00'
-                                description: Waktu mulai jadwal (format HH:mm:ss)
-                              status:
-                                type: string
-                                enum: [completed, cancelled, expired, rejected]
-                                example: completed
-                              learning_method:
-                                type: string
-                                enum: [online, offline]
-                                example: online
-                              reason:
-                                type: string
-                                nullable: true
-                                example: null
-                              address:
-                                type: string
-                                example: 'Google Meet'
-                              created_at:
-                                type: string
-                                format: date-time
-                                example: '2026-05-05T14:30:00Z'
-                              updated_at:
-                                type: string
-                                format: date-time
-                                example: '2026-05-05T14:30:00Z'
-                              student:
-                                type: object
-                                description: Data siswa yang terlibat dalam jadwal
-                                properties:
-                                  user_id:
-                                    type: integer
-                                    example: 1
-                                  class_id:
-                                    type: integer
-                                    example: 1
-                                  session:
-                                    type: integer
-                                    example: 5
-                                  created_at:
-                                    type: string
-                                    format: date-time
-                                    example: '2026-05-01T08:00:00Z'
-                                  updated_at:
-                                    type: string
-                                    format: date-time
-                                    example: '2026-05-01T08:00:00Z'
-                                  user:
-                                    type: object
-                                    description: Data user siswa (password dan remember_token tersembunyi)
-                                    properties:
-                                      id:
-                                        type: integer
-                                        example: 1
-                                      name:
-                                        type: string
-                                        example: Demo Student
-                                      email:
-                                        type: string
-                                        format: email
-                                        example: demo.student@example.com
-                                      role:
-                                        type: string
-                                        enum: [student]
-                                        example: student
-                                      telephone_number:
-                                        type: string
-                                        nullable: true
-                                        example: null
-                              subject:
-                                type: object
-                                description: Data mata pelajaran
-                                properties:
-                                  id:
-                                    type: integer
-                                    example: 1
-                                  class_id:
-                                    type: integer
-                                    example: 1
-                                  name:
-                                    type: string
-                                    example: Matematika
-                                  icon_image_path:
-                                    type: string
-                                    nullable: true
-                                    example: null
-                                  created_at:
-                                    type: string
-                                    format: date-time
-                                    nullable: true
-                                    example: null
-                                  updated_at:
-                                    type: string
-                                    format: date-time
-                                    nullable: true
-                                    example: null
-                        total:
-                          type: integer
-                          example: 3
-                        per_page:
-                          type: integer
-                          example: 2
-                        last_page:
-                          type: integer
-                          example: 2
+                      $ref: '../components/schemas.yaml#/StudentScheduleListPayload'
             example:
               status: success
               data:
                 me:
-                  id: 1
-                  email: parent@example.com
+                  id: 3
+                  email: demo.parent@example.com
                 warning: 0
                 sanction: null
-                session: 5
+                session: '0'
                 notification:
                   current_page: 1
                   data:
-                    - id: '7f8e9d0a-1b2c-3d4e-5f6a-7b8c9d0a1b2c'
-                      title: Jadwal Belajar Baru
-                      body: Anak Anda memiliki jadwal belajar baru dengan tutor Matematika
+                    - id: '6e74dca4-5d7d-4f89-9f0d-427ac95df5fc'
+                      title: Pembayaran Berhasil
+                      body: Pembayaran paket kamu sudah kami terima.
                       data: null
-                    - id: '8a9b0c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d'
-                      title: Laporan Pembelajaran
-                      body: Tutor telah membuat laporan pembelajaran
+                    - id: '2f2a8e50-1a4f-4a4e-8c88-7a8c3d7b0e10'
+                      title: Jadwal Baru
+                      body: Anda memiliki jadwal belajar baru.
                       data: null
-                  total: 5
+                  first_page_url: 'http://localhost:8000/api/student/dashboard/homepage?page=1'
+                  from: null
+                  last_page: 1
+                  last_page_url: 'http://localhost:8000/api/student/dashboard/homepage?page=1'
+                  links:
+                    - url: null
+                      label: '&laquo; Previous'
+                      page: null
+                      active: false
+                    - url: 'http://localhost:8000/api/student/dashboard/homepage?page=1'
+                      label: '1'
+                      page: 1
+                      active: true
+                    - url: null
+                      label: 'Next &raquo;'
+                      page: null
+                      active: false
+                  next_page_url: null
+                  path: 'http://localhost:8000/api/student/dashboard/homepage'
                   per_page: 2
-                  last_page: 3
+                  prev_page_url: null
+                  to: null
+                  total: 0
                 schedules_history:
                   current_page: 1
                   data:
                     - id: 1
-                      student_id: 1
-                      tutor_id: 2
-                      subject_id: 1
-                      date: '2026-05-05T14:00:00Z'
-                      time: '14:00:00'
+                      tutorId: 2
+                      studentId: 1
+                      subjectId: 1
+                      date: '2026-05-08T00:00:00.000000Z'
+                      startTime: '2026-05-08T21:00:00.000000Z'
+                      endTime: '2026-05-08T22:00:00.000000Z'
                       status: completed
-                      learning_method: online
-                      reason: null
-                      created_at: '2026-05-01T10:30:00Z'
-                      updated_at: '2026-05-01T10:30:00Z'
+                      learningMethod: online
                       address: 'Google Meet'
-                      student:
-                        user_id: 1
-                        class_id: 1
-                        session: 5
-                        created_at: '2026-05-01T08:00:00Z'
-                        updated_at: '2026-05-01T08:00:00Z'
-                        user:
-                          id: 1
-                          name: Demo Student
-                          email: demo.student@example.com
-                          role: student
-                          telephone_number: null
-                      subject:
-                        id: 1
-                        class_id: 1
-                        name: Matematika
-                        icon_image_path: null
-                        created_at: null
-                        updated_at: null
-                    - id: 2
-                      student_id: 1
-                      tutor_id: 3
-                      subject_id: 2
-                      date: '2026-05-04T10:00:00Z'
-                      time: '10:00:00'
-                      status: cancelled
-                      learning_method: offline
-                      reason: null
-                      created_at: '2026-04-30T09:15:00Z'
-                      updated_at: '2026-04-30T09:15:00Z'
-                      address: 'Rumah Siswa'
-                      student:
-                        user_id: 1
-                        class_id: 1
-                        session: 5
-                        created_at: '2026-05-01T08:00:00Z'
-                        updated_at: '2026-05-01T08:00:00Z'
-                        user:
-                          id: 1
-                          name: Demo Student
-                          email: demo.student@example.com
-                          role: student
-                          telephone_number: null
-                      subject:
-                        id: 2
-                        class_id: 1
-                        name: Bahasa Inggris
-                        icon_image_path: null
-                        created_at: null
-                        updated_at: null
-                  total: 3
+                      tutorName: Demo Tutor
+                      subjectName: Matematika
+                      studentName: Demo student
+                      tutorTelephoneNumber: null
+                      studentTelephoneNumber: '098766222'
+                  first_page_url: 'http://localhost?page=1'
+                  from: 1
+                  last_page: 1
+                  last_page_url: 'http://localhost?page=1'
+                  links:
+                    - url: null
+                      label: '&laquo; Previous'
+                      page: null
+                      active: false
+                    - url: 'http://localhost?page=1'
+                      label: '1'
+                      page: 1
+                      active: true
+                    - url: null
+                      label: 'Next &raquo;'
+                      page: null
+                      active: false
+                  next_page_url: null
+                  path: 'http://localhost'
                   per_page: 2
-                  last_page: 2
+                  prev_page_url: null
+                  to: 1
+                  total: 1
       '401':
         description: Unauthorized - Token tidak valid atau tidak ada
         content:

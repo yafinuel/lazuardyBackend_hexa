@@ -20,6 +20,32 @@ studentBiodata:
                   example: "success"
                 data:
                   $ref: '../components/schemas.yaml#/StudentEntity'
+            example:
+              status: "success"
+              data:
+                id: "1"
+                name: "Demo student"
+                email: "demo.student@example.com"
+                emailVerifiedAt: "2026-05-08 06:32:57"
+                telephoneNumber: "098766222"
+                telephoneVerifiedAt: null
+                profilePhotoUrl: null
+                dateOfBirth: "2000-05-15 00:00:00"
+                gender: "Laki-laki"
+                religion: null
+                homeAddress:
+                  regency: "Jakarta Pusat"
+                  district: "Tanah Abang"
+                  province: "DKI Jakarta"
+                  subdistrict: "Bendungan Hilir"
+                role: "Siswa"
+                warning: 0
+                sanction: null
+                latitude: null
+                longitude: null
+                session: "0"
+                classId: 1
+                className: "kelas 1"
       '401':
         description: Unauthorized
         content:

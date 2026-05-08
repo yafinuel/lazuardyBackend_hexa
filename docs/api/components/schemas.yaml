@@ -716,6 +716,35 @@ StudentEntity:
     classId:
       type: integer
       nullable: true
+    className:
+      type: string
+      nullable: true
+  example:
+    id: "1"
+    name: "Demo student"
+    email: "demo.student@example.com"
+    emailVerifiedAt: "2026-05-08 06:32:57"
+    googleId: null
+    facebookId: null
+    role: "Siswa"
+    warning: 0
+    sanction: null
+    telephoneNumber: "098766222"
+    telephoneVerifiedAt: null
+    profilePhotoUrl: null
+    dateOfBirth: "2000-05-15 00:00:00"
+    gender: "Laki-laki"
+    religion: null
+    homeAddress:
+      province: "DKI Jakarta"
+      regency: "Jakarta Pusat"
+      district: "Tanah Abang"
+      subdistrict: "Bendungan Hilir"
+    latitude: null
+    longitude: null
+    session: "0"
+    classId: 1
+    className: "kelas 1"
 
 TutorEntity:
   type: object
@@ -772,7 +801,12 @@ TutorEntity:
       type: array
       nullable: true
       items:
-        type: string
+        type: object
+        properties:
+          level:
+            type: string
+          major:
+            type: string
     salary:
       type: integer
       nullable: true
@@ -810,15 +844,52 @@ TutorEntity:
       type: number
       format: float
       nullable: true
+    createdAt:
+      type: string
+      format: date-time
+      nullable: true
+  example:
+    id: "2"
+    name: "Demo Tutor"
+    email: "demo.tutor@example.com"
+    emailVerifiedAt: "2026-05-08 06:32:58"
+    telephoneNumber: null
+    telephoneVerifiedAt: null
+    profilePhotoUrl: null
+    dateOfBirth: null
+    gender: null
+    religion: null
+    homeAddress: null
+    latitude: null
+    longitude: null
+    education:
+      - level: "S1"
+        major: "Pendidikan Matematika"
+    salary: 0
+    description: "Saya mengajar dengan metode interaktif dan menyenangkan"
+    bankCode: null
+    accountNumber: null
+    learningMethod:
+      - "online"
+    role: "Mentor"
+    warning: 0
+    sanction: null
+    status: "verified"
+    avgRate: null
+    createdAt: "2026-05-08T06:32:58.000000Z"
 
 UpdateStudentBiodataRequest:
   type: object
-  required: [province, regency, district, subdistrict]
+  required: [name, class_id, gender, date_of_birth, telephone_number, province, regency, district, subdistrict]
   properties:
     name:
       type: string
       maxLength: 255
       example: "John Doe"
+    class_id:
+      type: integer
+      example: 1
+      description: "ID kelas (harus ada di tabel classes)"
     telephone_number:
       type: string
       maxLength: 20
@@ -847,9 +918,6 @@ UpdateStudentBiodataRequest:
     subdistrict:
       type: string
       example: "Bendungan Hilir"
-    class_id:
-      type: integer
-      example: 1
     latitude:
       type: number
       format: float
@@ -952,6 +1020,9 @@ NotificationListPayload:
             nullable: true
           label:
             type: string
+          page:
+            type: integer
+            nullable: true
           active:
             type: boolean
     next_page_url:
@@ -1011,6 +1082,9 @@ TutorListPayload:
             nullable: true
           label:
             type: string
+          page:
+            type: integer
+            nullable: true
           active:
             type: boolean
     next_page_url:
@@ -1088,6 +1162,9 @@ DashboardNotificationListPayload:
             nullable: true
           label:
             type: string
+          page:
+            type: integer
+            nullable: true
           active:
             type: boolean
     next_page_url:
@@ -1138,13 +1215,16 @@ ScheduleEntity:
       example: 1
     date:
       type: string
-      example: '2026-04-21 00:00:00'
+      format: date-time
+      example: '2026-05-08T00:00:00.000000Z'
     startTime:
       type: string
-      example: '14:00:00'
+      format: date-time
+      example: '2026-05-08T21:00:00.000000Z'
     endTime:
       type: string
-      example: '15:00:00'
+      format: date-time
+      example: '2026-05-08T22:00:00.000000Z'
     status:
       type: string
       example: pending
