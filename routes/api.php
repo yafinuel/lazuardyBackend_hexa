@@ -103,7 +103,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('tutor/presence/create', [PresenceController::class, 'createTutorReport']);
 
-        Route::get('tutor/schedules', [ScheduleController::class, 'getFilteredSchedulesByTutorId']);
+        // Route::get('tutor/schedules', [ScheduleController::class, 'getFilteredSchedulesByTutorId']);
         Route::patch('tutor/schedule/booking-confirmation', [ScheduleController::class, 'bookingConfirmation']);
 
         Route::put('/tutor/teaching-profile', [TutorController::class, 'updateTeachingProfile']);
@@ -119,5 +119,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::middleware('role:'. RoleEnum::PARENT->value)->group(function (){
         Route::get('/parent/dashboard/homepage', [DashboardController::class, 'parentHomepage']);
+        Route::get('/parent/dashboard/profile-page', [StudentController::class, 'meStudent']);
     });
 });
