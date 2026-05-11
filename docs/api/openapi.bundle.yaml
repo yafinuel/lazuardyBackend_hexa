@@ -2745,30 +2745,7 @@ paths:
         - bearerAuth: []
       operationId: bookingConfirmation
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - schedule_id
-                - decision
-              properties:
-                schedule_id:
-                  type: integer
-                  minimum: 1
-                  example: 1
-                  description: ID jadwal yang akan dikonfirmasi
-                decision:
-                  type: string
-                  enum:
-                    - accept
-                    - reject
-                  example: accept
-                  description: Keputusan tutor untuk menerima (accept) atau menolak (reject) booking jadwal
-            example:
-              schedule_id: 1
-              decision: accept
+        $ref: '#/components/requestBodies/BookingConfirmation'
       responses:
         '200':
           description: Konfirmasi booking berhasil diproses
@@ -2784,30 +2761,15 @@ paths:
                     type: string
                     example: Booking decision processed successfully
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
+          $ref: '#/components/responses/UnauthorizedError'
         '403':
-          description: Forbidden - Endpoint hanya untuk role tutor
-          content:
-            application/json:
-              example:
-                status: failed
-                message: This page is Forbidden for student
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
         '422':
-          description: Validasi gagal
-          content:
-            application/json:
-              example:
-                message: The given data was invalid.
-                errors:
-                  schedule_id:
-                    - The schedule id field is required.
-                  decision:
-                    - The decision field is required.
-                    - The selected decision is invalid.
+          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
   /schedule/cancel:
@@ -3232,6 +3194,79 @@ components:
             status: error
             message: Terjadi kesalahan pada server
             debug_error: Exception error atau database error
+    UnauthorizedError:
+      description: Token tidak valid, expired, atau tidak dikirim
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              status:
+                type: string
+                enum:
+                  - error
+          example:
+            message: Unauthorized
+            status: error
+    ForbiddenError:
+      description: User tidak memiliki akses ke resource ini (role/permission denied)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum:
+                  - error
+              message:
+                type: string
+              debug_error:
+                type: string
+          example:
+            status: error
+            message: Akses ditolak
+            debug_error: User harus memiliki role tertentu untuk mengakses resource ini
+    NotFoundError:
+      description: Resource tidak ditemukan
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum:
+                  - error
+              message:
+                type: string
+              debug_error:
+                type: string
+          example:
+            status: error
+            message: Resource tidak ditemukan
+            debug_error: Data dengan ID tersebut tidak ada dalam sistem
+    ConflictError:
+      description: Data sudah ada atau terjadi konflik (duplikasi, status incompatible, dll)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum:
+                  - error
+              message:
+                type: string
+              debug_error:
+                type: string
+          example:
+            status: error
+            message: Data sudah ada dalam sistem
+            debug_error: Email atau resource sudah terdaftar
   requestBodies:
     UpdateStudentBiodata:
       description: Payload untuk memperbarui biodata siswa
@@ -3268,6 +3303,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateTeachingProfileRequest'
+    BookingConfirmation:
+      description: Payload untuk tutor mengonfirmasi atau menolak booking jadwal
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BookingConfirmationRequest'
+          examples:
+            acceptExample:
+              summary: Tutor menerima booking
+              value:
+                schedule_id: 1
+                decision: accept
+            rejectExample:
+              summary: Tutor menolak booking
+              value:
+                schedule_id: 1
+                decision: reject
   schemas:
     ClassEntity:
       type: object
@@ -4936,3 +4989,28 @@ components:
           example: success
         data:
           $ref: '#/components/schemas/TutorScheduleListPayload'
+    BookingConfirmationRequest:
+      type: object
+      required:
+        - schedule_id
+        - decision
+      properties:
+        schedule_id:
+          type: integer
+          minimum: 1
+          example: 1
+          description: ID jadwal yang akan dikonfirmasi oleh tutor
+        decision:
+          type: string
+          enum:
+            - accept
+            - reject
+          example: accept
+          description: |
+            Keputusan tutor terhadap booking:
+            - `accept`: Tutor menerima booking. Sistem akan mengubah status jadwal menjadi `active`.
+            - `reject`: Tutor menolak booking. Sistem akan mengubah status jadwal menjadi `rejected`.
+            Nilai harus persis `accept` atau `reject` (lowercase).
+      example:
+        schedule_id: 1
+        decision: accept

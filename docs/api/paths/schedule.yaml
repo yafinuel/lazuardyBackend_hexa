@@ -426,28 +426,7 @@ bookingConfirmation:
       - bearerAuth: []
     operationId: bookingConfirmation
     requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - schedule_id
-              - decision
-            properties:
-              schedule_id:
-                type: integer
-                minimum: 1
-                example: 1
-                description: ID jadwal yang akan dikonfirmasi
-              decision:
-                type: string
-                enum: [accept, reject]
-                example: accept
-                description: Keputusan tutor untuk menerima (accept) atau menolak (reject) booking jadwal
-          example:
-            schedule_id: 1
-            decision: accept
+      $ref: '../components/request-bodies.yaml#/BookingConfirmation'
     responses:
       '200':
         description: Konfirmasi booking berhasil diproses
@@ -463,29 +442,14 @@ bookingConfirmation:
                   type: string
                   example: Booking decision processed successfully
       '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: 'Unauthenticated.'
+        $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
-        description: Forbidden - Endpoint hanya untuk role tutor
-        content:
-          application/json:
-            example:
-              status: failed
-              message: 'This page is Forbidden for student'
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
       '422':
-        description: Validasi gagal
-        content:
-          application/json:
-            example:
-              message: The given data was invalid.
-              errors:
-                schedule_id:
-                  - The schedule id field is required.
-                decision:
-                  - The decision field is required.
-                  - The selected decision is invalid.
+        $ref: '../components/responses.yaml#/ValidationError'
+      '409':
+        $ref: '../components/responses.yaml#/ConflictError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'

@@ -26,15 +26,17 @@ class PresenceController extends Controller
     {
         $data = $request->validate([
             'schedule_id' => ['required', 'integer', 'exists:schedules,id'],
-            'tutor_id' => ['required', 'integer', 'exists:tutors,user_id'],
+            // 'tutor_id' => ['required', 'integer', 'exists:tutors,user_id'],
             'student_id' => ['required', 'integer', 'exists:students,user_id'],
             'topic' => ['required', 'string'],
             'notes' => ['required', 'string'],
         ]);
 
+        $tutorId = $request->user()->id;
+
         $action->execute(
             $data['schedule_id'],
-            $data['tutor_id'],
+            $tutorId,
             $data['student_id'],
             $data['topic'],
             $data['notes']

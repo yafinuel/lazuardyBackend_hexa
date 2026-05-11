@@ -37,3 +37,22 @@ CreateTutorPresence:
     application/json:
       schema:
         $ref: './schemas.yaml#/CreateTutorPresenceRequest'
+
+BookingConfirmation:
+  description: "Payload untuk tutor mengonfirmasi atau menolak booking jadwal"
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/BookingConfirmationRequest'
+      examples:
+        acceptExample:
+          summary: Tutor menerima booking
+          value:
+            schedule_id: 1
+            decision: accept
+        rejectExample:
+          summary: Tutor menolak booking
+          value:
+            schedule_id: 1
+            decision: reject
