@@ -99,13 +99,13 @@ paths:
   /filterCategoryPage:
     $ref: './paths/course-catalog.yaml#/filterCategoryPage'
 
-  /meStudent:
+  /student/biodata:
     $ref: './paths/user-profile.yaml#/studentBiodata'
   /updateStudentBiodata:
     $ref: './paths/user-profile.yaml#/updateStudentBiodata'
   /tutor/profile:
     $ref: './paths/user-profile.yaml#/updateTutorBiodata'
-  /meAsTutor:
+  /meTutor:
     $ref: './paths/user-profile.yaml#/meAsTutor'
   /getTutorById:
     $ref: './paths/user-profile.yaml#/getTutorById'
@@ -147,7 +147,7 @@ paths:
     $ref: './paths/schedule.yaml#/bookingConfirmation'
   /schedule/cancel:
     $ref: './paths/schedule.yaml#/cancelSchedule'
-  /student/reports:
+  /reports:
     $ref: './paths/report.yaml#/getAllReportsByStudentId'
   /tutor/presence/create:
     $ref: './paths/report.yaml#/createTutorReport'

@@ -39,4 +39,10 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
 
         return $order->items()->createMany($items);
     }
+
+    public function updatePaymentByExternalId(string $externalId, array $data): bool
+    {
+        $payment = Payment::where('external_id',$externalId)->firstOrFail();
+        return $payment->update($data);
+    }
 }

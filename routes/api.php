@@ -55,6 +55,7 @@ Route::get('/getUniqueSubjectByLevel', [SubjectController::class, 'getUniqueSubj
 
 // Course Catalog
 Route::get('/filterCategoryPage', [CourseCatalogController::class, 'filterCategoryPageAction']);
+Route::post('/xendit/callback', [PaymentGatewayController::class, 'handlePaymentCallback']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Authentication
@@ -83,7 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/schedules', [DashboardController::class, 'schedulePage']);
     
     Route::middleware('role:' . RoleEnum::STUDENT->value)->group(function (){
-        Route::get('/meStudent', [StudentController::class, 'meStudent']);
+        Route::get('/student/biodata', [StudentController::class, 'getStudentById']);
         Route::put('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
         Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
         Route::post('/schedule/takeMeeting', [ScheduleController::class, 'createMeetingSchedule']);
@@ -119,6 +120,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::middleware('role:'. RoleEnum::PARENT->value)->group(function (){
         Route::get('/parent/dashboard/homepage', [DashboardController::class, 'parentHomepage']);
-        Route::get('/parent/dashboard/profile-page', [StudentController::class, 'meStudent']);
+        Route::get('/parent/dashboard/profile-page', [StudentController::class, 'getStudentById']);
     });
 });

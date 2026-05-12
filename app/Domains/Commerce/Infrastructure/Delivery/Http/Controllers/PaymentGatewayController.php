@@ -4,10 +4,12 @@ namespace App\Domains\Commerce\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Commerce\Actions\CheckoutPackageAction;
 use App\Domains\Commerce\Actions\GetBankListAction;
+use App\Domains\Commerce\Actions\HandlePaymentCallbackAction;
 use App\Domains\Commerce\Actions\ValidateAccountAction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PaymentGatewayController extends Controller
 {
@@ -52,6 +54,18 @@ class PaymentGatewayController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $result
+        ]);
+    }
+
+    public function handlePaymentCallback(Request $request, HandlePaymentCallbackAction $action)
+    {
+        $data = $request->all();
+
+        $action->execute($data);
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment callback received'
         ]);
     }
 }

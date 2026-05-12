@@ -1056,7 +1056,7 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
-  /meStudent:
+  /student/biodata:
     get:
       tags:
         - User Profile
@@ -1121,7 +1121,7 @@ paths:
                 message: Gagal mengambil biodata siswa
                 debug_error: Error message
   /updateStudentBiodata:
-    patch:
+    put:
       tags:
         - User Profile
       summary: Memperbarui biodata siswa
@@ -1196,12 +1196,12 @@ paths:
                 status: failed
                 message: Failed to update tutor profile
                 debug_error: Error message
-  /meAsTutor:
+  /meTutor:
     get:
       tags:
         - User Profile
       summary: Mengambil biodata tutor
-      description: Endpoint untuk mendapatkan biodata tutor yang sedang login melalui alias /meAsTutor. Membutuhkan autentikasi.
+      description: Endpoint untuk mendapatkan biodata tutor yang sedang login (path `/meTutor`). Membutuhkan autentikasi dan role tutor.
       security:
         - bearerAuth: []
       operationId: meAsTutor
@@ -2835,7 +2835,7 @@ paths:
                     - The reason field is required.
         '500':
           $ref: '#/components/responses/ServerError'
-  /student/reports:
+  /reports:
     get:
       tags:
         - Report

@@ -48,7 +48,30 @@ sequenceDiagram
 	Client-->>Student: tampilkan jadwal student
 ```
 
-## 3. Student Reports
+## 3. Student Biodata
+
+```mermaid
+sequenceDiagram
+	autonumber
+	actor Student as Student
+	participant Client as Frontend / Mobile App
+	participant Backend as Backend API
+	participant DB as Database
+	participant StorageApi as File Storage API
+
+	Student->>Client: buka halaman profil / biodata student
+	Client->>Backend: GET /student/biodata (Bearer token)
+	Backend->>Backend: validasi token dan ekstrak user_id
+	Backend->>DB: ambil data student berdasarkan user_id
+	DB-->>Backend: data student + biodata lengkap
+	Backend->>Backend: resolve relasi class dan address
+	Backend->>StorageApi: resolve profile photo URL jika ada
+	StorageApi-->>Backend: url media
+	Backend-->>Client: 200 success + StudentEntity
+	Client-->>Student: tampilkan biodata student lengkap
+```
+
+## 4. Student Reports
 
 ```mermaid
 sequenceDiagram
@@ -59,7 +82,7 @@ sequenceDiagram
 	participant DB as Database
 
 	Student->>Client: buka halaman report student
-	Client->>Backend: GET /student/reports?paginate=...
+	Client->>Backend: GET /reports?paginate=...
 	Backend->>Backend: validasi paginate
 	Backend->>DB: ambil semua report milik student
 	DB-->>Backend: daftar report
@@ -70,8 +93,10 @@ sequenceDiagram
 
 ## Catatan
 
+- Endpoint student biodata berada di grup `role:student` pada [routes/api.php](../../routes/api.php).
 - Endpoint student dashboard berada di grup `role:student` pada [routes/api.php](../../routes/api.php).
 - Endpoint report student berada di grup `role:student` pada [routes/api.php](../../routes/api.php).
+- Flow biodata menampilkan informasi lengkap student (nama, email, nomor telepon, biodata, alamat, kelas, dll).
 - Flow homepage menampilkan warning, biodata student, notifikasi, dan rekomendasi tutor.
 - Flow schedule menampilkan data jadwal berdasarkan tanggal yang dipilih.
 - Flow reports menampilkan daftar report milik student.

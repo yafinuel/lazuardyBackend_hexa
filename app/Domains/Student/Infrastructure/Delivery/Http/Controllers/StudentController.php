@@ -12,7 +12,7 @@ use Illuminate\Validation\Rules\Enum;
 
 class StudentController extends Controller
 {
-    public function meStudent(Request $request, GetStudentByIdAction $action)
+    public function getStudentById(Request $request, GetStudentByIdAction $action)
     {
         try {
             $user = $request->user();

@@ -64,7 +64,7 @@ studentBiodata:
               debug_error: "Error message"
 
 updateStudentBiodata:
-  patch:
+  put:
     tags:
       - User Profile
     summary: Memperbarui biodata siswa
@@ -146,7 +146,7 @@ meAsTutor:
     tags:
       - User Profile
     summary: Mengambil biodata tutor
-    description: Endpoint untuk mendapatkan biodata tutor yang sedang login melalui alias /meAsTutor. Membutuhkan autentikasi.
+    description: Endpoint untuk mendapatkan biodata tutor yang sedang login (path `/meTutor`). Membutuhkan autentikasi dan role tutor.
     security:
       - bearerAuth: []
     operationId: meAsTutor
