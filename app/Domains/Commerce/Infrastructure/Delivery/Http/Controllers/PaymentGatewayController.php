@@ -5,10 +5,11 @@ namespace App\Domains\Commerce\Infrastructure\Delivery\Http\Controllers;
 use App\Domains\Commerce\Actions\CheckoutPackageAction;
 use App\Domains\Commerce\Actions\GetBankListAction;
 use App\Domains\Commerce\Actions\HandlePaymentCallbackAction;
+use App\Domains\Commerce\Actions\ProcessPaymentExpiredAction;
+use App\Domains\Commerce\Actions\ProcessPaymentSuccessAction;
 use App\Domains\Commerce\Actions\ValidateAccountAction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class PaymentGatewayController extends Controller
@@ -57,11 +58,22 @@ class PaymentGatewayController extends Controller
         ]);
     }
 
-    public function handlePaymentCallback(Request $request, HandlePaymentCallbackAction $action)
+    public function handlePaymentCallback(Request $request, ProcessPaymentSuccessAction $successAction, ProcessPaymentExpiredAction $expiredAction)
     {
         $data = $request->all();
 
-        $action->execute($data);
+        switch ($data['status']) {
+            case 'SETTLED':
+            case 'PAID':
+                $successAction->execute($data);
+                break;
+            case 'EXPIRED':
+                $expiredAction->execute($data);
+                break;
+            default:
+                Log::info("Callback received for invoice ". $data['external_id'] . "with status: " . $data['status']);
+                break;
+        }
         
         return response()->json([
             'status' => 'success',

@@ -2,6 +2,8 @@
 
 namespace App\Domains\Commerce\Infrastructure\Repository;
 
+use App\Domains\Commerce\Entities\OrderEntity;
+use App\Domains\Commerce\Entities\PaymentEntity;
 use App\Domains\Commerce\Ports\CommerceRepositoryInterface;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -40,9 +42,60 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
         return $order->items()->createMany($items);
     }
 
-    public function updatePaymentByExternalId(string $externalId, array $data): bool
+    public function updatePaymentByExternalId(string $externalId, array $data): PaymentEntity
     {
         $payment = Payment::where('external_id',$externalId)->firstOrFail();
-        return $payment->update($data);
+        $payment->update($data);
+        return new PaymentEntity(
+            id: $payment->id,
+            orderId: $payment->order_id,
+            externalId: $payment->external_id,
+            paymentMethod: $payment->payment_method,
+            paymentChannel: $payment->payment_channel,
+            amount: $payment->amount,
+            status: $payment->status,
+            checkoutUrl: $payment->checkout_url,
+            paidAt: $payment->paid_at,
+        );
+    }
+
+    public function getOrderById(int $orderId): OrderEntity
+    {
+        $order = Order::findOrFail($orderId);
+        return new OrderEntity(
+            id: $order->id,
+            userId: $order->user_id,
+            orderNumber: $order->order_number,
+            totalAmount: $order->total_amount,
+            status: $order->status,
+        );
+    }
+
+    public function updateOrder(int $orderId, array $data): OrderEntity
+    {
+        $order = Order::findOrFail($orderId);
+        $order->update($data);
+        return new OrderEntity(
+            id: $order->id,
+            userId: $order->user_id,
+            orderNumber: $order->order_number,
+            totalAmount: $order->total_amount,
+            status: $order->status,
+        );
+    }
+
+    public function getOrderItemsByOrderId(int $orderId): Collection
+    {
+        $order = Order::findOrFail($orderId);
+        return $order->items;
+    }
+
+    public function getSessionCountFromOrder(int $orderId): int
+    {
+        $order = Order::with('items.package')->findOrFail($orderId);
+
+        return $order->items->sum(function ($item) {
+            return $item->qty * ($item->package->session ?? 0);
+        });
     }
 }

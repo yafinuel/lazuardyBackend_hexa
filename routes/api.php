@@ -39,9 +39,10 @@ Route::post('/register-otp/student-parents', [AuthController::class, 'registerPa
 Route::post('/verify-otp/student-parents', [AuthController::class, 'verifyOtpEmailForStudentParents']);
 Route::post('/register/parent', [AuthController::class, 'parentRegister']);
 
-// Order
+// Finance
 Route::get('/getBankList', [PaymentGatewayController::class, 'getBankList']);
 Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateBankAccount']);
+Route::post('/xendit/callback', [PaymentGatewayController::class, 'handlePaymentCallback']);
 
 // Class
 Route::get('/jenjang', [ClassController::class, 'getClassLevels']);
@@ -55,12 +56,13 @@ Route::get('/getUniqueSubjectByLevel', [SubjectController::class, 'getUniqueSubj
 
 // Course Catalog
 Route::get('/filterCategoryPage', [CourseCatalogController::class, 'filterCategoryPageAction']);
-Route::post('/xendit/callback', [PaymentGatewayController::class, 'handlePaymentCallback']);
+
+
 
 Route::middleware('auth:sanctum')->group(function () {
     // Authentication
     Route::post('/logout', [AuthController::class, 'logout']);
-
+    
     // User Profile
     Route::get('/getTutorById', [TutorController::class, 'getTutorById']);
     Route::patch('/updateProfilePhoto', [UserController::class, 'updateProfilePhoto']);

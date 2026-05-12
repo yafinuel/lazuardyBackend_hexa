@@ -5,6 +5,7 @@ namespace App\Domains\Commerce\Infrastructure\Services;
 use App\Domains\Commerce\Ports\CommerceServicePort;
 use App\Domains\Package\Actions\GetPackageByIdAction;
 use App\Domains\Schedule\Actions\GetSchedulesThisMonthByTutorIdAction;
+use App\Domains\Student\Actions\UpdateStudentSessionAction;
 use App\Domains\User\Actions\GetUserByIdAction;
 use App\Domains\User\Entities\UserEntity;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -14,7 +15,8 @@ class CommerceServiceAdapter implements CommerceServicePort
     public function __construct(
         protected GetPackageByIdAction $getPackageByIdAction,
         protected GetUserByIdAction $getUserByIdAction,
-        protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthByTutorIdAction
+        protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthByTutorIdAction,
+        protected UpdateStudentSessionAction $updateStudentSessionAction,
     ) {}
 
     public function getPackageByIdAction(int $packageId)
@@ -30,5 +32,10 @@ class CommerceServiceAdapter implements CommerceServicePort
     public function getSchedulesThisMonthByTutorId(int $tutorId): LengthAwarePaginator
     {
         return $this->getSchedulesThisMonthByTutorIdAction->execute($tutorId);
+    }
+
+    public function updateStudentSession(int $studentId, int $sessionToAdd = 1)
+    {
+        return $this->updateStudentSessionAction->execute($studentId, $sessionToAdd);
     }
 }

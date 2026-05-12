@@ -3,13 +3,14 @@
 namespace App\Domains\Commerce\Actions;
 
 use App\Domains\Commerce\Ports\CommerceRepositoryInterface;
+use App\Domains\Commerce\Ports\CommerceServicePort;
 use App\Shared\Enums\PaymentStatusEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class HandlePaymentCallbackAction
+class ProcessPaymentSuccessAction
 {
-    public function __construct(protected CommerceRepositoryInterface $repository) {}
+    public function __construct(protected CommerceRepositoryInterface $repository, protected CommerceServicePort $service) {}
 
     public function execute(array $payloadRaw): void
     {
@@ -23,6 +24,14 @@ class HandlePaymentCallbackAction
             'payload_raw' => json_encode($payloadRaw),
         ];
 
-        $this->repository->updatePaymentByExternalId($payloadRaw['external_id'], $data);
+        $orderData = [
+            'status' => PaymentStatusEnum::COMPLETED,
+        ];
+
+        $payment = $this->repository->updatePaymentByExternalId($payloadRaw['external_id'], $data);
+        $order = $this->repository->updateOrder($payment->orderId, $orderData);
+        $totalSession = $this->repository->getSessionCountFromOrder($order->id);
+        
+        $this->service->updateStudentSession($order->userId, $totalSession);
     }
 }
