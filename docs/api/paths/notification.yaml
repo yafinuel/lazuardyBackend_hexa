@@ -22,3 +22,68 @@ getNotificationByUserId:
               message: "Unauthenticated."
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+userFcmTokenPatch:
+  patch:
+    tags:
+      - Notification
+    summary: Memperbarui FCM token pengguna
+    description: Endpoint untuk menyimpan FCM token dari perangkat pengguna. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: updateFcmToken
+    requestBody:
+      $ref: '../components/request-bodies.yaml#/UpdateFcmToken'
+    responses:
+      '200':
+        description: FCM token berhasil diperbarui
+        content:
+          application/json:
+            example:
+              status: "success"
+              message: "FCM token updated successfully"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+userFcmTokenDelete:
+  delete:
+    tags:
+      - Notification
+    summary: Menghapus FCM token pengguna
+    description: "Endpoint untuk menghapus FCM token pengguna yang sedang login (contoh: saat logout). Membutuhkan autentikasi."
+    security:
+      - bearerAuth: []
+    operationId: clearFcmToken
+    parameters:
+      - name: device_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID unik perangkat yang tokennya akan dihapus
+    responses:
+      '200':
+        description: FCM token berhasil dihapus
+        content:
+          application/json:
+            example:
+              status: "success"
+              message: "FCM token cleared successfully"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+

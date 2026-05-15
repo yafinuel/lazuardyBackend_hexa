@@ -1364,10 +1364,34 @@ paths:
                 status: failed
                 message: Gagal memperbarui foto profil
                 debug_error: Error message
+  /getNotificationByUserId:
+    get:
+      tags:
+        - Notification
+      summary: Mendapatkan semua notifikasi pengguna
+      description: Endpoint untuk mendapatkan daftar notifikasi milik pengguna yang sedang login, beserta metadata pagination.
+      security:
+        - bearerAuth: []
+      operationId: getNotificationByUserId
+      responses:
+        '200':
+          description: Berhasil mendapatkan daftar notifikasi pengguna
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllUserNotificationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '500':
+          $ref: '#/components/responses/ServerError'
   /user/fcm-token:
     patch:
       tags:
-        - User Profile
+        - Notification
       summary: Memperbarui FCM token pengguna
       description: Endpoint untuk menyimpan FCM token dari perangkat pengguna. Membutuhkan autentikasi.
       security:
@@ -1393,16 +1417,22 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
+  /user/fcm-token/{device_id}:
     delete:
       tags:
-        - User Profile
+        - Notification
       summary: Menghapus FCM token pengguna
       description: 'Endpoint untuk menghapus FCM token pengguna yang sedang login (contoh: saat logout). Membutuhkan autentikasi.'
       security:
         - bearerAuth: []
       operationId: clearFcmToken
-      requestBody:
-        $ref: '#/components/requestBodies/ClearFcmToken'
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID unik perangkat yang tokennya akan dihapus
       responses:
         '200':
           description: FCM token berhasil dihapus
@@ -1419,30 +1449,6 @@ paths:
                 message: Unauthenticated.
         '422':
           $ref: '#/components/responses/ValidationError'
-        '500':
-          $ref: '#/components/responses/ServerError'
-  /getNotificationByUserId:
-    get:
-      tags:
-        - Notification
-      summary: Mendapatkan semua notifikasi pengguna
-      description: Endpoint untuk mendapatkan daftar notifikasi milik pengguna yang sedang login, beserta metadata pagination.
-      security:
-        - bearerAuth: []
-      operationId: getNotificationByUserId
-      responses:
-        '200':
-          description: Berhasil mendapatkan daftar notifikasi pengguna
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetAllUserNotificationResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
         '500':
           $ref: '#/components/responses/ServerError'
   /getTutorByCriteria:
@@ -2785,6 +2791,143 @@ paths:
               example:
                 status: failed
                 message: This page is Forbidden for tutor
+        '422':
+          description: Validasi gagal
+          content:
+            application/json:
+              example:
+                message: The given data was invalid.
+                errors:
+                  schedule_id:
+                    - The schedule id field is required.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /student/schedule/cancel-application:
+    patch:
+      tags:
+        - Schedule
+      summary: Membatalkan aplikasi jadwal oleh student
+      description: Endpoint untuk membatalkan aplikasi jadwal yang masih berstatus `pending` berdasarkan `schedule_id`. Hanya dapat digunakan oleh student yang memiliki aplikasi jadwal tersebut dan membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: cancelScheduleApplication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - schedule_id
+              properties:
+                schedule_id:
+                  type: integer
+                  minimum: 1
+                  example: 1
+            example:
+              schedule_id: 1
+      responses:
+        '200':
+          description: Berhasil membatalkan aplikasi jadwal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Schedule cancellation application submitted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Student bukan pemilik schedule ini (AuthorizationException)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  exception:
+                    type: string
+                  file:
+                    type: string
+                  line:
+                    type: integer
+                  trace:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        file:
+                          type: string
+                        line:
+                          type: integer
+                        function:
+                          type: string
+                        class:
+                          type: string
+                        type:
+                          type: string
+              example:
+                message: Schedule does not belong to this student.
+                exception: Illuminate\Auth\Access\AuthorizationException
+                file: C:\\Apache24\\htdocs\\lazuardyMobile_backend\\app\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction.php
+                line: 19
+                trace:
+                  - file: C:\\Apache24\\htdocs\\lazuardyMobile_backend\\app\\Domains\\Schedule\\Infrastructure\\Delivery\\Http\\Controllers\\ScheduleController.php
+                    line: 141
+                    function: execute
+                    class: App\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction
+                    type: '->'
+        '409':
+          description: Schedule belum berada pada status pending (ConflictHttpException)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  exception:
+                    type: string
+                  file:
+                    type: string
+                  line:
+                    type: integer
+                  trace:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        file:
+                          type: string
+                        line:
+                          type: integer
+                        function:
+                          type: string
+                        class:
+                          type: string
+                        type:
+                          type: string
+              example:
+                message: Schedule is not in a pending state.
+                exception: Symfony\Component\HttpKernel\Exception\ConflictHttpException
+                file: C:\\Apache24\\htdocs\\lazuardyMobile_backend\\app\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction.php
+                line: 23
+                trace:
+                  - file: C:\\Apache24\\htdocs\\lazuardyMobile_backend\\app\\Domains\\Schedule\\Infrastructure\\Delivery\\Http\\Controllers\\ScheduleController.php
+                    line: 141
+                    function: execute
+                    class: App\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction
+                    type: '->'
         '422':
           description: Validasi gagal
           content:

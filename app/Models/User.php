@@ -41,7 +41,6 @@ class User extends Authenticatable
         'sanction',
         'latitude',
         'longitude',
-        'fcm_token',
     ];
 
     /**

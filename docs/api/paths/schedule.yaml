@@ -105,6 +105,144 @@ cancelSchedule:
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
+cancelScheduleApplication:
+  patch:
+    tags:
+      - Schedule
+    summary: Membatalkan aplikasi jadwal oleh student
+    description: Endpoint untuk membatalkan aplikasi jadwal yang masih berstatus `pending` berdasarkan `schedule_id`. Hanya dapat digunakan oleh student yang memiliki aplikasi jadwal tersebut dan membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: cancelScheduleApplication
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - schedule_id
+            properties:
+              schedule_id:
+                type: integer
+                minimum: 1
+                example: 1
+          example:
+            schedule_id: 1
+    responses:
+      '200':
+        description: Berhasil membatalkan aplikasi jadwal
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: success
+                message:
+                  type: string
+                  example: Schedule cancellation application submitted successfully
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '403':
+        description: Student bukan pemilik schedule ini (AuthorizationException)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                exception:
+                  type: string
+                file:
+                  type: string
+                line:
+                  type: integer
+                trace:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      file:
+                        type: string
+                      line:
+                        type: integer
+                      function:
+                        type: string
+                      class:
+                        type: string
+                      type:
+                        type: string
+            example:
+              message: Schedule does not belong to this student.
+              exception: Illuminate\Auth\Access\AuthorizationException
+              file: C:\\Apache24\\htdocs\\lazuardyMobile_backend\\app\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction.php
+              line: 19
+              trace:
+                - file: C:\\Apache24\\htdocs\\lazuardyMobile_backend\\app\\Domains\\Schedule\\Infrastructure\\Delivery\\Http\\Controllers\\ScheduleController.php
+                  line: 141
+                  function: execute
+                  class: App\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction
+                  type: '->'
+      '409':
+        description: Schedule belum berada pada status pending (ConflictHttpException)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                exception:
+                  type: string
+                file:
+                  type: string
+                line:
+                  type: integer
+                trace:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      file:
+                        type: string
+                      line:
+                        type: integer
+                      function:
+                        type: string
+                      class:
+                        type: string
+                      type:
+                        type: string
+            example:
+              message: Schedule is not in a pending state.
+              exception: Symfony\Component\HttpKernel\Exception\ConflictHttpException
+              file: C:\\Apache24\\htdocs\\lazuardyMobile_backend\\app\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction.php
+              line: 23
+              trace:
+                - file: C:\\Apache24\\htdocs\\lazuardyMobile_backend\\app\\Domains\\Schedule\\Infrastructure\\Delivery\\Http\\Controllers\\ScheduleController.php
+                  line: 141
+                  function: execute
+                  class: App\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction
+                  type: '->'
+      '422':
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: The given data was invalid.
+              errors:
+                schedule_id:
+                  - The schedule id field is required.
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
 getTutorSchedulesByDay:
   get:
     tags:

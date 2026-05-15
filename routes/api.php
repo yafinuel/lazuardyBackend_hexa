@@ -67,7 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getTutorById', [TutorController::class, 'getTutorById']);
     Route::patch('/updateProfilePhoto', [UserController::class, 'updateProfilePhoto']);
     Route::patch('/user/fcm-token', [NotificationController::class, 'updateFcmToken']);
-    Route::delete('/user/fcm-token', [NotificationController::class, 'clearFcmToken']);
+        Route::delete('/user/fcm-token/{device_id}', [NotificationController::class, 'clearFcmToken']);
     
     // Package
     Route::get('/getPackages', [PackageController::class, 'index']);
@@ -94,6 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/schedule/takeMeeting', [ScheduleController::class, 'createMeetingSchedule']);
 
         Route::patch('/student/schedule/mark-as-complete', [ScheduleController::class, 'markAsComplete']);
+        Route::patch('/student/schedule/cancel-application', [ScheduleController::class, 'cancelScheduleApplication']);
 
         Route::post('/student/review/create', [ReviewController::class, 'createReview']);
 

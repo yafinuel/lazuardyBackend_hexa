@@ -4,6 +4,7 @@ namespace App\Domains\Schedule\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Schedule\Actions\BookingConfirmationAction;
 use App\Domains\Schedule\Actions\CancelScheduleAction;
+use App\Domains\Schedule\Actions\CancelScheduleApplicationAction;
 use App\Domains\Schedule\Actions\CreateMeetingScheduleAction;
 use App\Domains\Schedule\Actions\GetFilteredSchedulesByTutorIdAction;
 use App\Domains\Schedule\Actions\GetScheduleByIdAction;
@@ -127,6 +128,21 @@ class ScheduleController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Schedule marked as complete successfully',
+        ]);
+    }
+
+    public function cancelScheduleApplication(Request $request, CancelScheduleApplicationAction $action)
+    {
+        $data = $request->validate([
+            'schedule_id' => 'required|integer',
+        ]);
+
+        $userId = $request->user()->id;
+        $action->execute($userId, $data['schedule_id']);
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Schedule cancellation application submitted successfully',
         ]);
     }
 }

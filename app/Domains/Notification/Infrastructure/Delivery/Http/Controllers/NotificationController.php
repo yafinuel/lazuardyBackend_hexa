@@ -41,14 +41,11 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function clearFcmToken(Request $request, ClearFcmTokenAction $action)
+    public function clearFcmToken(Request $request, ClearFcmTokenAction $action, string $device_id)
     {
-        $data = $request->validate([
-            'device_id' => 'required|string|max:255',
-        ]);
         $userId = $request->user()->id;
 
-        $action->execute($userId, $data['device_id']);
+        $action->execute($userId, $device_id);
 
         return response()->json([
             'status' => 'success',

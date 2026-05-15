@@ -113,11 +113,13 @@ paths:
     $ref: './paths/user-profile.yaml#/getTutorFileByUserId'
   /updateProfilePhoto:
     $ref: './paths/user-profile.yaml#/updateProfilePhoto'
-  /user/fcm-token:
-    $ref: './paths/user-profile.yaml#/userFcmToken'
 
   /getNotificationByUserId:
     $ref: './paths/notification.yaml#/getNotificationByUserId'
+  /user/fcm-token:
+    $ref: './paths/notification.yaml#/userFcmTokenPatch'
+  /user/fcm-token/{device_id}:
+    $ref: './paths/notification.yaml#/userFcmTokenDelete'
 
   /getTutorByCriteria:
     $ref: './paths/tutor.yaml#/getTutorByCriteria'
@@ -145,6 +147,8 @@ paths:
     $ref: './paths/schedule.yaml#/takeMeeting'
   /student/schedule/mark-as-complete:
     $ref: './paths/schedule.yaml#/markAsComplete'
+  /student/schedule/cancel-application:
+    $ref: './paths/schedule.yaml#/cancelScheduleApplication'
   /tutor/schedule/booking-confirmation:
     $ref: './paths/schedule.yaml#/bookingConfirmation'
   /schedule/cancel:
