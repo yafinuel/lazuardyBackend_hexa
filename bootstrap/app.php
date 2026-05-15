@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\CheckSanction;
 use App\Http\Middleware\CheckVerifiedTutor;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => CheckRole::class,
             'verified.tutor' => CheckVerifiedTutor::class,
+            'check.sanction' => CheckSanction::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

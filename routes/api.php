@@ -91,7 +91,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/student/biodata', [StudentController::class, 'getStudentById']);
         Route::put('/updateStudentBiodata', [StudentController::class, 'updateBiodata']);
         Route::get('/student/dashboard/homepage', [DashboardController::class, 'studentHomepage']);
-        Route::post('/schedule/takeMeeting', [ScheduleController::class, 'createMeetingSchedule']);
+
+        Route::middleware('check.sanction')->group(function () {
+            Route::post('/schedule/takeMeeting', [ScheduleController::class, 'createMeetingSchedule']);
+        });
 
         Route::patch('/student/schedule/mark-as-complete', [ScheduleController::class, 'markAsComplete']);
         Route::patch('/student/schedule/cancel-application', [ScheduleController::class, 'cancelScheduleApplication']);
@@ -105,25 +108,21 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('role:' . RoleEnum::TUTOR->value)->group(function (){
+        Route::middleware('verified.tutor')->group(function () {
+            Route::get('/tutor/dashboard/homepage', [DashboardController::class, 'tutorHomepage']);
+            Route::post('tutor/presence/create', [PresenceController::class, 'createPresence']);
+            
+            Route::middleware('check.sanction')->group(function () {
+                Route::patch('tutor/schedule/booking-confirmation', [ScheduleController::class, 'bookingConfirmation']);
+            });
+            
+            Route::put('/tutor/teaching-profile', [TutorController::class, 'updateTeachingProfile']);
+            Route::get('/tutor/review', [ReviewController::class, 'getTutorReviewsAsTutor']);
+        });
         Route::get('/meTutor', [TutorController::class, 'getTutorById']);
         Route::put('/tutor/profile', [TutorController::class, 'updateBiodata']);
         Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
-
-        Route::post('tutor/presence/create', [PresenceController::class, 'createPresence']);
-
-        // Route::get('tutor/schedules', [ScheduleController::class, 'getFilteredSchedulesByTutorId']);
-        Route::patch('tutor/schedule/booking-confirmation', [ScheduleController::class, 'bookingConfirmation']);
-
-        Route::put('/tutor/teaching-profile', [TutorController::class, 'updateTeachingProfile']);
-
-        Route::get('/tutor/dashboard/homepage', [DashboardController::class, 'tutorHomepage']);
-
-        Route::get('/tutor/review', [ReviewController::class, 'getTutorReviewsAsTutor']);
         
-        Route::middleware('verified.tutor')->group(function () {
-            // Route::get('/tutor/dashboard/schedule', [DashboardController::class, 'tutorSchedulePage']);
-            // Route::get('/tutor/reports', [PresenceController::class, 'getAllReportsByTutorId']);
-        });
     });
     Route::middleware('role:'. RoleEnum::PARENT->value)->group(function (){
         Route::get('/parent/dashboard/homepage', [DashboardController::class, 'parentHomepage']);

@@ -12,9 +12,14 @@ class UserPenaltySetAction
 
     public function execute(int $userId)
     {
+        $this->repository->addWarning($userId);
+        
         $user = $this->service->getUserById($userId);
         $warning = $user->warning;
         $sanction = $user->sanction;
+
+        Log::info('UserPenaltySetAction: called', ['user_id' => $userId, 'warning' => $warning, 'sanction' => $sanction]);
+
 
         if ($warning >= 3){
             $warningCount = $warning % 3;
@@ -28,7 +33,8 @@ class UserPenaltySetAction
             }
         }
 
-        Log::info("User with ID {$userId} has reached warning count of {$warning}. Current sanction end date: {$sanction}. Current user warning {$warning}");
-        $this->repository->addWarning($userId);
+        $newWarning = $this->repository->getUserWarning($userId);
+        $newSanction = $this->repository->getUserSanction($userId);
+        Log::info('UserPenaltySetAction: after addWarning', ['user_id' => $userId, 'new_warning' => $newWarning, 'new_sanction' => $newSanction]);
     }
 }

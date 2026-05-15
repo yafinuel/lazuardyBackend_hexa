@@ -17,9 +17,6 @@ class TutorHomePageAction
         $studentTotal = $this->service->getStudentCountThisMonthSchedulesByTutorId($tutorId);
         $salaryStats = $this->service->salaryStats($tutorId);
 
-        
-
-
         return [
             'tutor' => $tutorBiodata,
             'salary' => $tutorBiodata->salary,

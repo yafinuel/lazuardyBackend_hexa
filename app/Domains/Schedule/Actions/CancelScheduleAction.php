@@ -29,15 +29,33 @@ class CancelScheduleAction
             throw new ConflictHttpException('Schedule is already ' . $schedule->status->value . '.');
         }
 
-        $scheduleStartAt = $schedule->date->copy()->setTimeFrom($schedule->startTime);
-        $minutesUntilStart = Carbon::now()->diffInMinutes($scheduleStartAt, false);
+        $timeValue = $schedule->time ?? $schedule->startTime ?? null;
+        if (is_string($timeValue)) {
+            $timeString = $timeValue;
+        } elseif ($timeValue instanceof \DateTimeInterface) {
+            $timeString = $timeValue->format('H:i:s');
+        } else {
+            $timeString = '00:00:00';
+        }
+
+        $tz = config('app.timezone') ?: 'UTC';
+        $scheduleStartAt = Carbon::createFromFormat('Y-m-d H:i:s', $schedule->date->toDateString() . ' ' . $timeString, $tz);
+        $now = Carbon::now($tz);
+        $minutesUntilStart = $now->diffInMinutes($scheduleStartAt, false);
+
+        Log::info('CancelScheduleAction: time debug', ['user_id' => $userId, 'schedule_id' => $data['schedule_id'], 'now' => $now->toDateTimeString(), 'schedule_start_at' => $scheduleStartAt->toDateTimeString(), 'app_timezone' => $tz]);
 
         if ($user->role === RoleEnum::TUTOR) {
             if ($minutesUntilStart >= 0) {
                 if ($minutesUntilStart < 12 * 60) {
+                    Log::info("CancelScheduleAction: applying penalty check", ['user_id' => $userId, 'schedule_id' => $data['schedule_id'], 'minutes_until_start' => $minutesUntilStart, 'role' => $user->role->value]);
                     $this->service->userPenaltySet($userId);
-                } 
+                    // refresh user after potential DB update
+                    $user = $this->service->getUserById($userId);
+                }
             }
+
+            Log::info("CancelScheduleAction: cek log diluar pinalti", ['user_id' => $userId, 'schedule_id' => $data['schedule_id'], 'minutes_until_start' => $minutesUntilStart, 'role' => $user->role->value, 'warning' => $user->warning, 'sanction' => $user->sanction]);
 
             $notificationData = [
                 'title' => 'Schedule Canceled',
@@ -57,9 +75,13 @@ class CancelScheduleAction
             if ($minutesUntilStart >= 0) {
                 if ($minutesUntilStart > 12 * 60) {
                     $this->studentRepository->update($student->id, ['session' => $student->session + 1]);
+                } else {
+                    Log::info("CancelScheduleAction: applying penalty check (student)", ['user_id' => $userId, 'schedule_id' => $data['schedule_id'], 'minutes_until_start' => $minutesUntilStart, 'role' => $user->role->value, 'warning' => $user->warning, 'sanction' => $user->sanction]);
+                    $this->service->userPenaltySet($userId);
                 }
             }
 
+            Log::info("CancelScheduleAction: cek log diluar pinalti", ['user_id' => $userId, 'schedule_id' => $data['schedule_id'], 'minutes_until_start' => $minutesUntilStart, 'role' => $user->role->value, 'warning' => $user->warning, 'sanction' => $user->sanction]);
             $notificationData = [
                 'title' => 'Schedule Canceled',
                 'body' => 'Your schedule has been canceled by student ' . $schedule->studentName,

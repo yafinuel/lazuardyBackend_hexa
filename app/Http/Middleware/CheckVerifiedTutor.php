@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Domains\Tutor\Actions\GetTutorFileByUserIdAction;
+use App\Domains\Tutor\Actions\GetTutorByIdAction;
 use App\Shared\Enums\TutorStatusEnum;
 use Closure;
 use Illuminate\Http\Request;
@@ -10,15 +10,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckVerifiedTutor
 {
+
+    public function __construct(
+        protected GetTutorByIdAction $getTutorByIdAction,
+    ) {}
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, GetTutorFileByUserIdAction $getTutorAction): Response
+    public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        $tutor = $getTutorAction->execute($user->id);
+        $tutor = $this->getTutorByIdAction->execute($user->id);
 
         if ($tutor->status == TutorStatusEnum::PENDING->value) {
             return response()->json([
