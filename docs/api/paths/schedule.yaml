@@ -185,6 +185,8 @@ getTutorSchedulesByDay:
               message: 'No query results for model [App\\Models\\Tutor].'
       '422':
         $ref: '../components/responses.yaml#/ValidationError'
+      '409':
+        $ref: '../components/responses.yaml#/ConflictError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
@@ -349,6 +351,8 @@ takeMeeting:
               message: 'This page is Forbidden for tutor'
       '422':
         $ref: '../components/responses.yaml#/ValidationError'
+      '409':
+        $ref: '../components/responses.yaml#/ConflictError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 

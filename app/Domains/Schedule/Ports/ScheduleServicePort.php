@@ -12,4 +12,6 @@ interface ScheduleServicePort
     public function getUserById(int $userId): UserEntity;
     public function getStudentById(int $studentId): StudentEntity;
     public function updateStudent(int $studentId, array $data): void;
+    public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10);
+    public function pushNotificationToUser(int $userId, array $notificationData): void;
 }

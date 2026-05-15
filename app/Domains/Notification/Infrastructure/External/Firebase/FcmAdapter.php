@@ -15,7 +15,7 @@ class FcmAdapter implements NotificationGatewayInterface
     
     public function __construct()
     {
-        $this->projectId = config('services.firebase.project_id');
+        $this->projectId = config('services.fcm.project_id');
     }
 
     public function sendPush(string $token, string $title, string $body, array $data = []): bool

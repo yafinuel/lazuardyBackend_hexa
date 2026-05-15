@@ -108,7 +108,7 @@ class ScheduleController extends Controller
             'decision' => 'required|string|in:accept,reject',
         ]);
 
-        $action->execute($data['schedule_id'], $data['decision']);
+        $action->execute($request->user()->id, $data['schedule_id'], $data['decision']);
 
         return response()->json([
             'status' => 'success',

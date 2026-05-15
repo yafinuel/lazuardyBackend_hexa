@@ -2,6 +2,7 @@
 
 namespace App\Domains\Schedule\Infrastructure\Services;
 
+use App\Domains\Notification\Ports\NotificationRepositoryInterface;
 use App\Domains\Penalty\Actions\UserPenaltySetAction;
 use App\Domains\Schedule\Actions\GetSchedulesThisMonthByTutorIdAction;
 use App\Domains\Schedule\Ports\ScheduleServicePort;
@@ -18,7 +19,8 @@ class ScheduleServiceAdapter implements ScheduleServicePort
         protected GetUserByIdAction $getUserByIdAction,
         protected GetStudentByIdAction $getStudentByIdAction,
         protected StudentRepositoryInterface $studentRepository,
-        protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthAction
+        protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthAction,
+        protected NotificationRepositoryInterface $notificationRepository
     ) {}
 
     public function userPenaltySet(int $userId)
@@ -44,5 +46,10 @@ class ScheduleServiceAdapter implements ScheduleServicePort
     public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10)
     {
         return $this->getSchedulesThisMonthAction->execute($tutorId, $paginate);
+    }
+
+    public function pushNotificationToUser(int $userId, array $notificationData): void
+    {
+        $this->notificationRepository->pushNotificationToUser($userId, $notificationData);
     }
 }

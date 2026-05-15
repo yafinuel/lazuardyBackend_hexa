@@ -2498,6 +2498,8 @@ paths:
             application/json:
               example:
                 message: No query results for model [App\\Models\\Tutor].
+        '409':
+          $ref: '#/components/responses/ConflictError'
         '422':
           $ref: '#/components/responses/ValidationError'
         '500':
@@ -2668,6 +2670,8 @@ paths:
               example:
                 status: failed
                 message: This page is Forbidden for tutor
+        '409':
+          $ref: '#/components/responses/ConflictError'
         '422':
           $ref: '#/components/responses/ValidationError'
         '500':
@@ -3194,6 +3198,25 @@ components:
             status: error
             message: Terjadi kesalahan pada server
             debug_error: Exception error atau database error
+    ConflictError:
+      description: Data sudah ada atau terjadi konflik (duplikasi, status incompatible, dll)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum:
+                  - error
+              message:
+                type: string
+              debug_error:
+                type: string
+          example:
+            status: error
+            message: Data sudah ada dalam sistem
+            debug_error: Email atau resource sudah terdaftar
     UnauthorizedError:
       description: Token tidak valid, expired, atau tidak dikirim
       content:
@@ -3248,25 +3271,6 @@ components:
             status: error
             message: Resource tidak ditemukan
             debug_error: Data dengan ID tersebut tidak ada dalam sistem
-    ConflictError:
-      description: Data sudah ada atau terjadi konflik (duplikasi, status incompatible, dll)
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                enum:
-                  - error
-              message:
-                type: string
-              debug_error:
-                type: string
-          example:
-            status: error
-            message: Data sudah ada dalam sistem
-            debug_error: Email atau resource sudah terdaftar
   requestBodies:
     UpdateStudentBiodata:
       description: Payload untuk memperbarui biodata siswa

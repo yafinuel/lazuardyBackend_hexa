@@ -14,7 +14,7 @@ class FcmChannel
     
     /**
      * @param mixed $notifiable
-     * @param \App\Domains\Notification\Notifications\OrderPaidExample $notification
+     * @param \App\Domains\Notification\Notifications\TemplateNotification $notification
      */
     public function send($notifiable, Notification $notification): void
     {
