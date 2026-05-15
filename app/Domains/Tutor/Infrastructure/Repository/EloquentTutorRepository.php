@@ -60,11 +60,19 @@ class EloquentTutorRepository implements TutorRepositoryInterface
         if(isset($filters['subject']) || isset($filters['class_name']) || isset($filters['level'])) {
             $query->whereHas('subjects', function($q) use ($filters) {
 
-                if(isset($filters['subject'])) {
-                    $q->where('name', $filters['subject']);
+                if(isset($filters['subject_id'])) {
+                    $q->where('id', $filters['subject_id']);
+                }
+
+                if(isset($filters['subject_name'])) {
+                    $q->where('name', $filters['subject_name']);
                 }
 
                 $q->whereHas('class', function($q2) use ($filters) {
+                    if(isset($filters['class_id'])) {
+                        $q2->where('id', $filters['class_id']);
+                    }
+
                     if(isset($filters['class_name'])) {
                         $q2->where('name', $filters['class_name']);
                     }
@@ -76,8 +84,17 @@ class EloquentTutorRepository implements TutorRepositoryInterface
             });
         }
 
+        // Apply rating filters if provided (min_rate, max_rate refer to average review rate)
+        if (isset($filters['min_rate'])) {
+            $query->havingRaw('COALESCE(reviews_avg_rate, 0) >= ?', [$filters['min_rate']]);
+        }
+
+        if (isset($filters['max_rate'])) {
+            $query->havingRaw('COALESCE(reviews_avg_rate, 0) <= ?', [$filters['max_rate']]);
+        }
+
         $query->orderByDesc('reviews_avg_rate');
-        
+
         $paginator = $query->paginate($paginate);
 
         return $paginator->through(function (Tutor $tutor) {

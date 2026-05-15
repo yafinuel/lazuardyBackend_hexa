@@ -40,7 +40,9 @@ use App\Domains\Presence\Infrastructure\Services\PresenceServiceAdapter;
 use App\Domains\Presence\Ports\PresenceRepositoryInterface;
 use App\Domains\Presence\Ports\PresenceServicePort;
 use App\Domains\Review\Infrastructure\Repository\EloquentReviewRepository;
+use App\Domains\Review\Infrastructure\Services\ReviewServiceAdapter;
 use App\Domains\Review\Ports\ReviewRepositoryInterface;
+use App\Domains\Review\Ports\ReviewServicePort;
 use App\Domains\Schedule\Infrastructure\Repository\EloquentScheduleRepository;
 use App\Domains\Schedule\Infrastructure\Services\ScheduleServiceAdapter;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
@@ -190,6 +192,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ReviewRepositoryInterface::class,
             EloquentReviewRepository::class
+        );
+
+        $this->app->bind(
+            ReviewServicePort::class,
+            ReviewServiceAdapter::class
         );
 
         $this->app->bind(

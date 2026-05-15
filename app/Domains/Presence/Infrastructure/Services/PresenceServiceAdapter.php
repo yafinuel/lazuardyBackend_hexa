@@ -2,6 +2,7 @@
 
 namespace App\Domains\Presence\Infrastructure\Services;
 
+use App\Domains\Notification\Ports\NotificationRepositoryInterface;
 use App\Domains\Parent\Actions\GetParentByIdAction;
 use App\Domains\Parent\Entities\ParentEntity;
 use App\Domains\Presence\Ports\PresenceServicePort;
@@ -16,6 +17,7 @@ class PresenceServiceAdapter implements PresenceServicePort
         protected GetUserByIdAction $getUserById,
         protected GetParentByIdAction $getParentById,
         protected GetScheduleByIdAction $getScheduleById,
+        protected NotificationRepositoryInterface $notificationRepository
     ) {}
     
     public function userBiodata(int $userId): UserEntity
@@ -31,5 +33,10 @@ class PresenceServiceAdapter implements PresenceServicePort
     public function scheduleDetail(int $scheduleId): ScheduleEntity
     {
         return $this->getScheduleById->execute($scheduleId);
+    }
+
+    public function pushNotificationToUser(int $userId, array $notificationData): void
+    {
+        $this->notificationRepository->pushNotificationToUser($userId, $notificationData);
     }
 }

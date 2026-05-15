@@ -74,7 +74,7 @@ class CancelScheduleAction
 
             $this->service->pushNotificationToUser($schedule->tutorId, $notificationData);
         }
-        Log::info("User {$userId} canceled schedule {$data['schedule_id']} with {$minutesUntilStart} minutes until start. User role: {$user->role->value}");
+        // Log::info("User {$userId} canceled schedule {$data['schedule_id']} with {$minutesUntilStart} minutes until start. User role: {$user->role->value}");
         return $this->repository->cancelSchedule($data['schedule_id'], $data['reason']);
     }
 }

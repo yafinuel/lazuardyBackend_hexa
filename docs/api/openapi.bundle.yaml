@@ -1461,13 +1461,27 @@ paths:
         - bearerAuth: []
       operationId: getTutorByCriteria
       parameters:
-        - name: subject
+        - name: subject_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 1
+          description: ID mata pelajaran yang dipakai untuk memfilter tutor.
+        - name: subject_name
           in: query
           required: false
           schema:
             type: string
             example: matematika
           description: Nama mata pelajaran yang dipakai untuk memfilter tutor.
+        - name: class_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 2
+          description: ID kelas yang dipakai untuk memfilter tutor.
         - name: class_name
           in: query
           required: false
@@ -1482,6 +1496,26 @@ paths:
             type: string
             example: SD
           description: Jenjang kelas yang dipakai untuk memfilter tutor.
+        - name: min_rate
+          in: query
+          required: false
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 5
+            example: 3.5
+          description: Filter minimum rata-rata rating tutor (incl. tutors with avgRate >= min_rate).
+        - name: max_rate
+          in: query
+          required: false
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 5
+            example: 5
+          description: Filter maksimum rata-rata rating tutor (includes tutors with avgRate <= max_rate).
       responses:
         '200':
           description: Berhasil mendapatkan daftar tutor
@@ -1495,12 +1529,67 @@ paths:
                     example: success
                   data:
                     $ref: '#/components/schemas/TutorListPayload'
+              example:
+                status: success
+                data:
+                  current_page: 1
+                  data:
+                    - id: '2'
+                      name: Demo Tutor
+                      email: demo.tutor@example.com
+                      emailVerifiedAt: '2026-05-08 06:32:58'
+                      telephoneNumber: null
+                      telephoneVerifiedAt: null
+                      profilePhotoUrl: null
+                      dateOfBirth: null
+                      gender: null
+                      religion: null
+                      homeAddress: null
+                      latitude: null
+                      longitude: null
+                      education:
+                        - level: S1
+                          major: Pendidikan Matematika
+                      salary: 0
+                      description: Saya mengajar dengan metode interaktif dan menyenangkan
+                      bankCode: null
+                      accountNumber: null
+                      learningMethod:
+                        - online
+                      role: Mentor
+                      warning: 0
+                      sanction: null
+                      status: verified
+                      avgRate: 4.6
+                      createdAt: '2026-05-08T06:32:58.000000Z'
+                  first_page_url: http://localhost:8000/api/getTutorByCriteria?page=1
+                  from: 1
+                  last_page: 1
+                  last_page_url: http://localhost:8000/api/getTutorByCriteria?page=1
+                  links: []
+                  next_page_url: null
+                  path: http://localhost:8000/api/getTutorByCriteria
+                  per_page: 10
+                  prev_page_url: null
+                  to: 1
+                  total: 1
         '401':
           description: Unauthorized
           content:
             application/json:
               example:
                 message: Unauthenticated.
+        '422':
+          description: Unprocessable Entity - Validasi data gagal
+          content:
+            application/json:
+              example:
+                message: The given data was invalid.
+                errors:
+                  min_rate:
+                    - The min rate must be at least 0.
+                  max_rate:
+                    - The max rate must be at most 5.
         '500':
           $ref: '#/components/responses/ServerError'
   /tutor/teaching-profile:
@@ -3284,14 +3373,14 @@ paths:
               type: object
               required:
                 - tutor_id
-                - rating
+                - rate
               properties:
                 tutor_id:
                   type: integer
                   minimum: 1
                   example: 7
                   description: ID tutor yang akan diberi review.
-                rating:
+                rate:
                   type: number
                   minimum: 0
                   maximum: 5
@@ -3304,7 +3393,7 @@ paths:
                   example: Tutor sangat membantu dan jelas menjelaskan materi.
             example:
               tutor_id: 7
-              rating: 4.5
+              rate: 4.5
               comment: Tutor sangat membantu dan jelas menjelaskan materi.
       responses:
         '200':
@@ -3347,6 +3436,92 @@ paths:
                     - The tutor id field is required.
                   rating:
                     - The rating field is required.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /student/tutor-review:
+    get:
+      tags:
+        - Review
+      summary: Mengambil daftar review untuk tutor tertentu (sebagai student)
+      description: Endpoint untuk menampilkan review yang dimiliki oleh tutor tertentu. Cocok untuk digunakan oleh student untuk melihat ulasan tutor.
+      security:
+        - bearerAuth: []
+      operationId: getTutorReviewsAsStudent
+      parameters:
+        - name: tutor_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 7
+          description: ID tutor yang ingin dilihat reviewnya.
+        - name: min_rating
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+            example: 3
+          description: Filter rating minimum (1 sampai 5).
+        - name: max_rating
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+            example: 5
+          description: Filter rating maksimum (1 sampai 5).
+        - name: pagination
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+            example: 10
+          description: Jumlah item per halaman.
+      responses:
+        '200':
+          description: Berhasil mengambil daftar review tutor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTutorReviewsResponse'
+              example:
+                status: success
+                avg_rating: 4.2
+                data:
+                  current_page: 1
+                  data:
+                    - id: 9
+                      studentId: 12
+                      tutorId: 7
+                      rate: 5
+                      comment: Penjelasan mudah dipahami
+                      createdAt: '2026-05-06T09:00:00Z'
+                      updatedAt: '2026-05-06T09:15:00Z'
+                  first_page_url: http://localhost:8000/api/student/tutor-review?tutor_id=7&pagination=10&page=1
+                  from: 1
+                  last_page: 1
+                  last_page_url: http://localhost:8000/api/student/tutor-review?tutor_id=7&pagination=10&page=1
+                  links: []
+                  next_page_url: null
+                  path: http://localhost:8000/api/student/tutor-review
+                  per_page: 10
+                  prev_page_url: null
+                  to: 1
+                  total: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
 components:

@@ -97,6 +97,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/student/schedule/cancel-application', [ScheduleController::class, 'cancelScheduleApplication']);
 
         Route::post('/student/review/create', [ReviewController::class, 'createReview']);
+        Route::get('/student/tutor-review', [ReviewController::class, 'getTutorReviewsAsStudent']);
+        Route::patch('/student/review/update', [ReviewController::class, 'updateReview']);
 
         // Order
         Route::post('/package/order', [PaymentGatewayController::class, 'orderPackage']);

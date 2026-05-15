@@ -42,13 +42,11 @@ class FcmChannel
             'token_count' => count($tokens),
         ]);
 
-        foreach ($tokens as $token) {
-            $this->gateway->sendPush(
-                $token,
-                $message['title'],
-                $message['body'],
-                $message['data'] ?? []
-            );
-        }
+        $this->gateway->sendPushToMany(
+            $tokens,
+            $message['title'],
+            $message['body'],
+            $message['data'] ?? []
+        );
     }
 }

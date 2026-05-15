@@ -2,6 +2,7 @@
 
 namespace App\Domains\Review\Infrastructure\Repository;
 
+use App\Domains\Review\Entities\ReviewEntity;
 use App\Domains\Review\Ports\ReviewRepositoryInterface;
 use App\Models\Review;
 use App\Models\Student;
@@ -14,14 +15,24 @@ class EloquentReviewRepository implements ReviewRepositoryInterface
         $student = Student::where('user_id', $studentId)->firstOrFail();
         $student->reviews()->create([
             'tutor_id' => $data['tutor_id'],
-            'rate' => $data['rating'],
+            'rate' => $data['rate'],
             'comment' => $data['comment'] ?? null,
         ]);
     }
 
-    public function findById(int $id)
+    public function findById(int $id): ReviewEntity
     {
-        // Implement the logic to find a review by its ID using Eloquent
+        $review = Review::findOrFail($id);
+
+        return new ReviewEntity(
+            id: $review->id,
+            studentId: $review->student_id,
+            tutorId: $review->tutor_id,
+            rate: $review->rate,
+            comment: $review->comment,
+            createdAt: $review->created_at,
+            updatedAt: $review->updated_at
+        );
     }
 
     public function findWithFilters(array $filters, int $pagination = 10): LengthAwarePaginator
@@ -51,11 +62,12 @@ class EloquentReviewRepository implements ReviewRepositoryInterface
 
     public function update(int $id, array $data)
     {
-        // Implement the logic to update a review by its ID using Eloquent
+        $review = Review::findOrFail($id);
+        $review->update($data);
     }
 
-    public function delete(int $id)
+    public function delete(int $id): bool
     {
-        // Implement the logic to delete a review by its ID using Eloquent
+        return Review::where('id', $id)->delete();
     }
 }

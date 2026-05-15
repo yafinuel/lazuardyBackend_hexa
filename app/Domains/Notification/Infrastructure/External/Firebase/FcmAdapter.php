@@ -18,7 +18,26 @@ class FcmAdapter implements NotificationGatewayInterface
         $this->projectId = config('services.fcm.project_id');
     }
 
-    public function sendPush(string $token, string $title, string $body, array $data = []): bool
+    public function sendPushToMany(array $tokens, string $title, string $body, array $data = []): bool
+    {
+        $tokens = array_values(array_unique(array_filter($tokens, fn ($token) => is_string($token) && $token !== '')));
+
+        if ($tokens === []) {
+            return false;
+        }
+
+        $hasFailure = false;
+
+        foreach ($tokens as $token) {
+            if (!$this->sendPushSingle($token, $title, $body, $data)) {
+                $hasFailure = true;
+            }
+        }
+
+        return !$hasFailure;
+    }
+
+    private function sendPushSingle(string $token, string $title, string $body, array $data = []): bool
     {
         try {
             $accessToken = $this->getAccessToken();

@@ -78,8 +78,16 @@ class TutorController extends Controller
 
     public function getTutorByCriteria(Request $request, GetTutorByCriteria $action)
     {
-        $filters = $request->only(['subject', 'class_name', 'level']);
-        
+        $filters = $request->validate([
+            'subject_id' => ['nullable', 'integer', 'exists:subjects,id'],
+            'subject_name' => ['nullable', 'string', 'exists:subjects,name'],
+            'class_id' => ['nullable', 'integer', 'exists:classes,id'],
+            'class_name' => ['nullable', 'string', 'exists:classes,name'],
+            'level' => ['nullable', 'string', 'exists:classes,level'],
+            'min_rate' => ['nullable', 'numeric', 'min:0'],
+            'max_rate' => ['nullable', 'numeric', 'min:0', 'gte:min_rate'],
+        ]);
+
         $tutors = $action->execute($filters);
 
         return response()->json([

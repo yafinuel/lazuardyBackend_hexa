@@ -11,4 +11,5 @@ interface PresenceServicePort
     public function userBiodata(int $userId): UserEntity;
     public function parentBiodata(int $parentId): ParentEntity;
     public function scheduleDetail(int $scheduleId): ScheduleEntity;
+    public function pushNotificationToUser(int $userId, array $notificationData): void;
 }

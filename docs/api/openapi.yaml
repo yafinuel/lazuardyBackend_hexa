@@ -161,6 +161,8 @@ paths:
     $ref: './paths/review.yaml#/getTutorReviewsAsTutor'
   /student/review/create:
     $ref: './paths/review.yaml#/createReview'
+  /student/tutor-review:
+    $ref: './paths/review.yaml#/getTutorReviewsAsStudent'
 
 components:
   securitySchemes:
