@@ -85,7 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/schedule/getTutorSchedulesByDay', [ScheduleController::class, 'getTutorSchedulesByDay']);
     Route::post('/schedule/cancel', [ScheduleController::class, 'cancelSchedule']);
     Route::get('/reports', [PresenceController::class, 'getPresenceByUserId']);
-    Route::get('/schedules', [DashboardController::class, 'schedulePage']);
+    Route::get('/schedules', [ScheduleController::class, 'getSchedulesByUserId']);
     
     Route::middleware('role:' . RoleEnum::STUDENT->value)->group(function (){
         Route::get('/student/biodata', [StudentController::class, 'getStudentById']);

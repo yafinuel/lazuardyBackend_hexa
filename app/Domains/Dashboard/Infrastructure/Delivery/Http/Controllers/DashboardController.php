@@ -3,7 +3,6 @@
 namespace App\Domains\Dashboard\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Dashboard\Actions\ParentHomePageAction;
-use App\Domains\Dashboard\Actions\SchedulePageAction;
 use App\Domains\Dashboard\Actions\StudentHomePageAction;
 use App\Domains\Dashboard\Actions\TutorHomePageAction;
 use Illuminate\Http\Request;
@@ -22,22 +21,6 @@ class DashboardController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $data
-        ]);
-    }
-
-    public function schedulePage(Request $request, SchedulePageAction $action)
-    {
-        $data = $request->validate([
-            'date' => ['nullable', 'date'],
-            'paginate' => ['nullable', 'integer']
-        ]);
-        $userId = $request->user()->id;
-
-        $result = $action->execute($userId, $data, $data['paginate'] ?? 10);
-        
-        return response()->json([
-            'status' => 'success',
-            'data' => $result
         ]);
     }
 

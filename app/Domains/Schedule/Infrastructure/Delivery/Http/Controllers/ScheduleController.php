@@ -145,4 +145,23 @@ class ScheduleController extends Controller
             'message' => 'Schedule cancellation application submitted successfully',
         ]);
     }
+
+    public function getSchedulesByUserId(Request $request, GetSchedulesByUserId $action)
+    {
+        $data = $request->validate([
+            'status' => ['nullable', new Enum(ScheduleStatusEnum::class)],
+            'learning_method' => ['nullable', 'in:online,offline'],
+            'student_id' => ['nullable', 'integer', 'exists:students,user_id'],
+            'subject_id' => ['nullable', 'integer', 'exists:subjects,id'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+            'paginate' => ['nullable', 'integer', 'min:1'],
+        ]);
+
+        $result = $action->execute($request->user()->id, $data, $data['paginate'] ?? 10);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $result,
+        ]);
+    }
 }

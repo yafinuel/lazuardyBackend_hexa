@@ -16,15 +16,6 @@ class StudentHomePageAction
         $notificationData = $this->service->getNotification($studentId, $notifPaginate);
         $tutorRecomendations = $this->service->getTutorByCriteria([], $tutorPaginate);
 
-        $notifications = $notificationData->through(function ($notifEntity) {
-            return [
-                'id' => $notifEntity->id,
-                'title' => $notifEntity->title,
-                'body' => $notifEntity->body,
-                'data' => $notifEntity->data,
-            ];
-        });
-
         $tutors = $tutorRecomendations->through(function ($tutorEntity) {
             if(!$tutorEntity->profilePhotoUrl) {
                 $tutorEntity->profilePhotoUrl = $this->storage->getMedia($tutorEntity->profilePhotoUrl);
@@ -37,7 +28,7 @@ class StudentHomePageAction
             'warning' => $warning,
             'sanction' => $studentBiodata->sanction,
             'session' => $studentBiodata->session,
-            'notification' => $notifications,
+            'notification' => $notificationData,
             'tutor_recomendation' => $tutors,
         ];
     }
