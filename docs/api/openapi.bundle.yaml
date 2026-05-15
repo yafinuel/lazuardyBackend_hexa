@@ -1364,6 +1364,63 @@ paths:
                 status: failed
                 message: Gagal memperbarui foto profil
                 debug_error: Error message
+  /user/fcm-token:
+    patch:
+      tags:
+        - User Profile
+      summary: Memperbarui FCM token pengguna
+      description: Endpoint untuk menyimpan FCM token dari perangkat pengguna. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: updateFcmToken
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateFcmToken'
+      responses:
+        '200':
+          description: FCM token berhasil diperbarui
+          content:
+            application/json:
+              example:
+                status: success
+                message: FCM token updated successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags:
+        - User Profile
+      summary: Menghapus FCM token pengguna
+      description: 'Endpoint untuk menghapus FCM token pengguna yang sedang login (contoh: saat logout). Membutuhkan autentikasi.'
+      security:
+        - bearerAuth: []
+      operationId: clearFcmToken
+      requestBody:
+        $ref: '#/components/requestBodies/ClearFcmToken'
+      responses:
+        '200':
+          description: FCM token berhasil dihapus
+          content:
+            application/json:
+              example:
+                status: success
+                message: FCM token cleared successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /getNotificationByUserId:
     get:
       tags:
@@ -3293,6 +3350,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateTutorPresenceRequest'
+    UpdateFcmToken:
+      description: Payload untuk menyimpan FCM token pengguna
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateFcmTokenRequest'
+    ClearFcmToken:
+      description: Payload untuk menghapus FCM token perangkat pengguna
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClearFcmTokenRequest'
     UpdateTutorBiodata:
       description: Payload untuk memperbarui biodata tutor
       required: true
@@ -4050,6 +4121,34 @@ components:
         status: verified
         avgRate: null
         createdAt: '2026-05-08T06:32:58.000000Z'
+    UpdateFcmTokenRequest:
+      type: object
+      required:
+        - fcm_token
+        - device_id
+      properties:
+        fcm_token:
+          type: string
+          description: Token FCM perangkat pengguna
+          example: fcm_device_token
+        device_id:
+          type: string
+          description: ID unik perangkat dari aplikasi
+          example: device-123
+        platform:
+          type: string
+          nullable: true
+          description: Platform perangkat (android/ios/web)
+          example: android
+    ClearFcmTokenRequest:
+      type: object
+      required:
+        - device_id
+      properties:
+        device_id:
+          type: string
+          description: ID unik perangkat yang tokennya akan dihapus
+          example: device-123
     UpdateStudentBiodataRequest:
       type: object
       required:

@@ -43,6 +43,7 @@ class FcmAdapter implements NotificationGatewayInterface
             ];
 
             $response = Http::withToken($accessToken)->post($url, $payload);
+            Log::info('FCM Response: ', $response->json());
 
             if ($response->failed()) {
                 Log::error('FCM Send Error: ' . $response->body());

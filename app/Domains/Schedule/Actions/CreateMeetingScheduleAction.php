@@ -24,5 +24,16 @@ class CreateMeetingScheduleAction
         $student = $this->service->getStudentById($data['student_id']);
         $session = $student->session - 1;
         $this->service->updateStudent($data['student_id'], ['session' => $session]);
+
+        $this->service->pushNotificationToUser($data['tutor_id'], [
+            'title' => 'New Booking Request',
+            'body' => 'You have a new booking request from ' . $student->name,
+            'data' => [
+                'student_name' => $student->name,
+                'subject_id' => $data['subject_id'],
+                'date' => $data['date'],
+                'time' => $data['time'],
+            ],
+        ]);
     }
 }

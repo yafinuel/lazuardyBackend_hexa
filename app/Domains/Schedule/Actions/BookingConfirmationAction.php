@@ -2,12 +2,10 @@
 
 namespace App\Domains\Schedule\Actions;
 
-use App\Domains\Notification\Notifications\TemplateNotification;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use App\Domains\Schedule\Ports\ScheduleServicePort;
 use App\Shared\Enums\ScheduleStatusEnum;
 use Illuminate\Auth\Access\AuthorizationException;
-use Exception;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class BookingConfirmationAction

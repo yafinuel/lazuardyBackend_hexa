@@ -113,6 +113,8 @@ paths:
     $ref: './paths/user-profile.yaml#/getTutorFileByUserId'
   /updateProfilePhoto:
     $ref: './paths/user-profile.yaml#/updateProfilePhoto'
+  /user/fcm-token:
+    $ref: './paths/user-profile.yaml#/userFcmToken'
 
   /getNotificationByUserId:
     $ref: './paths/notification.yaml#/getNotificationByUserId'
@@ -176,6 +178,10 @@ components:
       $ref: './components/request-bodies.yaml#/CreateMeetingSchedule'
     CreateTutorPresence:
       $ref: './components/request-bodies.yaml#/CreateTutorPresence'
+    UpdateFcmToken:
+      $ref: './components/request-bodies.yaml#/UpdateFcmToken'
+    ClearFcmToken:
+      $ref: './components/request-bodies.yaml#/ClearFcmToken'
 
   schemas:
     ClassEntity:
@@ -222,6 +228,10 @@ components:
       $ref: './components/schemas.yaml#/StudentEntity'
     TutorEntity:
       $ref: './components/schemas.yaml#/TutorEntity'
+    UpdateFcmTokenRequest:
+      $ref: './components/schemas.yaml#/UpdateFcmTokenRequest'
+    ClearFcmTokenRequest:
+      $ref: './components/schemas.yaml#/ClearFcmTokenRequest'
     UpdateStudentBiodataRequest:
       $ref: './components/schemas.yaml#/UpdateStudentBiodataRequest'
     UpdateTeachingProfileRequest:

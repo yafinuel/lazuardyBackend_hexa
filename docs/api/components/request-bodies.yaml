@@ -22,6 +22,22 @@ UpdateTeachingProfile:
       schema:
         $ref: './schemas.yaml#/UpdateTeachingProfileRequest'
 
+UpdateFcmToken:
+  description: "Payload untuk menyimpan FCM token pengguna"
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/UpdateFcmTokenRequest'
+
+ClearFcmToken:
+  description: "Payload untuk menghapus FCM token perangkat pengguna"
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/ClearFcmTokenRequest'
+
 CreateMeetingSchedule:
   description: "Payload untuk membuat jadwal meeting siswa"
   required: true

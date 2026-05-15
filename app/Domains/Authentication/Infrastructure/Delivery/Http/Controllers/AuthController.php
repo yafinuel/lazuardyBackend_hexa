@@ -13,6 +13,7 @@ use App\Domains\Authentication\Actions\TutorRegisterPageAction;
 use App\Domains\Authentication\Actions\VerifyOtpEmailForgotPasswordAction;
 use App\Domains\Authentication\Actions\VerifyOtpRegisterEmailAction;
 use App\Domains\Authentication\Actions\VerifyStudentParentOtpAction;
+use App\Domains\Notification\Actions\ClearFcmTokenAction;
 use App\Http\Controllers\Controller;
 use App\Shared\Enums\GenderEnum;
 use Exception;
@@ -38,8 +39,12 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request, ClearFcmTokenAction $clearFcmTokenAction)
     {
+        $data = $request->validate([
+            'device_id' => ['nullable', 'string', 'max:255'],
+        ]);
+        $clearFcmTokenAction->execute($request->user()->id, $data['device_id'] ?? null);
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([

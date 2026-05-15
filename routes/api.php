@@ -66,6 +66,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // User Profile
     Route::get('/getTutorById', [TutorController::class, 'getTutorById']);
     Route::patch('/updateProfilePhoto', [UserController::class, 'updateProfilePhoto']);
+    Route::patch('/user/fcm-token', [NotificationController::class, 'updateFcmToken']);
+    Route::delete('/user/fcm-token', [NotificationController::class, 'clearFcmToken']);
     
     // Package
     Route::get('/getPackages', [PackageController::class, 'index']);

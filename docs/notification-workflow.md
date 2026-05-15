@@ -37,12 +37,13 @@ Tanggung jawab:
 
 - Menerima objek notifiable dan notification dari sistem Laravel
 - Mengambil payload dari `toFcm()`
-- Mengambil token dari `notifiable->fcm_token`
-- Memanggil gateway jika token tersedia
+- Mengambil token dari relasi `notifiable->fcmTokens`
+- Fallback ke `notifiable->fcm_token` jika token per device belum tersedia
+- Memanggil gateway untuk tiap token yang tersedia
 
 Catatan:
 
-- Jika `fcm_token` kosong/null, push tidak dikirim.
+- Jika tidak ada token yang tersimpan, push tidak dikirim.
 
 ### 3. Gateway Interface
 
@@ -66,7 +67,7 @@ Tanggung jawab:
 
 Dependency konfigurasi:
 
-- `config('services.firebase.project_id')`
+- `config('services.fcm.project_id')`
 - File credential service account pada `storage/app/firebase-auth.json`
 
 ### 5. Service Container Binding
@@ -89,7 +90,7 @@ Dampak:
 4. Channel custom `FcmChannel` dipanggil.
 5. `FcmChannel` memanggil `toFcm()` untuk membentuk message push.
 6. `FcmChannel` membaca `fcm_token` dari user.
-7. Jika token ada, `FcmChannel` memanggil `NotificationGatewayInterface::sendPush(...)`.
+7. Jika token ada, `FcmChannel` memanggil `NotificationGatewayInterface::sendPush(...)` untuk tiap token.
 8. Karena binding interface, panggilan diteruskan ke `FcmAdapter`.
 9. `FcmAdapter` mengambil access token, membangun payload FCM, lalu melakukan request ke API FCM.
 10. Jika request gagal/exception, error dicatat ke log.
@@ -147,8 +148,87 @@ Catatan testing:
 
 - Pastikan nilai `services.firebase.project_id` tersedia pada environment.
 - Pastikan file `storage/app/firebase-auth.json` tersedia dan valid.
-- User harus memiliki `fcm_token` agar push benar-benar terkirim.
+- User harus memiliki token di tabel `user_fcm_tokens` agar push benar-benar terkirim.
 - Kegagalan kirim push tidak mencegah penyimpanan notifikasi ke database karena berjalan pada channel terpisah.
+
+## Contoh Flutter (Registrasi Token)
+
+Frontend perlu mengirim token FCM ke backend setelah login, saat app dibuka ulang, dan saat token berubah.
+
+Contoh sederhana (gunakan `firebase_messaging` dan `http`):
+
+```dart
+import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
+
+Future<void> syncFcmToken({
+	required String apiBaseUrl,
+	required String authToken,
+	required String deviceId,
+	required String platform,
+}) async {
+	final token = await FirebaseMessaging.instance.getToken();
+	if (token == null) return;
+
+	await http.patch(
+		Uri.parse('$apiBaseUrl/user/fcm-token'),
+		headers: {
+			'Authorization': 'Bearer $authToken',
+			'Content-Type': 'application/json',
+		},
+		body: jsonEncode({
+			'fcm_token': token,
+			'device_id': deviceId,
+			'platform': platform,
+		}),
+	);
+}
+
+void registerFcmTokenRefresh({
+	required String apiBaseUrl,
+	required String authToken,
+	required String deviceId,
+	required String platform,
+}) {
+	FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+		await http.patch(
+			Uri.parse('$apiBaseUrl/user/fcm-token'),
+			headers: {
+				'Authorization': 'Bearer $authToken',
+				'Content-Type': 'application/json',
+			},
+			body: jsonEncode({
+				'fcm_token': newToken,
+				'device_id': deviceId,
+				'platform': platform,
+			}),
+		);
+	});
+}
+
+Future<void> clearFcmToken({
+	required String apiBaseUrl,
+	required String authToken,
+	required String deviceId,
+}) async {
+	await http.delete(
+		Uri.parse('$apiBaseUrl/user/fcm-token'),
+		headers: {
+			'Authorization': 'Bearer $authToken',
+			'Content-Type': 'application/json',
+		},
+		body: jsonEncode({
+			'device_id': deviceId,
+		}),
+	);
+}
+```
+
+Catatan:
+
+- `deviceId` sebaiknya stabil per perangkat (contoh: hasil dari `device_info_plus` + penyimpanan lokal).
+- Panggil `clearFcmToken` saat logout untuk device tersebut.
 
 ## Referensi File
 

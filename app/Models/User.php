@@ -79,6 +79,11 @@ class User extends Authenticatable
         return $this->hasOne(Student::class);
     }
 
+    public function fcmTokens(): HasMany
+    {
+        return $this->hasMany(UserFcmToken::class);
+    }
+
     public function tutor(): HasOne
     {
         return $this->hasOne(Tutor::class);
