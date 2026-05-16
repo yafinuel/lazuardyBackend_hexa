@@ -15,6 +15,11 @@ class CommerceHelper
     {
         return 'ORD_'. $orderNumberType . '_' . $userId . '_' . Carbon::now()->timestamp;
     }
+    
+    public function createPayoutNumber(int $userId): string
+    {
+        return 'PAYOUT_' . $userId . '_' . Carbon::now()->timestamp;
+    }
 
     public function calculateSubTotalPackage(int $packageId, int $quantity): int
     {

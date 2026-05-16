@@ -6,7 +6,6 @@ use App\Domains\Schedule\Actions\BookingConfirmationAction;
 use App\Domains\Schedule\Actions\CancelScheduleAction;
 use App\Domains\Schedule\Actions\CancelScheduleApplicationAction;
 use App\Domains\Schedule\Actions\CreateMeetingScheduleAction;
-use App\Domains\Schedule\Actions\GetFilteredSchedulesByTutorIdAction;
 use App\Domains\Schedule\Actions\GetScheduleByIdAction;
 use App\Domains\Schedule\Actions\GetSchedulesByUserId;
 use App\Domains\Schedule\Actions\GetTutorSchedulesByDayAction;

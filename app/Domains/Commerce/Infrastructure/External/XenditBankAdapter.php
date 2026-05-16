@@ -142,5 +142,49 @@ class XenditBankAdapter implements XenditBankPort
         }
     }
 
+    public function createPayout(
+        string $externalId,
+        int $amount,
+        string $bankCode,
+        string $accountNumber,
+        string $accountHolderName,
+        string $userEmail,
+        string $description = 'Pembayaran gaji tutor'
+    ): array
+    {
+        $params = [
+            'reference_id' => $externalId,
+            'channel_code' => $bankCode,
+            'channel_properties' => [
+                'account_number' => $accountNumber,
+                'account_holder_name' => $accountHolderName
+            ],
+            'amount' => $amount,
+            'currency' => 'IDR',
+            'description' => $description,
+            'receipt_notification' => [
+                'email' => [$userEmail],
+            ],
+        ];
 
+        try {
+            $idempotencyKey = $externalId;
+            
+            $payout = $this->apiInstance->createPayout($idempotencyKey, null, new CreatePayoutRequest($params));
+
+            return [
+                'xendit_id' => $payout->getId(),
+                'status' => $payout->getStatus(),
+                'reference_id' => $payout->getReferenceId(),
+                'amount' => $payout->getAmount(),
+            ];
+        } catch (XenditSdkException $e) {
+            $error = json_decode(json_encode($e->getFullError()), true);
+            Log::error('Xendit Payout Create Failed', $error ?: ['message' => $e->getMessage()]);
+            throw new Exception('Gagal membuat payout: ' . ($error['message'] ?? $e->getMessage()), 500);
+        } catch (Exception $e) {
+            Log::error('General Payout Create Error: ' . $e->getMessage());
+            throw new Exception('Terjadi kesalahan sistem saat membuat payout', 500);
+        }
+    }
 }

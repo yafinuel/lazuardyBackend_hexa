@@ -7,6 +7,7 @@ use App\Domains\Commerce\Actions\GetBankListAction;
 use App\Domains\Commerce\Actions\HandlePaymentCallbackAction;
 use App\Domains\Commerce\Actions\ProcessPaymentExpiredAction;
 use App\Domains\Commerce\Actions\ProcessPaymentSuccessAction;
+use App\Domains\Commerce\Actions\RequestPayoutAction;
 use App\Domains\Commerce\Actions\ValidateAccountAction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -78,6 +79,24 @@ class PaymentGatewayController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Payment callback received'
+        ]);
+    }
+
+    public function requestPayout(Request $request, RequestPayoutAction $action)
+    {
+        $data = $request->validate([
+            'bank_code' => ['required', 'string'],
+            'account_number' => ['required', 'string'],
+            'amount' => ['required', 'numeric', 'min:10000']
+        ]);
+
+        $userId = $request->user()->id;
+
+        $action->execute($userId, $data);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payout request submitted successfully'
         ]);
     }
 }
