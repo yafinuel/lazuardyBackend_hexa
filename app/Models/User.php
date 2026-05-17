@@ -92,11 +92,6 @@ class User extends Authenticatable
     {
         return $this->hasOne(ParentModel::class);
     }
-
-    // public function takenSchedules(): HasMany
-    // {
-    //     return $this->hasMany(TakenSchedule::class);
-    // }
     
     public function subjects(): BelongsToMany {
         return $this->belongsToMany(Subject::class, 'tutor_subjects', 'user_id', 'subject_id');
@@ -106,26 +101,10 @@ class User extends Authenticatable
         return $this->hasMany(File::class);
     }
 
-    // public function payments(): HasMany
-    // {
-    //     return $this->hasMany(Payment::class);
-    // }
-    
-    // public function orders(): HasMany
-    // {
-    //     return $this->hasMany(Order::class);
-    // }
+    public function payoutApprovals(): HasMany {
+        return $this->hasMany(Payout::class, 'approved_by', 'id');
+    }
 
-    // public function studentPackageTutors(): HasMany
-    // {
-    //     return $this->hasMany(StudentPackage::class, 'tutor_user_id');
-    // }
-
-    // public function studentPackageStudents(): HasMany
-    // {
-    //     return $this->hasMany(StudentPackage::class, 'student_user_id');
-    // }
-    
     public function scopeGetUserByEmail($query, $email)
     {
         return $query->where('email', $email)->first();

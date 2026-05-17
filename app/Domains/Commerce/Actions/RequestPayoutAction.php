@@ -5,7 +5,8 @@ namespace App\Domains\Commerce\Actions;
 use App\Domains\Commerce\Helpers\CommerceHelper;
 use App\Domains\Commerce\Ports\CommerceRepositoryInterface;
 use App\Domains\Commerce\Ports\CommerceServicePort;
-use App\Shared\Enums\PaymentStatusEnum;
+use App\Shared\Enums\PayoutStatusEnum;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Nette\Schema\ValidationException;
 
@@ -21,39 +22,31 @@ class RequestPayoutAction
     {
         $tutor = $this->service->getTutorById($tutorId);
 
-        if($tutor->sarary < $data['amount']){
+        if($tutor->salary < $data['amount']){
             throw new ValidationException('Insufficient balance for payout request.');
         }
 
+        $decreasedSalary = $tutor->salary - $data['amount'];
+
         $payoutNumber = $this->helper->createPayoutNumber($tutorId);
+
+        $payoutData = [
+            'tutor_id' => $tutorId,
+            'payout_number' => $payoutNumber,
+            'amount' => $data['amount'],
+            'bank_code' => $tutor->bankCode,
+            'account_holder_name' => $tutor->accountHolderName,
+            'account_number' => $tutor->accountNumber,
+            'status' => PayoutStatusEnum::REQUESTED,
+        ];
 
         DB::beginTransaction();
         try {
-            $decreaseSalary = $tutor->sarary - $data['amount'];
-
-            $order = $this->repository->createOrder(
-                userId: $tutorId,
-                orderNumber: $payoutNumber,
-                amount: $data['amount'],
-                status: PaymentStatusEnum::PENDING
-            );
-
-            $payment = $this->repository->createPayment(
-                orderId: $order->id,
-                externalId: $payoutNumber,
-                amount: $data['amount'],
-                status: PaymentStatusEnum::PENDING,
-                checkoutUrl: '',
-                xenditId: ''
-            );
-
-            $this->service->updateTutorById($tutorId, ['salary' => $decreaseSalary]);
-
+            $this->repository->createPayout($payoutData);
+            $this->service->updateTutorById($tutorId, ['salary' => $decreasedSalary]);
             DB::commit();
-
-            // return $payout;
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (Exception $e) {
+            DB::rollback();
             throw $e;
         }
     }

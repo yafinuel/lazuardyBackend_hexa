@@ -4,10 +4,12 @@ namespace App\Domains\Commerce\Infrastructure\Repository;
 
 use App\Domains\Commerce\Entities\OrderEntity;
 use App\Domains\Commerce\Entities\PaymentEntity;
+use App\Domains\Commerce\Entities\PayoutEntity;
 use App\Domains\Commerce\Ports\CommerceRepositoryInterface;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
+use App\Models\Payout;
 use App\Shared\Enums\PaymentStatusEnum;
 use Illuminate\Support\Collection;
 
@@ -97,5 +99,83 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
         return $order->items->sum(function ($item) {
             return $item->qty * ($item->package->session ?? 0);
         });
+    }
+
+    public function updatePayoutByPayoutNumber(string $payoutNumber, array $data): PayoutEntity
+    {
+        $payout = Payout::where('payout_number', $payoutNumber)->firstOrFail();
+        $payout->update($data);
+        return new PayoutEntity(
+            id: $payout->id,
+            tutorId: $payout->tutor_id,
+            payoutNumber: $payout->payout_number,
+            amount: $payout->amount,
+            bankCode: $payout->bank_code,
+            accountHolderName: $payout->account_holder_name,
+            accountNumber: $payout->account_number,
+            status: $payout->status
+        );
+    }
+
+        public function createPayout(array $data): Payout
+    {
+        return Payout::create($data);
+    }
+
+    public function getPayoutById(int $payoutId): PayoutEntity
+    {
+        $result = Payout::findOrFail($payoutId);
+        
+        return new PayoutEntity(
+            id: $result->id,
+            tutorId: $result->tutor_id,
+            payoutNumber: $result->payout_number,
+            amount: $result->amount,
+            bankCode: $result->bank_code,
+            accountHolderName: $result->account_holder_name,
+            accountNumber: $result->account_number,
+            status: $result->status
+        );
+    }
+
+    public function getPayoutByPayoutNumber(string $payoutNumber): ?PayoutEntity
+    {
+
+        $result = Payout::where('payout_number', $payoutNumber)->first();
+        
+        if (!$result) {
+            return null;
+        }
+
+        return new PayoutEntity(
+            id: $result->id,
+            tutorId: $result->tutor_id,
+            payoutNumber: $result->payout_number,
+            amount: $result->amount,
+            bankCode: $result->bank_code,
+            accountHolderName: $result->account_holder_name,
+            accountNumber: $result->account_number,
+            status: $result->status
+        );
+    }
+
+    public function getPayoutByXenditId(string $xenditId): ?PayoutEntity
+    {
+        $result = Payout::where('xendit_id', $xenditId)->first();
+
+        if (!$result) {
+            return null;
+        }
+
+        return new PayoutEntity(
+            id: $result->id,
+            tutorId: $result->tutor_id,
+            payoutNumber: $result->payout_number,
+            amount: $result->amount,
+            bankCode: $result->bank_code,
+            accountHolderName: $result->account_holder_name,
+            accountNumber: $result->account_number,
+            status: $result->status
+        );
     }
 }

@@ -852,6 +852,87 @@ paths:
               example:
                 message: 'Gagal melakukan checkout: Gagal membuat invoice: Invalid input data'
                 exception: Exception
+  /tutor/take-money:
+    post:
+      tags:
+        - Payment Gateway
+      security:
+        - bearerAuth: []
+      summary: Permintaan pencairan saldo oleh tutor
+      operationId: payoutRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - bank_account_id
+              properties:
+                amount:
+                  type: number
+                  format: float
+                  example: 500000
+                bank_account_id:
+                  type: string
+                  example: '12345678'
+                note:
+                  type: string
+                  example: Pencairan saldo bulan Mei
+      responses:
+        '200':
+          description: Permintaan payout berhasil dibuat
+          content:
+            application/json:
+              example:
+                status: success
+                data:
+                  payout_id: 1
+                  status: pending
+        '400':
+          description: Validasi request gagal
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /admin/payout/approval:
+    post:
+      tags:
+        - Payment Gateway
+      security:
+        - bearerAuth: []
+      summary: Approval payout oleh admin
+      operationId: payoutApprovalFromAdmin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - payout_id
+                - approved
+              properties:
+                payout_id:
+                  type: integer
+                  example: 1
+                approved:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Approval berhasil
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Payout tidak ditemukan
+        '500':
+          $ref: '#/components/responses/ServerError'
   /getPackages:
     get:
       tags:
@@ -2734,59 +2815,60 @@ paths:
                       startTime: '2026-05-08T14:00:00.000000Z'
                       endTime: '2026-05-08T15:00:00.000000Z'
                       status: active
-                      learningMethod: online
-                      address: null
-                      tutorName: Demo Tutor
-                      subjectName: Matematika
-                      studentName: Demo Student
-                      tutorTelephoneNumber: '081234567890'
-                      studentTelephoneNumber: '081234567890'
-                  first_page_url: http://localhost:8000/api/schedule/filter?page=1
-                  from: 1
-                  last_page: 1
-                  last_page_url: http://localhost:8000/api/schedule/filter?page=1
-                  links:
-                    - url: null
-                      label: '&laquo; Previous'
-                      page: null
-                      active: false
-                    - url: http://localhost:8000/api/schedule/filter?page=1
-                      label: '1'
-                      page: 1
-                      active: true
-                    - url: null
-                      label: Next &raquo;
-                      page: null
-                      active: false
-                  next_page_url: null
-                  path: http://localhost:8000/api/schedule/filter
-                  per_page: 10
-                  prev_page_url: null
-                  to: 1
-                  total: 1
         '401':
           description: Unauthorized
           content:
             application/json:
               example:
                 message: Unauthenticated.
-        '422':
-          description: Validasi gagal
+        '404':
+          description: Data tutor tidak ditemukan
           content:
             application/json:
               example:
-                message: The given data was invalid.
-                errors:
-                  status:
-                    - The selected status is invalid.
-                  learning_method:
-                    - The selected learning method is invalid.
-                  student_id:
-                    - The selected student id is invalid.
-                  subject_id:
-                    - The selected subject id is invalid.
-                  date:
-                    - The date field must match the format Y-m-d.
+                message: No query results for model [App\\Models\\Tutor].
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /schedules:
+    get:
+      tags:
+        - Schedule
+      security:
+        - bearerAuth: []
+      summary: Mengambil daftar jadwal untuk user yang sedang login
+      operationId: getSchedulesByUserId
+      description: Mengambil daftar jadwal (schedules) milik user yang sedang terautentikasi.
+      responses:
+        '200':
+          description: Berhasil mengambil daftar jadwal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentScheduleListPayload'
+              example:
+                current_page: 1
+                data: []
+                first_page_url: http://localhost:8000/api/schedules?page=1
+                from: 1
+                last_page: 1
+                last_page_url: http://localhost:8000/api/schedules?page=1
+                links: []
+                next_page_url: null
+                path: http://localhost:8000/api/schedules
+                per_page: 10
+                prev_page_url: null
+                to: 0
+                total: 0
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
         '500':
           $ref: '#/components/responses/ServerError'
   /schedule/takeMeeting:
@@ -3522,6 +3604,151 @@ paths:
                 message: Unauthenticated.
         '422':
           $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /student/review/update:
+    patch:
+      tags:
+        - Review
+      summary: Mengubah review milik student yang sedang login
+      description: Endpoint untuk mengupdate/mengubah review yang telah dibuat. Hanya student pemilik review yang bisa mengubahnya.
+      security:
+        - bearerAuth: []
+      operationId: updateReview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - review_id
+              properties:
+                review_id:
+                  type: integer
+                  minimum: 1
+                  example: 9
+                  description: ID review yang akan diubah.
+                rate:
+                  type: number
+                  minimum: 0
+                  maximum: 5
+                  nullable: true
+                  example: 4.5
+                  description: Nilai rating review (opsional).
+                comment:
+                  type: string
+                  nullable: true
+                  maxLength: 1000
+                  example: Tutor sangat membantu dan jelas menjelaskan materi.
+                  description: Komentar review (opsional).
+            example:
+              review_id: 9
+              rate: 4.5
+              comment: Tutor sangat membantu dan jelas menjelaskan materi.
+      responses:
+        '200':
+          description: Review berhasil diubah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Review updated successfully
+              example:
+                status: success
+                message: Review updated successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Forbidden - User bukan pemilik review atau tidak memiliki akses
+          content:
+            application/json:
+              example:
+                status: failed
+                message: Unauthorized to update this review
+        '404':
+          description: Review tidak ditemukan
+          content:
+            application/json:
+              example:
+                message: Not Found
+        '422':
+          description: Validasi gagal
+          content:
+            application/json:
+              example:
+                message: The given data was invalid.
+                errors:
+                  review_id:
+                    - The review id field is required.
+                  rate:
+                    - The rate must be between 0 and 5.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /student/review/{reviewId}/delete:
+    delete:
+      tags:
+        - Review
+      summary: Menghapus review milik student yang sedang login
+      description: Endpoint untuk menghapus review yang telah dibuat. Hanya student pemilik review yang bisa menghapusnya.
+      security:
+        - bearerAuth: []
+      operationId: deleteReview
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 9
+          description: ID review yang akan dihapus.
+      responses:
+        '200':
+          description: Review berhasil dihapus
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Review deleted successfully
+              example:
+                status: success
+                message: Review deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Forbidden - User bukan pemilik review
+          content:
+            application/json:
+              example:
+                status: failed
+                message: Unauthorized to delete this review
+        '404':
+          description: Review tidak ditemukan
+          content:
+            application/json:
+              example:
+                message: Not Found
         '500':
           $ref: '#/components/responses/ServerError'
 components:

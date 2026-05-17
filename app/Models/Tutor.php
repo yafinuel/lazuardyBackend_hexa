@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Tutor extends Model
 {
-    /** @use HasFactory<\Database\Factories\TutorFactory> */
     use HasFactory;
 
     protected $table = 'tutors';
@@ -28,8 +27,9 @@ class Tutor extends Model
         'status',
         'warning',
         'sanction',
-        'bank_code',
+        'channel_code',
         'account_number',
+        'account_holder_name',
     ];
     
     protected $casts = [
@@ -68,5 +68,10 @@ class Tutor extends Model
     public function presences()
     {
         return $this->hasMany(Presence::class, 'tutor_id', 'user_id');
+    }
+
+    public function payouts()
+    {
+        return $this->hasMany(Payout::class, 'tutor_id', 'user_id');
     }
 }

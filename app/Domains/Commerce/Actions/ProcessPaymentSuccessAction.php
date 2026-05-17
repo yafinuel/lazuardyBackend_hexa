@@ -14,7 +14,7 @@ class ProcessPaymentSuccessAction
 
     public function execute(array $payloadRaw): void
     {
-        Log::info('Processing payment callback with payloadRaw:', $payloadRaw);
+        // Log::info('Processing payment callback with payloadRaw:', $payloadRaw);
 
         $data = [
             'status' => PaymentStatusEnum::COMPLETED,

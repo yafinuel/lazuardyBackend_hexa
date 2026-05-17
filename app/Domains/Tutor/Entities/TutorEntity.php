@@ -30,6 +30,7 @@ class TutorEntity{
         public ?int $salary,
         public ?string $description,
         public ?string $bankCode,
+        public ?string $accountHolderName,
         public ?string $accountNumber,
         public ?array $learningMethod,
         public ?string $status,

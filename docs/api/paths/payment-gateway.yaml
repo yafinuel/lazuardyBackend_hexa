@@ -106,3 +106,82 @@ orderPackage:
             example:
               message: "Gagal melakukan checkout: Gagal membuat invoice: Invalid input data"
               exception: "Exception"
+
+payoutRequest:
+  post:
+    tags:
+      - Payment Gateway
+    security:
+      - bearerAuth: []
+    summary: Permintaan pencairan saldo oleh tutor
+    operationId: payoutRequest
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [amount, bank_account_id]
+            properties:
+              amount:
+                type: number
+                format: float
+                example: 500000
+              bank_account_id:
+                type: string
+                example: "12345678"
+              note:
+                type: string
+                example: "Pencairan saldo bulan Mei"
+    responses:
+      '200':
+        description: Permintaan payout berhasil dibuat
+        content:
+          application/json:
+            example:
+              status: success
+              data:
+                payout_id: 1
+                status: pending
+      '400':
+        description: Validasi request gagal
+      '401':
+        description: Unauthorized
+      '403':
+        description: Forbidden
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+payoutApprovalFromAdmin:
+  post:
+    tags:
+      - Payment Gateway
+    security:
+      - bearerAuth: []
+    summary: Approval payout oleh admin
+    operationId: payoutApprovalFromAdmin
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [payout_id, approved]
+            properties:
+              payout_id:
+                type: integer
+                example: 1
+              approved:
+                type: boolean
+                example: true
+    responses:
+      '200':
+        description: Approval berhasil
+      '401':
+        description: Unauthorized
+      '403':
+        description: Forbidden
+      '404':
+        description: Payout tidak ditemukan
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

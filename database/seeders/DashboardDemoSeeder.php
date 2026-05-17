@@ -56,7 +56,10 @@ class DashboardDemoSeeder extends Seeder
         Tutor::create([
             'user_id' => $tutorUser->id,
             'education' => [['level' => 'S1', 'major' => 'Pendidikan Matematika']],
-            'salary' => 0,
+            'salary' => 100000,
+            'bank_code' => 'ID_ALLO',
+            'account_holder_name' => 'FETCH_HOLDER_NAME',
+            'account_number' => '1234567890',
             'description' => 'Tutor demo untuk pengujian dashboard schedule.',
             'learning_method' => ['online', 'offline'],
             'status' => TutorStatusEnum::VERIFIED,

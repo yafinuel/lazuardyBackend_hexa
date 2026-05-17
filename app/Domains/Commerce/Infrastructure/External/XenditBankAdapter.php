@@ -143,7 +143,7 @@ class XenditBankAdapter implements XenditBankPort
     }
 
     public function createPayout(
-        string $externalId,
+        string $referenceId,
         int $amount,
         string $bankCode,
         string $accountNumber,
@@ -152,8 +152,9 @@ class XenditBankAdapter implements XenditBankPort
         string $description = 'Pembayaran gaji tutor'
     ): array
     {
+        
         $params = [
-            'reference_id' => $externalId,
+            'reference_id' => $referenceId,
             'channel_code' => $bankCode,
             'channel_properties' => [
                 'account_number' => $accountNumber,
@@ -168,16 +169,17 @@ class XenditBankAdapter implements XenditBankPort
         ];
 
         try {
-            $idempotencyKey = $externalId;
+
+            $idempotencyKey = $referenceId;
             
             $payout = $this->apiInstance->createPayout($idempotencyKey, null, new CreatePayoutRequest($params));
 
             return [
                 'xendit_id' => $payout->getId(),
                 'status' => $payout->getStatus(),
-                'reference_id' => $payout->getReferenceId(),
-                'amount' => $payout->getAmount(),
+                'payload_raw' => $payout->jsonSerialize()
             ];
+
         } catch (XenditSdkException $e) {
             $error = json_decode(json_encode($e->getFullError()), true);
             Log::error('Xendit Payout Create Failed', $error ?: ['message' => $e->getMessage()]);

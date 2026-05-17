@@ -36,6 +36,7 @@ class EloquentTutorRepository implements TutorRepositoryInterface
             salary: $tutor->salary,
             role: $user->role?->displayName(),
             description: $tutor->description,
+            accountHolderName: $tutor->account_holder_name,
             bankCode: $tutor->bank_code,
             accountNumber: $tutor->account_number,
             learningMethod: $tutor->learning_method,
@@ -121,6 +122,7 @@ class EloquentTutorRepository implements TutorRepositoryInterface
 
                 description: $tutor->description,
                 bankCode: $tutor->bank_code,
+                accountHolderName: $tutor->account_holder_name,
                 accountNumber: $tutor->account_number,
                 learningMethod: $tutor->learning_method,
                 status: $tutor->status?->value,

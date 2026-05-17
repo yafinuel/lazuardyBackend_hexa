@@ -277,3 +277,150 @@ getTutorReviewsAsStudent:
         $ref: '../components/responses.yaml#/ValidationError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+
+updateReview:
+  patch:
+    tags:
+      - Review
+    summary: Mengubah review milik student yang sedang login
+    description: Endpoint untuk mengupdate/mengubah review yang telah dibuat. Hanya student pemilik review yang bisa mengubahnya.
+    security:
+      - bearerAuth: []
+    operationId: updateReview
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - review_id
+            properties:
+              review_id:
+                type: integer
+                minimum: 1
+                example: 9
+                description: ID review yang akan diubah.
+              rate:
+                type: number
+                minimum: 0
+                maximum: 5
+                nullable: true
+                example: 4.5
+                description: Nilai rating review (opsional).
+              comment:
+                type: string
+                nullable: true
+                maxLength: 1000
+                example: Tutor sangat membantu dan jelas menjelaskan materi.
+                description: Komentar review (opsional).
+          example:
+            review_id: 9
+            rate: 4.5
+            comment: Tutor sangat membantu dan jelas menjelaskan materi.
+    responses:
+      '200':
+        description: Review berhasil diubah
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: success
+                message:
+                  type: string
+                  example: Review updated successfully
+            example:
+              status: success
+              message: Review updated successfully
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: 'Unauthenticated.'
+      '403':
+        description: Forbidden - User bukan pemilik review atau tidak memiliki akses
+        content:
+          application/json:
+            example:
+              status: failed
+              message: 'Unauthorized to update this review'
+      '404':
+        description: Review tidak ditemukan
+        content:
+          application/json:
+            example:
+              message: 'Not Found'
+      '422':
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: The given data was invalid.
+              errors:
+                review_id:
+                  - The review id field is required.
+                rate:
+                  - The rate must be between 0 and 5.
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+deleteReview:
+  delete:
+    tags:
+      - Review
+    summary: Menghapus review milik student yang sedang login
+    description: Endpoint untuk menghapus review yang telah dibuat. Hanya student pemilik review yang bisa menghapusnya.
+    security:
+      - bearerAuth: []
+    operationId: deleteReview
+    parameters:
+      - name: reviewId
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          example: 9
+        description: ID review yang akan dihapus.
+    responses:
+      '200':
+        description: Review berhasil dihapus
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: success
+                message:
+                  type: string
+                  example: Review deleted successfully
+            example:
+              status: success
+              message: Review deleted successfully
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: 'Unauthenticated.'
+      '403':
+        description: Forbidden - User bukan pemilik review
+        content:
+          application/json:
+            example:
+              status: failed
+              message: 'Unauthorized to delete this review'
+      '404':
+        description: Review tidak ditemukan
+        content:
+          application/json:
+            example:
+              message: 'Not Found'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

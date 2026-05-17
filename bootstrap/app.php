@@ -3,6 +3,7 @@
 use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\CheckSanction;
 use App\Http\Middleware\CheckVerifiedTutor;
+use App\Http\Middleware\VerifyXenditCallbackToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => CheckRole::class,
             'verified.tutor' => CheckVerifiedTutor::class,
             'check.sanction' => CheckSanction::class,
+            'verify.xendit.callback.token' => VerifyXenditCallbackToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -78,6 +78,10 @@ paths:
     $ref: './paths/payment-gateway.yaml#/validateBankAccount'
   /package/order:
     $ref: './paths/payment-gateway.yaml#/orderPackage'
+  /tutor/take-money:
+    $ref: './paths/payment-gateway.yaml#/payoutRequest'
+  /admin/payout/approval:
+    $ref: './paths/payment-gateway.yaml#/payoutApprovalFromAdmin'
 
   /getPackages:
     $ref: './paths/package.yaml#/getPackages'
@@ -143,6 +147,8 @@ paths:
     $ref: './paths/schedule.yaml#/getTutorSchedulesByDay'
   /tutor/schedules:
     $ref: './paths/schedule.yaml#/getFilteredSchedulesByTutorId'
+  /schedules:
+    $ref: './paths/schedule.yaml#/getSchedulesByUserId'
   /schedule/takeMeeting:
     $ref: './paths/schedule.yaml#/takeMeeting'
   /student/schedule/mark-as-complete:
@@ -163,6 +169,10 @@ paths:
     $ref: './paths/review.yaml#/createReview'
   /student/tutor-review:
     $ref: './paths/review.yaml#/getTutorReviewsAsStudent'
+  /student/review/update:
+    $ref: './paths/review.yaml#/updateReview'
+  /student/review/{reviewId}/delete:
+    $ref: './paths/review.yaml#/deleteReview'
 
 components:
   securitySchemes:

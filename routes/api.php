@@ -42,7 +42,11 @@ Route::post('/register/parent', [AuthController::class, 'parentRegister']);
 // Finance
 Route::get('/getBankList', [PaymentGatewayController::class, 'getBankList']);
 Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateBankAccount']);
-Route::post('/xendit/callback', [PaymentGatewayController::class, 'handlePaymentCallback']);
+
+Route::middleware('verify.xendit.callback.token')->group(function () {
+    Route::post('/xendit/callback', [PaymentGatewayController::class, 'handlePaymentCallback']);
+    Route::post('/xendit/payout-callback', [PaymentGatewayController::class, 'handlePayoutCallback']);
+});
 
 // Class
 Route::get('/jenjang', [ClassController::class, 'getClassLevels']);
@@ -86,6 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/schedule/cancel', [ScheduleController::class, 'cancelSchedule']);
     Route::get('/reports', [PresenceController::class, 'getPresenceByUserId']);
     Route::get('/schedules', [ScheduleController::class, 'getSchedulesByUserId']);
+    Route::post('/admin/payout/approval', [PaymentGatewayController::class, 'payoutApprovalFromAdmin']);
     
     Route::middleware('role:' . RoleEnum::STUDENT->value)->group(function (){
         Route::get('/student/biodata', [StudentController::class, 'getStudentById']);
@@ -102,6 +107,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/student/review/create', [ReviewController::class, 'createReview']);
         Route::get('/student/tutor-review', [ReviewController::class, 'getTutorReviewsAsStudent']);
         Route::patch('/student/review/update', [ReviewController::class, 'updateReview']);
+        Route::delete('/student/review/{reviewId}/delete', [ReviewController::class, 'deleteReview']);
 
         // Order
         Route::post('/package/order', [PaymentGatewayController::class, 'orderPackage']);
@@ -122,7 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/meTutor', [TutorController::class, 'getTutorById']);
         Route::put('/tutor/profile', [TutorController::class, 'updateBiodata']);
         Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
-        
+        Route::post('/tutor/take-money', [PaymentGatewayController::class, 'payoutRequest']);
     });
     Route::middleware('role:'. RoleEnum::PARENT->value)->group(function (){
         Route::get('/parent/dashboard/homepage', [DashboardController::class, 'parentHomepage']);

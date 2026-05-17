@@ -20,6 +20,7 @@ return new class extends Migration
             $table->json('education')->nullable();
             $table->integer('salary')->default(0);
             $table->longText('description')->nullable();
+            $table->string('account_holder_name')->nullable();
             $table->string('bank_code')->nullable();
             $table->string('account_number')->nullable();
             $table->json('learning_method')->nullable();
