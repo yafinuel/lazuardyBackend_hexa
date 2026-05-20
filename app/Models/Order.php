@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Shared\Enums\PaymentStatusEnum;
+use App\Shared\Enums\OrderStatusEnum;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
@@ -15,7 +15,7 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'status' => PaymentStatusEnum::class,
+        'status' => OrderStatusEnum::class,
     ];
 
     public function user()

@@ -43,6 +43,7 @@ Route::post('/register/parent', [AuthController::class, 'parentRegister']);
 Route::get('/getBankList', [PaymentGatewayController::class, 'getBankList']);
 Route::post('/validateBankAccount', [PaymentGatewayController::class, 'validateBankAccount']);
 
+
 Route::middleware('verify.xendit.callback.token')->group(function () {
     Route::post('/xendit/callback', [PaymentGatewayController::class, 'handlePaymentCallback']);
     Route::post('/xendit/payout-callback', [PaymentGatewayController::class, 'handlePayoutCallback']);

@@ -39,11 +39,7 @@ class EloquentStudentRepository implements StudentRepositoryInterface
 
     public function createStudent(int $userId, array $studentData): int
     {
-        $student = Student::create([
-            'user_id' => $userId,
-            'session' => $studentData['session'],
-            'class_id' => $studentData['class_id'],
-        ]);
+        $student = Student::create($studentData + ['user_id' => $userId]);
 
         return $student->user_id;
     }

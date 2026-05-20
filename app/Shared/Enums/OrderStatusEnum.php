@@ -2,15 +2,15 @@
 
 namespace App\Shared\Enums;
 
-enum PaymentStatusEnum: string
+enum OrderStatusEnum: string
 {
-    case PENDING = 'pending';
-    case PAID = 'paid';
-    case EXPIRED = 'expired';
-    case FAILED = 'failed';
-
+    case UNPAID = 'unpaid';
+    case COMPLETED = 'completed';
+    case CANCELLED = 'cancelled';
+    
     public static function list() : array 
     {
         return array_map(fn($case) => $case->value, self::cases());
     }
+
 }

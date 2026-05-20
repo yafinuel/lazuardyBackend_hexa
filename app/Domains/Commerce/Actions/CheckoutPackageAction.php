@@ -6,6 +6,7 @@ use App\Domains\Commerce\Helpers\CommerceHelper;
 use App\Domains\Commerce\Ports\CommerceRepositoryInterface;
 use App\Domains\Commerce\Ports\CommerceServicePort;
 use App\Domains\Commerce\Ports\XenditBankPort;
+use App\Shared\Enums\OrderStatusEnum;
 use App\Shared\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,7 @@ class CheckoutPackageAction
                 userId: $userId,
                 orderNumber: $orderNumber,
                 amount: $totalPrice,
-                status: PaymentStatusEnum::PENDING
+                status: OrderStatusEnum::UNPAID
             );
 
             $orderItems = $this->repository->createOrderItems(

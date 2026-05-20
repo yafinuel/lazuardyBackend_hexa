@@ -7,15 +7,16 @@ use App\Domains\Commerce\Entities\PaymentEntity;
 use App\Domains\Commerce\Entities\PayoutEntity;
 use App\Domains\Commerce\Ports\CommerceRepositoryInterface;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Payout;
+use App\Shared\Enums\OrderStatusEnum;
 use App\Shared\Enums\PaymentStatusEnum;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class EloquentCommerceRepository implements CommerceRepositoryInterface
 {
-    public function createOrder(int $userId, string $orderNumber, int $amount, PaymentStatusEnum $status): Order
+    public function createOrder(int $userId, string $orderNumber, int $amount, OrderStatusEnum $status): Order
     {
         return Order::create([
             'user_id' => $userId,
@@ -48,6 +49,8 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
     {
         $payment = Payment::where('external_id',$externalId)->firstOrFail();
         $payment->update($data);
+        $status = $payment->status instanceof PaymentStatusEnum ? $payment->status : PaymentStatusEnum::tryFrom($payment->status);
+
         return new PaymentEntity(
             id: $payment->id,
             orderId: $payment->order_id,
@@ -55,7 +58,7 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
             paymentMethod: $payment->payment_method,
             paymentChannel: $payment->payment_channel,
             amount: $payment->amount,
-            status: $payment->status,
+            status: $status,
             checkoutUrl: $payment->checkout_url,
             paidAt: $payment->paid_at,
         );
@@ -176,6 +179,30 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
             accountHolderName: $result->account_holder_name,
             accountNumber: $result->account_number,
             status: $result->status
+        );
+    }
+
+    public function getPaymentByExternalId(string $externalId): ?PaymentEntity
+    {
+        $payment = Payment::where('external_id', $externalId)->first();
+        Log::info("Payment found: " . ($payment ? $payment->id : 'No payment found for external_id: ' . $externalId));
+        
+        if (!$payment) {
+            return null;
+        }
+
+        $status = $payment->status instanceof PaymentStatusEnum ? $payment->status : PaymentStatusEnum::tryFrom($payment->status);
+
+        return new PaymentEntity(
+            id: $payment->id,
+            orderId: $payment->order_id,
+            externalId: $payment->external_id,
+            paymentMethod: $payment->payment_method,
+            paymentChannel: $payment->payment_channel,
+            amount: $payment->amount,
+            status: $status,
+            checkoutUrl: $payment->checkout_url,
+            paidAt: $payment->paid_at,
         );
     }
 }

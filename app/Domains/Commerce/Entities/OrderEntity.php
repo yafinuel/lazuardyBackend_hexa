@@ -2,7 +2,7 @@
 
 namespace App\Domains\Commerce\Entities;
 
-use App\Shared\Enums\PaymentStatusEnum;
+use App\Shared\Enums\OrderStatusEnum;
 
 class OrderEntity
 {
@@ -11,6 +11,6 @@ class OrderEntity
         public ?int $userId = null,
         public ?string $orderNumber = null,
         public ?int $totalAmount = null,
-        public ?PaymentStatusEnum $status = null,
+        public ?OrderStatusEnum $status = null,
     ) {}
 }

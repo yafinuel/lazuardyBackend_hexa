@@ -10,6 +10,7 @@ use App\Domains\OtpManager\Actions\VerifyOtpAction;
 use App\Domains\Schedule\Actions\CreateTutorAvailabilityScheduleAction;
 use App\Domains\Subject\Actions\CreateTutorSubjectAction;
 use App\Domains\Tutor\Actions\CreateTutorAction;
+use App\Domains\Student\Actions\CreateStudentAction;
 use App\Domains\User\Actions\CreateUserAction;
 use App\Domains\User\Actions\ResetPasswordAction;
 use App\Models\ParentModel;
@@ -24,6 +25,7 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
 {
     public function __construct(
         protected CreateUserAction $createUserAction,
+        protected CreateStudentAction $createStudentAction,
         protected CreateTutorAction $createTutorAction,
         protected CreateTutorSubjectAction $createTutorSubjectAction,
         protected CreateTutorAvailabilityScheduleAction $createTutorAvailibilityScheduleAction,
@@ -74,7 +76,7 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
         DB::beginTransaction();
         try {
             $user = $this->createUserAction->execute($userData);
-            $this->createTutorAction->execute($user->id, $studentData);
+            $this->createStudentAction->execute($user->id, $studentData);
             DB::commit();
             return $user->id;
         } catch (Exception $e) {

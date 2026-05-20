@@ -167,32 +167,4 @@ class PaymentGatewayController extends Controller
             'message' => 'Callback processed successfully'
         ]);
     }
-
-    // public function handlePayoutCallback(
-    //     Request $request, 
-    //     CallbackSuccessHandlePayoutAction $successAction, 
-    //     CallbackFailedHandlePayoutAction $failedAction
-    // )
-    // {
-    //     $data = $request->all();
-
-    //     Log::info("Payout callback received for payout ID: " . $data['id'] . " with status: " . $data['status']);
-
-    //     switch ($data['status']) {
-    //         case 'SUCCEEDED':
-    //             $successAction->execute($data);
-    //             break;
-    //         case 'FAILED':
-    //             $failedAction->execute($data);
-    //             break;
-    //         default:
-    //             Log::info("Unknown payout status received for payout ID: " . $data['id'] . " with status: " . $data['status']);
-    //             break;
-    //     }
-
-    //     return response()->json([
-    //         'status' => 'success',
-    //         'message' => 'Payout callback received'
-    //     ]);
-    // }
 }

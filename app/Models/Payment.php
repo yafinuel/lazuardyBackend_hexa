@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Shared\Enums\PaymentStatusEnum;
 use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
@@ -22,6 +23,7 @@ class Payment extends Model
     protected $casts = [
         'payload_raw' => 'array',
         'paid_at' => 'datetime',
+        'status' => PaymentStatusEnum::class,
     ];
 
     public function order()

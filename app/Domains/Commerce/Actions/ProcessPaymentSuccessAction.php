@@ -4,9 +4,9 @@ namespace App\Domains\Commerce\Actions;
 
 use App\Domains\Commerce\Ports\CommerceRepositoryInterface;
 use App\Domains\Commerce\Ports\CommerceServicePort;
+use App\Shared\Enums\OrderStatusEnum;
 use App\Shared\Enums\PaymentStatusEnum;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class ProcessPaymentSuccessAction
 {
@@ -14,10 +14,16 @@ class ProcessPaymentSuccessAction
 
     public function execute(array $payloadRaw): void
     {
-        // Log::info('Processing payment callback with payloadRaw:', $payloadRaw);
+        $payment = $this->repository->getPaymentByExternalId($payloadRaw['external_id']);
+
+        if (!$payment) {
+            return;
+        } elseif ($payment->status !== PaymentStatusEnum::PENDING) {
+            return;
+        }
 
         $data = [
-            'status' => PaymentStatusEnum::COMPLETED,
+            'status' => PaymentStatusEnum::PAID,
             'payment_method' => $payloadRaw['payment_method'] ?? null,
             'paid_at' => isset($payloadRaw['paid_at']) ? Carbon::parse($payloadRaw['paid_at']) : null,
             'payment_channel' => $payloadRaw['payment_channel'] ?? null,
@@ -25,7 +31,7 @@ class ProcessPaymentSuccessAction
         ];
 
         $orderData = [
-            'status' => PaymentStatusEnum::COMPLETED,
+            'status' => OrderStatusEnum::COMPLETED,
         ];
 
         $payment = $this->repository->updatePaymentByExternalId($payloadRaw['external_id'], $data);

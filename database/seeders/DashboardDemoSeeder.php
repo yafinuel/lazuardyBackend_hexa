@@ -40,6 +40,12 @@ class DashboardDemoSeeder extends Seeder
             'role' => RoleEnum::PARENT,
         ]);
 
+        User::factory()->create([
+            'name' => 'Demo Admin',
+            'email' => 'demo.admin@example.com',
+            'role' => RoleEnum::ADMIN,
+        ]);
+
         $studentClassId = ClassModel::where('level', 'sd')->orderBy('id')->value('id');
         $subject = Subject::where('class_id', $studentClassId)->orderBy('id')->first();
 
