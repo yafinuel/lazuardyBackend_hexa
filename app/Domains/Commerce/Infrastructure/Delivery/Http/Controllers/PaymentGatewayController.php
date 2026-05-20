@@ -6,6 +6,7 @@ use App\Domains\Commerce\Actions\CallbackFailedHandlePayoutAction;
 use App\Domains\Commerce\Actions\CallbackSuccessHandlePayoutAction;
 use App\Domains\Commerce\Actions\CheckoutPackageAction;
 use App\Domains\Commerce\Actions\GetBankListAction;
+use App\Domains\Commerce\Actions\GetPayoutHistoryAction;
 use App\Domains\Commerce\Actions\ProcessApprovedPayoutAction;
 use App\Domains\Commerce\Actions\ProcessPaymentExpiredAction;
 use App\Domains\Commerce\Actions\ProcessPaymentSuccessAction;
@@ -165,6 +166,18 @@ class PaymentGatewayController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Callback processed successfully'
+        ]);
+    }
+
+    public function getPayoutHistory(Request $request, GetPayoutHistoryAction $action)
+    {
+        $userId = $request->user()->id;
+
+        $payouts = $action->execute($userId);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $payouts
         ]);
     }
 }

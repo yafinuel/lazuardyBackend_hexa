@@ -124,11 +124,12 @@ Route::middleware('auth:sanctum')->group(function () {
             
             Route::put('/tutor/teaching-profile', [TutorController::class, 'updateTeachingProfile']);
             Route::get('/tutor/review', [ReviewController::class, 'getTutorReviewsAsTutor']);
+            Route::get('/tutor/payout/history', [PaymentGatewayController::class, 'getPayoutHistory']);
+            Route::post('/tutor/take-money', [PaymentGatewayController::class, 'payoutRequest']);
         });
         Route::get('/meTutor', [TutorController::class, 'getTutorById']);
         Route::put('/tutor/profile', [TutorController::class, 'updateBiodata']);
         Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
-        Route::post('/tutor/take-money', [PaymentGatewayController::class, 'payoutRequest']);
     });
     
     Route::middleware('role:'. RoleEnum::PARENT->value)->group(function (){

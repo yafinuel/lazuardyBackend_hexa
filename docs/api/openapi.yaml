@@ -82,6 +82,8 @@ paths:
     $ref: './paths/payment-gateway.yaml#/payoutRequest'
   /admin/payout/approval:
     $ref: './paths/payment-gateway.yaml#/payoutApprovalFromAdmin'
+  /tutor/payout/history:
+    $ref: './paths/payment-gateway.yaml#/getPayoutHistory'
 
   /getPackages:
     $ref: './paths/package.yaml#/getPackages'

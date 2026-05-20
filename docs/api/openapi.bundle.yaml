@@ -590,6 +590,7 @@ paths:
                 - description
                 - date_of_birth
                 - telephone_number
+                - account_holder_name
                 - bank_code
                 - account_number
                 - province
@@ -606,52 +607,47 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: tutor@example.com
+                  description: Alamat email tutor
                 password:
                   type: string
-                  format: password
-                  example: password123
+                  description: Password minimal 8 karakter
                 name:
                   type: string
-                  example: Lazuardy Tutor
+                  description: Nama lengkap tutor
                 gender:
                   type: string
-                  enum:
-                    - male
-                    - female
-                  example: male
+                  description: Jenis kelamin (gunakan enum yang sesuai)
                 description:
                   type: string
-                  example: Saya adalah guru matematika berpengalaman.
+                  description: Deskripsi profil / bio tutor
                 date_of_birth:
                   type: string
                   format: date
-                  example: '1995-01-01'
+                  description: Tanggal lahir (YYYY-MM-DD)
                 telephone_number:
                   type: string
-                  example: '08123456789'
+                  description: Nomor telepon
+                account_holder_name:
+                  type: string
+                  description: Nama pemilik rekening
                 bank_code:
                   type: string
-                  example: ID_BSI
+                  description: 'Kode bank (contoh: ID_BSI)'
                 account_number:
                   type: string
-                  example: '7123456789'
+                  description: Nomor rekening bank
                 profile_photo:
                   type: string
                   format: binary
-                  description: Upload foto profil (jpg/png/jpeg/svg/webp)
+                  description: Foto profil (opsional)
                 province:
                   type: string
-                  example: Jawa Timur
                 regency:
                   type: string
-                  example: Malang
                 district:
                   type: string
-                  example: Lowokwaru
                 subdistrict:
                   type: string
-                  example: Tulusrejo
                 google_id:
                   type: string
                   nullable: true
@@ -660,38 +656,38 @@ paths:
                   nullable: true
                 subject_id:
                   type: integer
-                  example: 1
+                  description: ID mata pelajaran yang diajar
                 learning_method:
                   type: array
                   items:
                     type: string
-                  example:
-                    - online
-                    - offline
+                  description: Metode pembelajaran (mis. online, offline)
                 schedules:
                   type: array
-                  description: Kirim sebagai array of objects
                   items:
                     type: object
+                    required:
+                      - day
+                      - time
                     properties:
                       day:
                         type: string
-                        example: Monday
+                        description: Hari ketersediaan (mis. Monday)
                       time:
                         type: string
-                        example: '14:00'
+                        description: Waktu dalam format HH:MM
                 curriculum_vitae:
                   type: string
                   format: binary
-                  description: Upload file PDF
+                  description: CV dalam format PDF
                 id_card:
                   type: string
                   format: binary
-                  description: Upload file PDF/JPG/PNG
+                  description: KTP atau identitas lain (pdf/jpg/png)
                 certificate:
                   type: string
                   format: binary
-                  description: Upload file PDF
+                  description: Sertifikat (PDF)
       responses:
         '200':
           description: Berhasil mendaftar
@@ -945,6 +941,95 @@ paths:
                 status: error
                 message: Terjadi kesalahan pada server saat memproses approval payout
                 debug_error: Exception message or database error details
+  /tutor/payout/history:
+    get:
+      tags:
+        - Payment Gateway
+      security:
+        - bearerAuth: []
+      summary: Mendapatkan riwayat payout untuk tutor (terpaginate)
+      operationId: getPayoutHistory
+      description: Mengembalikan daftar payout yang diminta oleh tutor. Mendukung filter status dan pagination.
+      parameters:
+        - name: status
+          in: query
+          description: 'Filter status payout (contoh: pending, success, failed)'
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Nomor halaman (pagination)
+          schema:
+            type: integer
+            default: 10
+        - name: per_page
+          in: query
+          description: Jumlah item per halaman (pagination)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Daftar payout berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      per_page:
+                        type: integer
+                        example: 10
+                      total:
+                        type: integer
+                        example: 42
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            payout_number:
+                              type: string
+                              example: PAYOUT-202605-0001
+                            amount:
+                              type: number
+                              format: float
+                              example: 500000
+                            bank_code:
+                              type: string
+                              example: ID_BSI
+                            account_holder_name:
+                              type: string
+                              example: Budi
+                            account_number:
+                              type: string
+                              example: '12345678'
+                            status:
+                              type: string
+                              example: pending
+                            xendit_id:
+                              type: string
+                              nullable: true
+                            created_at:
+                              type: string
+                              format: date-time
+        '401':
+          description: Unauthorized - Token tidak valid atau tidak ada
+        '403':
+          description: Forbidden - Hanya tutor yang dapat mengakses endpoint ini
+        '500':
+          description: Internal Server Error
   /getPackages:
     get:
       tags:

@@ -158,6 +158,71 @@ payoutRequest:
               message: "Terjadi kesalahan pada server saat memproses payout"
               debug_error: "Exception message or database error details"
 
+getPayoutHistory:
+  get:
+    tags:
+      - Payment Gateway
+    security:
+      - bearerAuth: []
+    summary: Mendapatkan riwayat payout untuk tutor (terpaginate)
+    operationId: getPayoutHistory
+    description: "Mengembalikan daftar payout yang diminta oleh tutor. Mendukung filter status dan pagination."
+    parameters:
+      - name: status
+        in: query
+        description: "Filter status payout (contoh: pending, success, failed)"
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: "Nomor halaman (pagination)"
+        schema:
+          type: integer
+          default: 10
+      - name: per_page
+        in: query
+        description: "Jumlah item per halaman (pagination)"
+        schema:
+          type: integer
+          default: 10
+    responses:
+      '200':
+        description: Daftar payout berhasil diambil
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: success
+                data:
+                  type: object
+                  properties:
+                    current_page: { type: integer, example: 1 }
+                    per_page: { type: integer, example: 10 }
+                    total: { type: integer, example: 42 }
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id: { type: integer, example: 1 }
+                          payout_number: { type: string, example: "PAYOUT-202605-0001" }
+                          amount: { type: number, format: float, example: 500000 }
+                          bank_code: { type: string, example: "ID_BSI" }
+                          account_holder_name: { type: string, example: "Budi" }
+                          account_number: { type: string, example: "12345678" }
+                          status: { type: string, example: "pending" }
+                          xendit_id: { type: string, nullable: true }
+                          created_at: { type: string, format: date-time }
+      '401':
+        description: Unauthorized - Token tidak valid atau tidak ada
+      '403':
+        description: Forbidden - Hanya tutor yang dapat mengakses endpoint ini
+      '500':
+        description: Internal Server Error
+
 payoutApprovalFromAdmin:
   post:
     tags:

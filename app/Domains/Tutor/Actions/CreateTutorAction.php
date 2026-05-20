@@ -4,6 +4,7 @@ namespace App\Domains\Tutor\Actions;
 
 use App\Domains\Tutor\Ports\TutorRepositoryInterface;
 use App\Shared\Enums\TutorStatusEnum;
+use Illuminate\Support\Facades\Log;
 
 class CreateTutorAction
 {
@@ -18,7 +19,10 @@ class CreateTutorAction
             'account_number' => $data['account_number'] ?? null,
             'learning_method' => $data['learning_method'] ?? null,
             'status' => $data['status'] ?? TutorStatusEnum::PENDING,
+            'account_holder_name' => $data['account_holder_name'] ?? null,
         ];
+
+        Log::info($data);
         return $this->repository->createTutor($userId, $filter);
     }
 }

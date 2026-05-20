@@ -35,6 +35,7 @@ class TutorRegisterPageAction
 
         $tutorData = [
             'description' => $data['description'],
+            'account_holder_name' => $data['account_holder_name'],
             'bank_code' => $data['bank_code'],
             'account_number' => $data['account_number'],
             'learning_method' => $data['learning_method'],

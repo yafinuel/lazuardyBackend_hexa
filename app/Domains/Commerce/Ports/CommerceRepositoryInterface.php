@@ -10,6 +10,7 @@ use App\Models\Payment;
 use App\Models\Payout;
 use App\Shared\Enums\OrderStatusEnum;
 use App\Shared\Enums\PaymentStatusEnum;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 interface CommerceRepositoryInterface
@@ -27,4 +28,5 @@ interface CommerceRepositoryInterface
     public function getPayoutByPayoutNumber(string $payoutNumber): ?PayoutEntity;
     public function getPayoutByXenditId(string $xenditId): ?PayoutEntity;
     public function getPaymentByExternalId(string $externalId): ?PaymentEntity;
+    public function getPayoutByTutorId(int $tutorId, array $filters = [], int $page = 10): LengthAwarePaginator;
 }

@@ -27,7 +27,7 @@ class Tutor extends Model
         'status',
         'warning',
         'sanction',
-        'channel_code',
+        'bank_code',
         'account_number',
         'account_holder_name',
     ];

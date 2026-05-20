@@ -251,6 +251,7 @@ class AuthController extends Controller
             'description' => ['required', 'string'],
             'date_of_birth' => ['required', 'date'],
             'telephone_number' => ['required', 'string'],
+            'account_holder_name' => ['required', 'string'],
             'bank_code' => ['required', 'string'],
             'account_number' => ['required', 'string'],
             'profile_photo' => ['nullable', 'file', 'mimes:jpg,png,jpeg,svg,webp'],

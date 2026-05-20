@@ -11,8 +11,11 @@ use App\Models\Payment;
 use App\Models\Payout;
 use App\Shared\Enums\OrderStatusEnum;
 use App\Shared\Enums\PaymentStatusEnum;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+
+use function PHPUnit\Framework\isArray;
 
 class EloquentCommerceRepository implements CommerceRepositoryInterface
 {
@@ -204,5 +207,30 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
             checkoutUrl: $payment->checkout_url,
             paidAt: $payment->paid_at,
         );
+    }
+
+    public function getPayoutByTutorId(int $tutorId, array $filters = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = Payout::where('tutor_id', $tutorId);
+
+        if (isset($filters['status'])) {
+            $statuses = is_array($filters['status']) ? $filters['status'] : [$filters['status']];
+            $query->whereIn('status', $statuses);
+        }
+
+        $payouts = $query->paginate($perPage);
+
+        return $payouts->through(function ($payout) {
+            return new PayoutEntity(
+                id: $payout->id,
+                tutorId: $payout->tutor_id,
+                payoutNumber: $payout->payout_number,
+                amount: $payout->amount,
+                bankCode: $payout->bank_code,
+                accountHolderName: $payout->account_holder_name,
+                accountNumber: $payout->account_number,
+                status: $payout->status
+            );
+        });
     }
 }

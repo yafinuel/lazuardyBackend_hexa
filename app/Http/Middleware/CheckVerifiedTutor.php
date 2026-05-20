@@ -24,17 +24,17 @@ class CheckVerifiedTutor
         $user = $request->user();
         $tutor = $this->getTutorByIdAction->execute($user->id);
 
-        if ($tutor->status == TutorStatusEnum::PENDING->value) {
+        if ($tutor->status == TutorStatusEnum::PENDING) {
             return response()->json([
                 'turor_status' => $tutor->status,
                 'message' => 'Your tutor account is still pending verification. Please wait for the admin to verify your account.',
             ], 403);
-        } else if ($tutor->status == TutorStatusEnum::REJECTED->value) {
+        } else if ($tutor->status == TutorStatusEnum::REJECTED) {
             return response()->json([
                 'turor_status' => $tutor->status,
                 'message' => 'Your tutor account has been rejected. Please contact support for more information.',
             ], 403);
-        } else if ($tutor->status == TutorStatusEnum::VERIFIED->value) {
+        } else if ($tutor->status == TutorStatusEnum::VERIFIED) {
             return $next($request);
         } else {
             return response()->json([
