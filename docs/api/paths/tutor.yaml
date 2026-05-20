@@ -136,7 +136,13 @@ getTutorByCriteria:
                 min_rate: ["The min rate must be at least 0."]
                 max_rate: ["The max rate must be at most 5."]
       '500':
-        $ref: '../components/responses.yaml#/ServerError'
+        description: Internal Server Error - Terjadi kesalahan pada server saat memproses approval aplikasi tutor
+        content:
+          application/json:
+            example:
+              status: "error"
+              message: "Terjadi kesalahan pada server saat memproses approval aplikasi tutor"
+              debug_error: "Exception message or database error details"
 
 updateTeachingProfile:
   put:
@@ -205,3 +211,41 @@ updateTeachingProfile:
               status: "failed"
               message: "Gagal memperbarui profil mengajar"
               debug_error: "Failed to update teaching profile: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'tutor_schedules.tutor_id' in 'where clause'"
+
+adminTutorApplicationApproval:
+  patch:
+    tags:
+      - Tutor
+    security:
+      - bearerAuth: []
+    summary: Approve or reject tutor application (admin)
+    description: Endpoint untuk admin untuk menyetujui atau menolak aplikasi tutor.
+    operationId: adminTutorApplicationApproval
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [tutor_id, decision]
+            properties:
+              tutor_id:
+                type: integer
+                example: 5
+              decision:
+                type: string
+                enum: [approve, reject]
+                example: approve
+    responses:
+      '200':
+        description: Aplikasi tutor berhasil diproses
+      '400':
+        description: Bad request - nilai decision tidak valid
+      '401':
+        description: Unauthorized
+      '403':
+        description: Forbidden
+      '404':
+        description: Tutor not found
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'

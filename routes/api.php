@@ -91,7 +91,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/schedule/cancel', [ScheduleController::class, 'cancelSchedule']);
     Route::get('/reports', [PresenceController::class, 'getPresenceByUserId']);
     Route::get('/schedules', [ScheduleController::class, 'getSchedulesByUserId']);
-    Route::post('/admin/payout/approval', [PaymentGatewayController::class, 'payoutApprovalFromAdmin']);
     
     Route::middleware('role:' . RoleEnum::STUDENT->value)->group(function (){
         Route::get('/student/biodata', [StudentController::class, 'getStudentById']);
@@ -131,8 +130,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
         Route::post('/tutor/take-money', [PaymentGatewayController::class, 'payoutRequest']);
     });
+    
     Route::middleware('role:'. RoleEnum::PARENT->value)->group(function (){
         Route::get('/parent/dashboard/homepage', [DashboardController::class, 'parentHomepage']);
         Route::get('/parent/dashboard/profile-page', [StudentController::class, 'getStudentById']);
+    });
+
+    Route::middleware('role:' . RoleEnum::ADMIN->value)->group(function () {
+        Route::patch('/admin/tutor-application/approval', [TutorController::class, 'approvalTutorApplication']);
+        Route::post('/admin/payout/approval', [PaymentGatewayController::class, 'payoutApprovalFromAdmin']);
     });
 });

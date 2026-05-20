@@ -5,4 +5,5 @@ namespace App\Domains\Tutor\Ports;
 interface TutorServicePort
 {
     public function updateUser(int $userId, array $data): void;
+    public function pushNotificationToUser(int $userId, array $notificationData): void;
 }

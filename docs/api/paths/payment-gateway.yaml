@@ -150,7 +150,13 @@ payoutRequest:
       '403':
         description: Forbidden
       '500':
-        $ref: '../components/responses.yaml#/ServerError'
+        description: Internal Server Error - Terjadi kesalahan pada server saat memproses payout
+        content:
+          application/json:
+            example:
+              status: "error"
+              message: "Terjadi kesalahan pada server saat memproses payout"
+              debug_error: "Exception message or database error details"
 
 payoutApprovalFromAdmin:
   post:
@@ -184,4 +190,10 @@ payoutApprovalFromAdmin:
       '404':
         description: Payout tidak ditemukan
       '500':
-        $ref: '../components/responses.yaml#/ServerError'
+        description: Internal Server Error - Terjadi kesalahan pada server saat approval payout
+        content:
+          application/json:
+            example:
+              status: "error"
+              message: "Terjadi kesalahan pada server saat memproses approval payout"
+              debug_error: "Exception message or database error details"

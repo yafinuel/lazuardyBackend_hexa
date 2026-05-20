@@ -2,9 +2,11 @@
 
 namespace App\Domains\Tutor\Infrastructure\Delivery\Http\Controllers;
 
+use App\Domains\Tutor\Actions\ApproveApplicationTutorAction;
 use App\Domains\Tutor\Actions\GetTutorByCriteria;
 use App\Domains\Tutor\Actions\GetTutorByIdAction;
 use App\Domains\Tutor\Actions\GetTutorFileByUserIdAction;
+use App\Domains\Tutor\Actions\RejectApplicationTutorAction;
 use App\Domains\Tutor\Actions\UpdateTeachingProfileAction;
 use App\Domains\Tutor\Actions\UpdateTutorProfileAction;
 use App\Http\Controllers\Controller;
@@ -120,4 +122,33 @@ class TutorController extends Controller
             ]);
         }
     }
+
+    public function approvalTutorApplication(
+        Request $request,
+        ApproveApplicationTutorAction $approveAction,
+        RejectApplicationTutorAction $rejectAction
+    )
+    {
+        $data = $request->validate([
+            'tutor_id' => ['required', 'integer', 'exists:tutors,user_id'],
+            'decision' => ['required', 'string', 'in:approve,reject'],
+        ]);
+        
+        if($data['decision'] === 'approve') {
+            $approveAction->execute($data['tutor_id']);
+        } else if ($data['decision'] === 'reject') {
+            $rejectAction->execute($data['tutor_id']);
+        } else {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Invalid decision value. Must be either "approve" or "reject".',
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Aplikasi tutor berhasil diproses',
+        ]);
+    }
 }
+

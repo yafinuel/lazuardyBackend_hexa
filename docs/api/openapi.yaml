@@ -113,6 +113,8 @@ paths:
     $ref: './paths/user-profile.yaml#/meAsTutor'
   /getTutorById:
     $ref: './paths/user-profile.yaml#/getTutorById'
+  /admin/tutor-application/approval:
+    $ref: './paths/tutor.yaml#/adminTutorApplicationApproval'
   /tutor/get-my-files:
     $ref: './paths/user-profile.yaml#/getTutorFileByUserId'
   /updateProfilePhoto:

@@ -40,7 +40,7 @@ class EloquentTutorRepository implements TutorRepositoryInterface
             bankCode: $tutor->bank_code,
             accountNumber: $tutor->account_number,
             learningMethod: $tutor->learning_method,
-            status: $tutor->status?->value,
+            status: $tutor->status,
             avgRate: $tutor->reviews_avg_rate ?? null,
             createdAt: $tutor->created_at,
         );
@@ -125,7 +125,7 @@ class EloquentTutorRepository implements TutorRepositoryInterface
                 accountHolderName: $tutor->account_holder_name,
                 accountNumber: $tutor->account_number,
                 learningMethod: $tutor->learning_method,
-                status: $tutor->status?->value,
+                status: $tutor->status,
                 avgRate: $tutor->reviews_avg_rate ?? null,
                 createdAt: $tutor->created_at,
             );

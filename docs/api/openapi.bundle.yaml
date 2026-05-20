@@ -897,7 +897,13 @@ paths:
         '403':
           description: Forbidden
         '500':
-          $ref: '#/components/responses/ServerError'
+          description: Internal Server Error - Terjadi kesalahan pada server saat memproses payout
+          content:
+            application/json:
+              example:
+                status: error
+                message: Terjadi kesalahan pada server saat memproses payout
+                debug_error: Exception message or database error details
   /admin/payout/approval:
     post:
       tags:
@@ -932,7 +938,13 @@ paths:
         '404':
           description: Payout tidak ditemukan
         '500':
-          $ref: '#/components/responses/ServerError'
+          description: Internal Server Error - Terjadi kesalahan pada server saat approval payout
+          content:
+            application/json:
+              example:
+                status: error
+                message: Terjadi kesalahan pada server saat memproses approval payout
+                debug_error: Exception message or database error details
   /getPackages:
     get:
       tags:
@@ -1353,6 +1365,47 @@ paths:
                 status: failed
                 message: Gagal mengambil biodata tutor
                 debug_error: Error message
+  /admin/tutor-application/approval:
+    patch:
+      tags:
+        - Tutor
+      security:
+        - bearerAuth: []
+      summary: Approve or reject tutor application (admin)
+      description: Endpoint untuk admin untuk menyetujui atau menolak aplikasi tutor.
+      operationId: adminTutorApplicationApproval
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tutor_id
+                - decision
+              properties:
+                tutor_id:
+                  type: integer
+                  example: 5
+                decision:
+                  type: string
+                  enum:
+                    - approve
+                    - reject
+                  example: approve
+      responses:
+        '200':
+          description: Aplikasi tutor berhasil diproses
+        '400':
+          description: Bad request - nilai decision tidak valid
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Tutor not found
+        '500':
+          $ref: '#/components/responses/ServerError'
   /tutor/get-my-files:
     get:
       tags:
@@ -1672,7 +1725,13 @@ paths:
                   max_rate:
                     - The max rate must be at most 5.
         '500':
-          $ref: '#/components/responses/ServerError'
+          description: Internal Server Error - Terjadi kesalahan pada server saat memproses approval aplikasi tutor
+          content:
+            application/json:
+              example:
+                status: error
+                message: Terjadi kesalahan pada server saat memproses approval aplikasi tutor
+                debug_error: Exception message or database error details
   /tutor/teaching-profile:
     put:
       tags:

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Tutor\Entities;
 
+use App\Shared\Enums\TutorStatusEnum;
 use Carbon\Carbon;
 
 class TutorEntity{
@@ -33,7 +34,7 @@ class TutorEntity{
         public ?string $accountHolderName,
         public ?string $accountNumber,
         public ?array $learningMethod,
-        public ?string $status,
+        public ?TutorStatusEnum $status,
         public ?float $avgRate,
         public ?Carbon $createdAt,
     ) {}
