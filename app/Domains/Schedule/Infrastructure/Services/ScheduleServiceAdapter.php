@@ -9,6 +9,9 @@ use App\Domains\Schedule\Ports\ScheduleServicePort;
 use App\Domains\Student\Actions\GetStudentByIdAction;
 use App\Domains\Student\Entities\StudentEntity;
 use App\Domains\Student\Ports\StudentRepositoryInterface;
+use App\Domains\Tutor\Actions\GetTutorByIdAction;
+use App\Domains\Tutor\Actions\UpdateTutorByIdAction;
+use App\Domains\Tutor\Entities\TutorEntity;
 use App\Domains\User\Actions\GetUserByIdAction;
 use App\Domains\User\Entities\UserEntity;
 
@@ -20,7 +23,9 @@ class ScheduleServiceAdapter implements ScheduleServicePort
         protected GetStudentByIdAction $getStudentByIdAction,
         protected StudentRepositoryInterface $studentRepository,
         protected GetSchedulesThisMonthByTutorIdAction $getSchedulesThisMonthAction,
-        protected NotificationRepositoryInterface $notificationRepository
+        protected NotificationRepositoryInterface $notificationRepository,
+        protected UpdateTutorByIdAction $updateTutorByIdAction,
+        protected GetTutorByIdAction $getTutorByIdAction,
     ) {}
 
     public function userPenaltySet(int $userId)
@@ -41,6 +46,16 @@ class ScheduleServiceAdapter implements ScheduleServicePort
     public function updateStudent(int $studentId, array $data): void
     {
         $this->studentRepository->update($studentId, $data);
+    }
+
+    public function getTutorById(int $tutorId): TutorEntity
+    {
+        return $this->getTutorByIdAction->execute($tutorId);
+    }
+
+    public function updateTutorById(int $tutorId, array $data):void
+    {
+        $this->updateTutorByIdAction->execute($tutorId, $data);
     }
 
     public function getSchedulesThisMonthByTutorId(int $tutorId, int $paginate = 10)

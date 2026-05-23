@@ -6,6 +6,7 @@ enum ScheduleStatusEnum: string
 {
     case PENDING = "pending";
     case ACTIVE = "active";
+    case REPORTED = "reported";
     case COMPLETED = 'completed';
     case EXPIRED = "expired";
     case CANCELLED = "cancelled";

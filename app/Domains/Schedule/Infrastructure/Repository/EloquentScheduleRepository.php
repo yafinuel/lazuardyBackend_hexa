@@ -10,7 +10,6 @@ use App\Models\Tutor;
 use App\Shared\Enums\ScheduleStatusEnum;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class EloquentScheduleRepository implements ScheduleRepositoryInterface

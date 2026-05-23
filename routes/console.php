@@ -14,6 +14,8 @@ Schedule::command('model:prune', [
     '--model' => [Notification::class],
 ])->daily();
 
+Schedule::command('app:AutoMarkAsComplete')->hourly();
+
 $ensureDirectory = function (string $directory): void {
     if (! File::exists($directory)) {
         File::makeDirectory($directory, 0755, true);

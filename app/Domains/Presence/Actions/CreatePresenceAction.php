@@ -7,6 +7,7 @@ use App\Domains\Presence\Ports\PresenceServicePort;
 use App\Domains\Schedule\Ports\ScheduleRepositoryInterface;
 use App\Shared\Enums\ScheduleStatusEnum;
 use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class CreatePresenceAction
 {
@@ -24,8 +25,12 @@ class CreatePresenceAction
             throw new AuthorizationException('Schedule does not belong to this tutor.');
         }
 
+        if ($schedule->status !== ScheduleStatusEnum::ACTIVE) {
+            throw new ConflictHttpException("Only active schedules can be marked as complete.");
+        }
+
         $this->presenceRepository->createPresence($scheduleId, $tutorId, $schedule->studentId, $topic, $notes);
-        $this->scheduleRepository->updateSchedule($scheduleId, ['status' => ScheduleStatusEnum::COMPLETED]);
+        $this->scheduleRepository->updateSchedule($scheduleId, ['status' => ScheduleStatusEnum::REPORTED]);
 
         $notificationData = [
             'title' => 'Schedule Completed',

@@ -122,7 +122,9 @@ class ScheduleController extends Controller
             'schedule_id' => 'required|integer',
         ]);
 
-        $action->execute($data['schedule_id']);
+        $studentId = $request->user()->id;
+
+        $action->execute($studentId, $data['schedule_id']);
 
         return response()->json([
             'status' => 'success',
