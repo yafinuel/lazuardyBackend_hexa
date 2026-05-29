@@ -3,6 +3,7 @@
 namespace App\Domains\Commerce\Infrastructure\Repository;
 
 use App\Domains\Commerce\Entities\OrderEntity;
+use App\Domains\Commerce\Entities\OrderItemEntity;
 use App\Domains\Commerce\Entities\PaymentEntity;
 use App\Domains\Commerce\Entities\PayoutEntity;
 use App\Domains\Commerce\Ports\CommerceRepositoryInterface;
@@ -14,8 +15,6 @@ use App\Shared\Enums\PaymentStatusEnum;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-
-use function PHPUnit\Framework\isArray;
 
 class EloquentCommerceRepository implements CommerceRepositoryInterface
 {
@@ -69,13 +68,28 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
 
     public function getOrderById(int $orderId): OrderEntity
     {
-        $order = Order::findOrFail($orderId);
+        $order = Order::with('items')->findOrFail($orderId);
+
+        $items = $order->items->map(function ($item) {
+            return new OrderItemEntity(
+                id: $item->id,
+                orderId: $item->order_id,
+                packageId: $item->package_id,
+                qty: $item->qty,
+                price: $item->price,
+                subTotal: ($item->qty ?? 0) * ($item->price ?? 0),
+                createdAt: $item->created_at,
+                updatedAt: $item->updated_at,
+            );
+        })->toArray();
+
         return new OrderEntity(
             id: $order->id,
             userId: $order->user_id,
             orderNumber: $order->order_number,
             totalAmount: $order->total_amount,
             status: $order->status,
+            items: $items,
         );
     }
 

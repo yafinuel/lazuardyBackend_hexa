@@ -76,7 +76,8 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Package
     Route::get('/getPackages', [PackageController::class, 'index']);
-    
+    Route::get('/package/{id}', [PackageController::class, 'getPackageById']);
+
     // Notification
     Route::get('/getNotificationByUserId', [NotificationController::class, 'getNotificationByUserId']);
     
@@ -127,7 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/tutor/payout/history', [PaymentGatewayController::class, 'getPayoutHistory']);
             Route::post('/tutor/take-money', [PaymentGatewayController::class, 'payoutRequest']);
         });
-        Route::get('/meTutor', [TutorController::class, 'getTutorById']);
+        Route::get('/tutor/biodata', [TutorController::class, 'getTutorById']);
         Route::put('/tutor/profile', [TutorController::class, 'updateBiodata']);
         Route::get('/tutor/get-my-files', [TutorController::class, 'getTutorFileByUserId']);
     });

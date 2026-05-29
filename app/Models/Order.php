@@ -16,6 +16,9 @@ class Order extends Model
 
     protected $casts = [
         'status' => OrderStatusEnum::class,
+        'total_amount' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function user()

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Commerce\Helpers;
 
+use App\Domains\Commerce\Entities\OrderItemEntity;
 use App\Domains\Commerce\Infrastructure\Services\CommerceServiceAdapter;
 use Carbon\Carbon;
 
@@ -69,5 +70,11 @@ class CommerceHelper
         }
 
         return $orderItems;
+    }
+
+    public function getTotalSessions(array $orderItems): int
+    {
+
+        return 1;
     }
 }

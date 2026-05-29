@@ -12,5 +12,7 @@ class OrderEntity
         public ?string $orderNumber = null,
         public ?int $totalAmount = null,
         public ?OrderStatusEnum $status = null,
+        public ?OrderItemEntity $items = null,
+        public ?int $totalSessions = null,
     ) {}
 }
