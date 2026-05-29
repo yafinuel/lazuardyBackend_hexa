@@ -175,6 +175,8 @@ paths:
     $ref: './paths/report.yaml#/createTutorReport'
   /tutor/review:
     $ref: './paths/review.yaml#/getTutorReviewsAsTutor'
+  /student/review:
+    $ref: './paths/review.yaml#/getStudentReviews'
   /student/review/create:
     $ref: './paths/review.yaml#/createReview'
   /student/tutor-review:
@@ -183,6 +185,8 @@ paths:
     $ref: './paths/review.yaml#/updateReview'
   /student/review/{reviewId}/delete:
     $ref: './paths/review.yaml#/deleteReview'
+  /payment/history:
+    $ref: './paths/payment-gateway.yaml#/getPaymentHistory'
 
 components:
   securitySchemes:

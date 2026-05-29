@@ -23,21 +23,14 @@ getScheduleById:
           application/json:
             schema:
               $ref: '../components/schemas.yaml#/GetScheduleByIdResponse'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
       '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: "Unauthenticated."
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
       '422':
-        description: Validasi gagal
-        content:
-          application/json:
-            example:
-              message: The given data was invalid.
-              errors:
-                schedule_id:
-                  - The schedule id field is required.
+        $ref: '../components/responses.yaml#/ValidationError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
@@ -85,23 +78,16 @@ cancelSchedule:
                 message:
                   type: string
                   example: Schedule cancelled successfully
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
       '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: "Unauthenticated."
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
       '422':
-        description: Validasi gagal
-        content:
-          application/json:
-            example:
-              message: The given data was invalid.
-              errors:
-                schedule_id:
-                  - The schedule id field is required.
-                reason:
-                  - The reason field is required.
+        $ref: '../components/responses.yaml#/ValidationError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
@@ -144,11 +130,7 @@ cancelScheduleApplication:
                   type: string
                   example: Schedule cancellation application submitted successfully
       '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: "Unauthenticated."
+        $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
         description: Student bukan pemilik schedule ini (AuthorizationException)
         content:
@@ -232,14 +214,7 @@ cancelScheduleApplication:
                   class: App\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction
                   type: '->'
       '422':
-        description: Validasi gagal
-        content:
-          application/json:
-            example:
-              message: The given data was invalid.
-              errors:
-                schedule_id:
-                  - The schedule id field is required.
+        $ref: '../components/responses.yaml#/ValidationError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
@@ -309,12 +284,10 @@ getTutorSchedulesByDay:
                 prev_page_url: null
                 to: 2
                 total: 2
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
       '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: 'Unauthenticated.'
+        $ref: '../components/responses.yaml#/UnauthorizedError'
       '404':
         description: Data tutor tidak ditemukan
         content:
@@ -378,6 +351,14 @@ getFilteredSchedulesByTutorId:
           format: date
           example: '2026-04-21'
         description: Tanggal jadwal yang ingin difilter dalam format Y-m-d.
+      - name: paginate
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 10
+        description: Jumlah data per halaman.
     responses:
       '200':
         description: Berhasil mengambil daftar jadwal tutor berdasarkan filter
@@ -398,13 +379,10 @@ getFilteredSchedulesByTutorId:
                     startTime: '2026-05-08T14:00:00.000000Z'
                     endTime: '2026-05-08T15:00:00.000000Z'
                     status: active
-                    
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
       '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: 'Unauthenticated.'
+        $ref: '../components/responses.yaml#/UnauthorizedError'
       '404':
         description: Data tutor tidak ditemukan
         content:
@@ -417,42 +395,119 @@ getFilteredSchedulesByTutorId:
         $ref: '../components/responses.yaml#/ConflictError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+
 getSchedulesByUserId:
   get:
     tags:
       - Schedule
     security:
       - bearerAuth: []
-    summary: Mengambil daftar jadwal untuk user yang sedang login
+    summary: Mengambil daftar jadwal berdasarkan user yang sedang login
     operationId: getSchedulesByUserId
-    description: Mengambil daftar jadwal (schedules) milik user yang sedang terautentikasi.
+    description: Endpoint ini dapat diambil berdasarkan filter.
+    parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum: [pending, active, completed, expired, cancelled, rejected]
+          example: pending
+        description: Status jadwal yang ingin difilter.
+      - name: learning_method
+        in: query
+        required: false
+        schema:
+          type: string
+          enum: [online, offline]
+          example: online
+        description: Metode pembelajaran yang ingin difilter.
+      - name: student_id
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 1
+        description: ID user student yang ingin difilter. Harus terdaftar di tabel students.
+      - name: subject_id
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 1
+        description: ID mata pelajaran yang ingin difilter.
+      - name: date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2026-05-22'
+        description: Tanggal jadwal yang ingin difilter dalam format Y-m-d.
+      - name: paginate
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          example: 10
+        description: Jumlah data per halaman.
     responses:
       '200':
         description: Berhasil mengambil daftar jadwal
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/StudentScheduleListPayload'
+              $ref: '../components/schemas.yaml#/StudentScheduleResponse'
             example:
-              current_page: 1
-              data: []
-              first_page_url: 'http://localhost:8000/api/schedules?page=1'
-              from: 1
-              last_page: 1
-              last_page_url: 'http://localhost:8000/api/schedules?page=1'
-              links: []
-              next_page_url: null
-              path: 'http://localhost:8000/api/schedules'
-              per_page: 10
-              prev_page_url: null
-              to: 0
-              total: 0
+              status: success
+              data:
+                current_page: 1
+                data:
+                  - id: 1
+                    tutorId: 2
+                    studentId: 1
+                    subjectId: 1
+                    date: '2026-05-22T17:00:00.000000Z'
+                    startTime: '2026-05-30T14:00:00.000000Z'
+                    endTime: '2026-05-30T15:00:00.000000Z'
+                    status: pending
+                    learningMethod: online
+                    address: Google Meet
+                    tutorName: Demo Tutor
+                    subjectName: Matematika
+                    studentName: Demo Student
+                    tutorTelephoneNumber: null
+                    studentTelephoneNumber: null
+                first_page_url: 'http://127.0.0.1:8000/api/schedules?page=1'
+                from: 1
+                last_page: 1
+                last_page_url: 'http://127.0.0.1:8000/api/schedules?page=1'
+                links:
+                  - url: null
+                    label: '&laquo; Previous'
+                    page: null
+                    active: false
+                  - url: 'http://127.0.0.1:8000/api/schedules?page=1'
+                    label: '1'
+                    page: 1
+                    active: true
+                  - url: null
+                    label: 'Next &raquo;'
+                    page: null
+                    active: false
+                next_page_url: null
+                path: 'http://127.0.0.1:8000/api/schedules'
+                per_page: 10
+                prev_page_url: null
+                to: 3
+                total: 3
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
       '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: 'Unauthenticated.'
+        $ref: '../components/responses.yaml#/UnauthorizedError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
@@ -476,19 +531,12 @@ takeMeeting:
               $ref: '../components/schemas.yaml#/CreateMeetingScheduleResponse'
             example:
               status: success
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
       '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: 'Unauthenticated.'
+        $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
-        description: Forbidden - Endpoint hanya untuk role student
-        content:
-          application/json:
-            example:
-              status: failed
-              message: 'This page is Forbidden for tutor'
+        $ref: '../components/responses.yaml#/ForbiddenError'
       '422':
         $ref: '../components/responses.yaml#/ValidationError'
       '409':
@@ -535,28 +583,14 @@ markAsComplete:
                 message:
                   type: string
                   example: Schedule marked as complete successfully
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
       '401':
-        description: Unauthorized
-        content:
-          application/json:
-            example:
-              message: 'Unauthenticated.'
+        $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
-        description: Forbidden - Endpoint hanya untuk role student
-        content:
-          application/json:
-            example:
-              status: failed
-              message: 'This page is Forbidden for tutor'
+        $ref: '../components/responses.yaml#/ForbiddenError'
       '422':
-        description: Validasi gagal
-        content:
-          application/json:
-            example:
-              message: The given data was invalid.
-              errors:
-                schedule_id:
-                  - The schedule id field is required.
+        $ref: '../components/responses.yaml#/ValidationError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 

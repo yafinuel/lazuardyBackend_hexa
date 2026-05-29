@@ -29,4 +29,5 @@ interface CommerceRepositoryInterface
     public function getPayoutByXenditId(string $xenditId): ?PayoutEntity;
     public function getPaymentByExternalId(string $externalId): ?PaymentEntity;
     public function getPayoutByTutorId(int $tutorId, array $filters = [], int $page = 10): LengthAwarePaginator;
+    public function getPaymentByStudentId(int $studentId, int $perPage = 10, int $page = 1): LengthAwarePaginator;
 }

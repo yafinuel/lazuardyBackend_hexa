@@ -7,6 +7,7 @@ use App\Domains\Commerce\Actions\CallbackSuccessHandlePayoutAction;
 use App\Domains\Commerce\Actions\CheckoutPackageAction;
 use App\Domains\Commerce\Actions\GetBankListAction;
 use App\Domains\Commerce\Actions\GetOrderByIdAction;
+use App\Domains\Commerce\Actions\GetPaymentHistoryAction;
 use App\Domains\Commerce\Actions\GetPayoutHistoryAction;
 use App\Domains\Commerce\Actions\ProcessApprovedPayoutAction;
 use App\Domains\Commerce\Actions\ProcessPaymentExpiredAction;
@@ -191,5 +192,16 @@ class PaymentGatewayController extends Controller
             'status' => 'success',
             'data' => $result
         ]);
+    }
+
+    public function getPaymentHistory(Request $request, GetPaymentHistoryAction $action)
+    {
+        $userId = $request->user()->id;
+        $perPage = $request->query('per_page', 10);
+        $page = $request->query('page', 1);
+
+        $result = $action->execute($userId, $perPage, $page);
+
+        return response()->json($result);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Domains\Review\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Review\Actions\CreateReviewAction;
 use App\Domains\Review\Actions\DeleteReviewAction;
+use App\Domains\Review\Actions\FindReviewWithFiltersAction;
 use App\Domains\Review\Actions\ReviewFromStudentPageAction;
 use App\Domains\Review\Actions\UpdateReviewAction;
 use App\Http\Controllers\Controller;
@@ -33,7 +34,7 @@ class ReviewController extends Controller
     public function getTutorReviewsAsStudent(Request $request, ReviewFromStudentPageAction $action)
     {
         $data = $request->validate([
-            'tutor_id' => 'required|integer|exists:tutors,user_id',
+            'tutor_id' => 'nullable|integer|exists:tutors,user_id',
             'min_rating' => 'nullable|integer|min:1|max:5',
             'max_rating' => 'nullable|integer|min:1|max:5',
             'pagination' => 'nullable|integer|min:1',
@@ -89,6 +90,24 @@ class ReviewController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Review updated successfully'
+        ]);
+    }
+
+    public function getStudentReviews(Request $request, FindReviewWithFiltersAction $action)
+    {
+        $data = $request->validate([
+            'tutor_id' => 'nullable|integer|exists:tutors,user_id',
+            'min_rating' => 'nullable|integer|min:1|max:5',
+            'max_rating' => 'nullable|integer|min:1|max:5',
+            'pagination' => 'nullable|integer|min:1',
+        ]);
+
+        $studentId = $request->user()->id;
+        $result = $action->execute(array_merge($data, ['student_id' => $studentId]), $data['pagination'] ?? 10);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $result
         ]);
     }
 }

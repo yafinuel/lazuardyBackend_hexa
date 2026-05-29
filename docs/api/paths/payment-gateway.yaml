@@ -140,6 +140,85 @@ getOrderById:
       '500':
         $ref: '../components/responses.yaml#/ServerError'
 
+getPaymentHistory:
+  get:
+    tags:
+      - Payment Gateway
+    security:
+      - bearerAuth: []
+    summary: Mengambil riwayat pembayaran siswa
+    description: Endpoint untuk menampilkan daftar riwayat pembayaran milik siswa yang sedang login.
+    operationId: getPaymentHistory
+    parameters:
+      - name: page
+        in: query
+        required: false
+        description: Nomor halaman.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 1
+      - name: per_page
+        in: query
+        required: false
+        description: Jumlah item per halaman.
+        schema:
+          type: integer
+          minimum: 1
+          default: 10
+          example: 10
+    responses:
+      '200':
+        description: Riwayat pembayaran berhasil diambil
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/PaymentHistoryListPayload'
+            example:
+              current_page: 1
+              data:
+                - id: 1
+                  orderId: 21
+                  externalId: "INV-20260530-0001"
+                  paymentMethod: "va"
+                  paymentChannel: "bca"
+                  amount: 1500000
+                  status: "paid"
+                  checkoutUrl: "https://xendit.co/web/invoices/..."
+                  paidAt: "2026-05-30T09:00:00Z"
+              first_page_url: "http://localhost:8000/api/payment/history?page=1"
+              from: 1
+              last_page: 1
+              last_page_url: "http://localhost:8000/api/payment/history?page=1"
+              links:
+                - url: null
+                  label: "&laquo; Previous"
+                  active: false
+                - url: "http://localhost:8000/api/payment/history?page=1"
+                  label: "1"
+                  active: true
+                - url: null
+                  label: "Next &raquo;"
+                  active: false
+              next_page_url: null
+              path: "http://localhost:8000/api/payment/history"
+              per_page: 10
+              prev_page_url: null
+              to: 1
+              total: 1
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        description: Forbidden - Endpoint hanya untuk role student
+        content:
+          application/json:
+            example:
+              status: failed
+              message: 'This page is Forbidden for tutor'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
 payoutRequest:
   post:
     tags:

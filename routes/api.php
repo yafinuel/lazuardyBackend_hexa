@@ -108,11 +108,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/student/review/create', [ReviewController::class, 'createReview']);
         Route::get('/student/tutor-review', [ReviewController::class, 'getTutorReviewsAsStudent']);
+        Route::get('/student/review', [ReviewController::class, 'getStudentReviews']);
         Route::patch('/student/review/update', [ReviewController::class, 'updateReview']);
         Route::delete('/student/review/{reviewId}/delete', [ReviewController::class, 'deleteReview']);
 
         // Order
         Route::post('/package/order', [PaymentGatewayController::class, 'orderPackage']);
+        Route::get('/payment/history', [PaymentGatewayController::class, 'getPaymentHistory']);
     });
 
     Route::middleware('role:' . RoleEnum::TUTOR->value)->group(function (){

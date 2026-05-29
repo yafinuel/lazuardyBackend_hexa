@@ -251,4 +251,32 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
             );
         });
     }
+
+    public function getPaymentByStudentId(int $studentId, int $perPage = 10, int $page = 1): LengthAwarePaginator
+    {
+        $query = Payment::whereHas('order', function ($q) use ($studentId) {
+            $q->where('user_id', $studentId);
+        });
+
+        if (isset($filters['status'])) {
+            $statuses = is_array($filters['status']) ? $filters['status'] : [$filters['status']];
+            $query->whereIn('status', $statuses);
+        }
+
+        $payments = $query->paginate($perPage);
+
+        return $payments->through(function ($payment) {
+            return new PaymentEntity(
+                id: $payment->id,
+                orderId: $payment->order_id,
+                externalId: $payment->external_id,
+                paymentMethod: $payment->payment_method,
+                paymentChannel: $payment->payment_channel,
+                amount: $payment->amount,
+                status: $payment->status,
+                checkoutUrl: $payment->checkout_url,
+                paidAt: $payment->paid_at,
+            );
+        });
+    }
 }

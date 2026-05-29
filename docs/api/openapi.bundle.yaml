@@ -2839,21 +2839,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetScheduleByIdResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
         '422':
-          description: Validasi gagal
-          content:
-            application/json:
-              example:
-                message: The given data was invalid.
-                errors:
-                  schedule_id:
-                    - The schedule id field is required.
+          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
   /schedule/getTutorSchedulesByDay:
@@ -2929,12 +2922,10 @@ paths:
                   prev_page_url: null
                   to: 2
                   total: 2
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
           description: Data tutor tidak ditemukan
           content:
@@ -3005,6 +2996,14 @@ paths:
             format: date
             example: '2026-04-21'
           description: Tanggal jadwal yang ingin difilter dalam format Y-m-d.
+        - name: paginate
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 10
+          description: Jumlah data per halaman.
       responses:
         '200':
           description: Berhasil mengambil daftar jadwal tutor berdasarkan filter
@@ -3025,12 +3024,10 @@ paths:
                       startTime: '2026-05-08T14:00:00.000000Z'
                       endTime: '2026-05-08T15:00:00.000000Z'
                       status: active
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
           description: Data tutor tidak ditemukan
           content:
@@ -3049,36 +3046,120 @@ paths:
         - Schedule
       security:
         - bearerAuth: []
-      summary: Mengambil daftar jadwal untuk user yang sedang login
+      summary: Mengambil daftar jadwal berdasarkan user yang sedang login
       operationId: getSchedulesByUserId
-      description: Mengambil daftar jadwal (schedules) milik user yang sedang terautentikasi.
+      description: Endpoint ini dapat diambil berdasarkan filter.
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - pending
+              - active
+              - completed
+              - expired
+              - cancelled
+              - rejected
+            example: pending
+          description: Status jadwal yang ingin difilter.
+        - name: learning_method
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - online
+              - offline
+            example: online
+          description: Metode pembelajaran yang ingin difilter.
+        - name: student_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+          description: ID user student yang ingin difilter. Harus terdaftar di tabel students.
+        - name: subject_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+          description: ID mata pelajaran yang ingin difilter.
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2026-05-22'
+          description: Tanggal jadwal yang ingin difilter dalam format Y-m-d.
+        - name: paginate
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 10
+          description: Jumlah data per halaman.
       responses:
         '200':
           description: Berhasil mengambil daftar jadwal
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StudentScheduleListPayload'
+                $ref: '#/components/schemas/StudentScheduleResponse'
               example:
-                current_page: 1
-                data: []
-                first_page_url: http://localhost:8000/api/schedules?page=1
-                from: 1
-                last_page: 1
-                last_page_url: http://localhost:8000/api/schedules?page=1
-                links: []
-                next_page_url: null
-                path: http://localhost:8000/api/schedules
-                per_page: 10
-                prev_page_url: null
-                to: 0
-                total: 0
+                status: success
+                data:
+                  current_page: 1
+                  data:
+                    - id: 1
+                      tutorId: 2
+                      studentId: 1
+                      subjectId: 1
+                      date: '2026-05-22T17:00:00.000000Z'
+                      startTime: '2026-05-30T14:00:00.000000Z'
+                      endTime: '2026-05-30T15:00:00.000000Z'
+                      status: pending
+                      learningMethod: online
+                      address: Google Meet
+                      tutorName: Demo Tutor
+                      subjectName: Matematika
+                      studentName: Demo Student
+                      tutorTelephoneNumber: null
+                      studentTelephoneNumber: null
+                  first_page_url: http://127.0.0.1:8000/api/schedules?page=1
+                  from: 1
+                  last_page: 1
+                  last_page_url: http://127.0.0.1:8000/api/schedules?page=1
+                  links:
+                    - url: null
+                      label: '&laquo; Previous'
+                      page: null
+                      active: false
+                    - url: http://127.0.0.1:8000/api/schedules?page=1
+                      label: '1'
+                      page: 1
+                      active: true
+                    - url: null
+                      label: Next &raquo;
+                      page: null
+                      active: false
+                  next_page_url: null
+                  path: http://127.0.0.1:8000/api/schedules
+                  per_page: 10
+                  prev_page_url: null
+                  to: 3
+                  total: 3
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
+          $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/ServerError'
   /schedule/takeMeeting:
@@ -3101,19 +3182,12 @@ paths:
                 $ref: '#/components/schemas/CreateMeetingScheduleResponse'
               example:
                 status: success
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
+          $ref: '#/components/responses/UnauthorizedError'
         '403':
-          description: Forbidden - Endpoint hanya untuk role student
-          content:
-            application/json:
-              example:
-                status: failed
-                message: This page is Forbidden for tutor
+          $ref: '#/components/responses/ForbiddenError'
         '409':
           $ref: '#/components/responses/ConflictError'
         '422':
@@ -3159,28 +3233,14 @@ paths:
                   message:
                     type: string
                     example: Schedule marked as complete successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
+          $ref: '#/components/responses/UnauthorizedError'
         '403':
-          description: Forbidden - Endpoint hanya untuk role student
-          content:
-            application/json:
-              example:
-                status: failed
-                message: This page is Forbidden for tutor
+          $ref: '#/components/responses/ForbiddenError'
         '422':
-          description: Validasi gagal
-          content:
-            application/json:
-              example:
-                message: The given data was invalid.
-                errors:
-                  schedule_id:
-                    - The schedule id field is required.
+          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
   /student/schedule/cancel-application:
@@ -3222,11 +3282,7 @@ paths:
                     type: string
                     example: Schedule cancellation application submitted successfully
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
+          $ref: '#/components/responses/UnauthorizedError'
         '403':
           description: Student bukan pemilik schedule ini (AuthorizationException)
           content:
@@ -3310,14 +3366,7 @@ paths:
                     class: App\\Domains\\Schedule\\Actions\\CancelScheduleApplicationAction
                     type: '->'
         '422':
-          description: Validasi gagal
-          content:
-            application/json:
-              example:
-                message: The given data was invalid.
-                errors:
-                  schedule_id:
-                    - The schedule id field is required.
+          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
   /tutor/schedule/booking-confirmation:
@@ -3401,23 +3450,16 @@ paths:
                   message:
                     type: string
                     example: Schedule cancelled successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              example:
-                message: Unauthenticated.
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
         '422':
-          description: Validasi gagal
-          content:
-            application/json:
-              example:
-                message: The given data was invalid.
-                errors:
-                  schedule_id:
-                    - The schedule id field is required.
-                  reason:
-                    - The reason field is required.
+          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
   /reports:
@@ -3648,6 +3690,107 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/ServerError'
+  /student/review:
+    get:
+      tags:
+        - Review
+      summary: Mengambil daftar review milik student yang sedang login
+      description: Endpoint untuk menampilkan review yang pernah dibuat oleh student yang sedang login, dengan filter opsional.
+      security:
+        - bearerAuth: []
+      operationId: getStudentReviews
+      parameters:
+        - name: tutor_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 7
+          description: Filter review berdasarkan ID tutor.
+        - name: min_rating
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+            example: 3
+          description: Filter rating minimum (1 sampai 5).
+        - name: max_rating
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+            example: 5
+          description: Filter rating maksimum (1 sampai 5).
+        - name: pagination
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+            example: 10
+          description: Jumlah item per halaman.
+      responses:
+        '200':
+          description: Berhasil mengambil daftar review student
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetStudentReviewsResponse'
+              example:
+                status: success
+                data:
+                  current_page: 1
+                  data:
+                    - id: 9
+                      studentId: 12
+                      tutorId: 7
+                      rate: 5
+                      comment: Penjelasan mudah dipahami
+                      createdAt: '2026-05-06T09:00:00Z'
+                      updatedAt: '2026-05-06T09:15:00Z'
+                  first_page_url: http://localhost:8000/api/student/review?page=1
+                  from: 1
+                  last_page: 1
+                  last_page_url: http://localhost:8000/api/student/review?page=1
+                  links:
+                    - url: null
+                      label: '&laquo; Previous'
+                      active: false
+                    - url: http://localhost:8000/api/student/review?page=1
+                      label: '1'
+                      active: true
+                    - url: null
+                      label: Next &raquo;
+                      active: false
+                  next_page_url: null
+                  path: http://localhost:8000/api/student/review
+                  per_page: 10
+                  prev_page_url: null
+                  to: 1
+                  total: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Forbidden - Endpoint hanya untuk role student
+          content:
+            application/json:
+              example:
+                status: failed
+                message: This page is Forbidden for tutor
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /student/review/create:
     post:
       tags:
@@ -3683,10 +3826,6 @@ paths:
                   nullable: true
                   maxLength: 1000
                   example: Tutor sangat membantu dan jelas menjelaskan materi.
-            example:
-              tutor_id: 7
-              rate: 4.5
-              comment: Tutor sangat membantu dan jelas menjelaskan materi.
       responses:
         '200':
           description: Review berhasil dibuat
@@ -3959,6 +4098,84 @@ paths:
             application/json:
               example:
                 message: Not Found
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /payment/history:
+    get:
+      tags:
+        - Payment Gateway
+      security:
+        - bearerAuth: []
+      summary: Mengambil riwayat pembayaran siswa
+      description: Endpoint untuk menampilkan daftar riwayat pembayaran milik siswa yang sedang login.
+      operationId: getPaymentHistory
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Nomor halaman.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: per_page
+          in: query
+          required: false
+          description: Jumlah item per halaman.
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+            example: 10
+      responses:
+        '200':
+          description: Riwayat pembayaran berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentHistoryListPayload'
+              example:
+                current_page: 1
+                data:
+                  - id: 1
+                    orderId: 21
+                    externalId: INV-20260530-0001
+                    paymentMethod: va
+                    paymentChannel: bca
+                    amount: 1500000
+                    status: paid
+                    checkoutUrl: https://xendit.co/web/invoices/...
+                    paidAt: '2026-05-30T09:00:00Z'
+                first_page_url: http://localhost:8000/api/payment/history?page=1
+                from: 1
+                last_page: 1
+                last_page_url: http://localhost:8000/api/payment/history?page=1
+                links:
+                  - url: null
+                    label: '&laquo; Previous'
+                    active: false
+                  - url: http://localhost:8000/api/payment/history?page=1
+                    label: '1'
+                    active: true
+                  - url: null
+                    label: Next &raquo;
+                    active: false
+                next_page_url: null
+                path: http://localhost:8000/api/payment/history
+                per_page: 10
+                prev_page_url: null
+                to: 1
+                total: 1
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Forbidden - Endpoint hanya untuk role student
+          content:
+            application/json:
+              example:
+                status: failed
+                message: This page is Forbidden for tutor
         '500':
           $ref: '#/components/responses/ServerError'
 components:
@@ -6006,3 +6223,167 @@ components:
       example:
         schedule_id: 1
         decision: accept
+    StudentReviewListPayload:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewEntity'
+        first_page_url:
+          type: string
+          nullable: true
+          example: http://localhost:8000/api/student/review?page=1
+        from:
+          type: integer
+          nullable: true
+          example: 1
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+          example: http://localhost:8000/api/student/review?page=1
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        next_page_url:
+          type: string
+          nullable: true
+          example: null
+        path:
+          type: string
+          example: http://localhost:8000/api/student/review
+        per_page:
+          type: integer
+          example: 10
+        prev_page_url:
+          type: string
+          nullable: true
+          example: null
+        to:
+          type: integer
+          nullable: true
+          example: 1
+        total:
+          type: integer
+          example: 1
+    GetStudentReviewsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/StudentReviewListPayload'
+    PaymentEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        orderId:
+          type: integer
+          nullable: true
+          example: 1
+        externalId:
+          type: string
+          nullable: true
+          example: INV-20260530-0001
+        paymentMethod:
+          type: string
+          nullable: true
+          example: va
+        paymentChannel:
+          type: string
+          nullable: true
+          example: bca
+        amount:
+          type: integer
+          nullable: true
+          example: 1500000
+        status:
+          type: string
+          nullable: true
+          example: paid
+        checkoutUrl:
+          type: string
+          nullable: true
+          format: uri
+          example: https://xendit.co/web/invoices/...
+        paidAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2026-05-30T09:00:00Z'
+    PaymentHistoryListPayload:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentEntity'
+        first_page_url:
+          type: string
+          nullable: true
+          example: http://localhost:8000/api/payment/history?page=1
+        from:
+          type: integer
+          nullable: true
+          example: 1
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          nullable: true
+          example: http://localhost:8000/api/payment/history?page=1
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        next_page_url:
+          type: string
+          nullable: true
+          example: null
+        path:
+          type: string
+          example: http://localhost:8000/api/payment/history
+        per_page:
+          type: integer
+          example: 10
+        prev_page_url:
+          type: string
+          nullable: true
+          example: null
+        to:
+          type: integer
+          nullable: true
+          example: 1
+        total:
+          type: integer
+          example: 1
