@@ -83,6 +83,8 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
             );
         })->toArray();
 
+        $totalSessions = $this->getSessionCountFromOrder($orderId);
+
         return new OrderEntity(
             id: $order->id,
             userId: $order->user_id,
@@ -90,6 +92,7 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
             totalAmount: $order->total_amount,
             status: $order->status,
             items: $items,
+            totalSessions: $totalSessions,
         );
     }
 

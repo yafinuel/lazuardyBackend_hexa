@@ -74,7 +74,22 @@ class CommerceHelper
 
     public function getTotalSessions(array $orderItems): int
     {
+        $total = 0;
 
-        return 1;
+        foreach ($orderItems as $item) {
+            $packageId = isset($item['package_id']) ? (int) $item['package_id'] : (isset($item['id']) ? (int) $item['id'] : null);
+            $qty = isset($item['qty']) ? (int) $item['qty'] : (isset($item['quantity']) ? (int) $item['quantity'] : 1);
+
+            if (! $packageId || $qty <= 0) {
+                continue;
+            }
+
+            $package = $this->service->getPackageByIdAction($packageId);
+            $sessionsPerPackage = isset($package->session) ? (int) $package->session : 0;
+
+            $total += $sessionsPerPackage * $qty;
+        }
+
+        return $total;
     }
 }
