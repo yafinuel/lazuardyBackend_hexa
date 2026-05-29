@@ -27,9 +27,9 @@ class TutorEntity{
         public ?string $longitude,
 
         // Tutor attributes
-        public ?array $education,
         public ?int $salary,
         public ?string $description,
+        public ?array $education,
         public ?string $bankCode,
         public ?string $accountHolderName,
         public ?string $accountNumber,
@@ -37,5 +37,7 @@ class TutorEntity{
         public ?TutorStatusEnum $status,
         public ?float $avgRate,
         public ?Carbon $createdAt,
-    ) {}
-}
+        
+        public ?array $subjects = null,
+        ) {}
+        }

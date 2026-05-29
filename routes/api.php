@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Package
     Route::get('/getPackages', [PackageController::class, 'index']);
     Route::get('/package/{id}', [PackageController::class, 'getPackageById']);
+    Route::get('/order/{orderId}', [PaymentGatewayController::class, 'getOrderById']);
 
     // Notification
     Route::get('/getNotificationByUserId', [NotificationController::class, 'getNotificationByUserId']);

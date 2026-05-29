@@ -14,7 +14,7 @@ class EloquentTutorRepository implements TutorRepositoryInterface
 {
     public function getTutorById(int $tutorId): TutorEntity
     {
-        $user = User::where('id', $tutorId)->firstOrFail();
+        $user = User::with('tutor.subjects')->where('id', $tutorId)->firstOrFail();
         $tutor = $user->tutor;
         
         return new TutorEntity(
@@ -44,6 +44,17 @@ class EloquentTutorRepository implements TutorRepositoryInterface
             status: $tutor->status,
             avgRate: $tutor->reviews_avg_rate ?? null,
             createdAt: $tutor->created_at,
+            subjects: $tutor->subjects->map(function($subject) {
+                return [
+                    'id' => $subject->id,
+                    'name' => $subject->name,
+                    'class' => [
+                        'id' => $subject->class->id,
+                        'name' => $subject->class->name,
+                        'level' => $subject->class->level,
+                    ],
+                ];
+            })->toArray(),
         );
     }
 

@@ -68,7 +68,7 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
 
     public function getOrderById(int $orderId): OrderEntity
     {
-        $order = Order::with('items')->findOrFail($orderId);
+        $order = Order::with('items', 'payment')->findOrFail($orderId);
 
         $items = $order->items->map(function ($item) {
             return new OrderItemEntity(
@@ -91,8 +91,9 @@ class EloquentCommerceRepository implements CommerceRepositoryInterface
             orderNumber: $order->order_number,
             totalAmount: $order->total_amount,
             status: $order->status,
-            items: $items,
             totalSessions: $totalSessions,
+            checkoutUrl: $order->payment ? $order->payment->checkout_url : null,
+            items: $items,
         );
     }
 

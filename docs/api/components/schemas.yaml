@@ -133,6 +133,15 @@ PackageItem:
       nullable: true
       example: "http://localhost:8000/storage/packages/package-1.jpg"
 
+PackageDetailResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: "success"
+    data:
+      $ref: '#/PackageItem'
+
 PaginationMeta:
   type: object
   properties:
@@ -872,6 +881,31 @@ TutorEntity:
       type: string
       format: date-time
       nullable: true
+    subjects:
+      type: array
+      nullable: true
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            nullable: true
+          name:
+            type: string
+            nullable: true
+          class:
+            type: object
+            nullable: true
+            properties:
+              id:
+                type: integer
+                nullable: true
+              name:
+                type: string
+                nullable: true
+              level:
+                type: string
+                nullable: true
   example:
     id: "2"
     name: "Demo Tutor"
@@ -901,6 +935,13 @@ TutorEntity:
     status: "verified"
     avgRate: null
     createdAt: "2026-05-08T06:32:58.000000Z"
+    subjects:
+      - id: 1
+        name: "Matematika"
+        class:
+          id: 1
+          name: "Kelas 10"
+          level: "SMA"
 
 UpdateFcmTokenRequest:
   type: object
@@ -1564,6 +1605,84 @@ OrderCheckoutResponse:
           format: uri
           example: "https://xendit.co/web/invoices/..."
           description: URL untuk redirect ke halaman pembayaran Xendit
+
+OrderItemEntity:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    orderId:
+      type: integer
+      example: 1
+    packageId:
+      type: integer
+      example: 2
+    qty:
+      type: integer
+      example: 1
+    price:
+      type: number
+      format: float
+      example: 1500000
+    subTotal:
+      type: number
+      format: float
+      example: 1500000
+    createdAt:
+      type: string
+      format: date-time
+      nullable: true
+    updatedAt:
+      type: string
+      format: date-time
+      nullable: true
+
+OrderEntity:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    userId:
+      type: integer
+      nullable: true
+      example: 12
+    orderNumber:
+      type: string
+      nullable: true
+      example: "ORD_PACKAGE_12_1710000000"
+    totalAmount:
+      type: integer
+      nullable: true
+      example: 1500000
+    status:
+      type: string
+      nullable: true
+      example: "pending"
+    totalSessions:
+      type: integer
+      nullable: true
+      example: 12
+    checkoutUrl:
+      type: string
+      nullable: true
+      format: uri
+      example: "https://xendit.co/web/invoices/..."
+    items:
+      type: array
+      nullable: true
+      items:
+        $ref: '#/OrderItemEntity'
+
+OrderDetailResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      example: "success"
+    data:
+      $ref: '#/OrderEntity'
 
 ReviewEntity:
   type: object

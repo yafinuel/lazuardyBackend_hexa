@@ -24,12 +24,14 @@ tags:
     description: Endpoint untuk data mata pelajaran
   - name: Course Catalog
     description: Endpoint untuk filter halaman kategori kursus
-  - name: User Profile
-    description: Endpoint untuk profil pengguna
+  - name: User
+    description: Endpoint profil yang berlaku untuk seluruh role
   - name: Notification
     description: Endpoint untuk notifikasi pengguna
   - name: Tutor
     description: Endpoint untuk pencarian tutor
+  - name: Student
+    description: Endpoint untuk biodata siswa
   - name: Dashboard
     description: Endpoint untuk data dashboard pengguna
   - name: Schedule
@@ -78,6 +80,8 @@ paths:
     $ref: './paths/payment-gateway.yaml#/validateBankAccount'
   /package/order:
     $ref: './paths/payment-gateway.yaml#/orderPackage'
+  /order/{orderId}:
+    $ref: './paths/payment-gateway.yaml#/getOrderById'
   /tutor/take-money:
     $ref: './paths/payment-gateway.yaml#/payoutRequest'
   /admin/payout/approval:
@@ -87,6 +91,8 @@ paths:
 
   /getPackages:
     $ref: './paths/package.yaml#/getPackages'
+  /package/{id}:
+    $ref: './paths/package.yaml#/getPackageById'
 
   /jenjang:
     $ref: './paths/class.yaml#/getClassLevels'
@@ -106,21 +112,21 @@ paths:
     $ref: './paths/course-catalog.yaml#/filterCategoryPage'
 
   /student/biodata:
-    $ref: './paths/user-profile.yaml#/studentBiodata'
+    $ref: './paths/student.yaml#/studentBiodata'
   /updateStudentBiodata:
-    $ref: './paths/user-profile.yaml#/updateStudentBiodata'
+    $ref: './paths/student.yaml#/updateStudentBiodata'
   /tutor/profile:
-    $ref: './paths/user-profile.yaml#/updateTutorBiodata'
+    $ref: './paths/tutor.yaml#/updateTutorBiodata'
   /meTutor:
-    $ref: './paths/user-profile.yaml#/meAsTutor'
+    $ref: './paths/tutor.yaml#/meAsTutor'
   /getTutorById:
-    $ref: './paths/user-profile.yaml#/getTutorById'
+    $ref: './paths/tutor.yaml#/getTutorById'
   /admin/tutor-application/approval:
     $ref: './paths/tutor.yaml#/adminTutorApplicationApproval'
   /tutor/get-my-files:
-    $ref: './paths/user-profile.yaml#/getTutorFileByUserId'
+    $ref: './paths/tutor.yaml#/getTutorFileByUserId'
   /updateProfilePhoto:
-    $ref: './paths/user-profile.yaml#/updateProfilePhoto'
+    $ref: './paths/user.yaml#/updateProfilePhoto'
 
   /getNotificationByUserId:
     $ref: './paths/notification.yaml#/getNotificationByUserId'

@@ -24,3 +24,37 @@ getPackages:
         description: Permintaan tidak valid
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+
+getPackageById:
+  get:
+    tags:
+      - Package
+    summary: Mendapatkan detail paket belajar
+    description: Endpoint untuk mendapatkan detail paket belajar berdasarkan ID. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: getPackageById
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID paket yang ingin diambil detailnya
+        schema:
+          type: integer
+          minimum: 1
+    responses:
+      '200':
+        description: Berhasil mendapatkan detail paket
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/PackageDetailResponse'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+

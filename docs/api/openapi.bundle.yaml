@@ -22,12 +22,14 @@ tags:
     description: Endpoint untuk data mata pelajaran
   - name: Course Catalog
     description: Endpoint untuk filter halaman kategori kursus
-  - name: User Profile
-    description: Endpoint untuk profil pengguna
+  - name: User
+    description: Endpoint profil yang berlaku untuk seluruh role
   - name: Notification
     description: Endpoint untuk notifikasi pengguna
   - name: Tutor
     description: Endpoint untuk pencarian tutor
+  - name: Student
+    description: Endpoint untuk biodata siswa
   - name: Dashboard
     description: Endpoint untuk data dashboard pengguna
   - name: Schedule
@@ -848,6 +850,38 @@ paths:
               example:
                 message: 'Gagal melakukan checkout: Gagal membuat invoice: Invalid input data'
                 exception: Exception
+  /order/{orderId}:
+    get:
+      tags:
+        - Payment Gateway
+      security:
+        - bearerAuth: []
+      summary: Mendapatkan detail order
+      description: Endpoint untuk mendapatkan detail order paket yang sedang dipilih user. Membutuhkan autentikasi.
+      operationId: getOrderById
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: ID order yang ingin diambil detailnya
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Berhasil mendapatkan detail order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetailResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /tutor/take-money:
     post:
       tags:
@@ -1056,6 +1090,38 @@ paths:
                 message: Unauthenticated.
         '500':
           $ref: '#/components/responses/ServerError'
+  /package/{id}:
+    get:
+      tags:
+        - Package
+      summary: Mendapatkan detail paket belajar
+      description: Endpoint untuk mendapatkan detail paket belajar berdasarkan ID. Membutuhkan autentikasi.
+      security:
+        - bearerAuth: []
+      operationId: getPackageById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID paket yang ingin diambil detailnya
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Berhasil mendapatkan detail paket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageDetailResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /jenjang:
     get:
       tags:
@@ -1237,7 +1303,7 @@ paths:
   /student/biodata:
     get:
       tags:
-        - User Profile
+        - Student
       summary: Mengambil biodata siswa
       description: Endpoint untuk mendapatkan biodata siswa yang sedang login. Membutuhkan autentikasi.
       security:
@@ -1301,7 +1367,7 @@ paths:
   /updateStudentBiodata:
     put:
       tags:
-        - User Profile
+        - Student
       summary: Memperbarui biodata siswa
       description: Endpoint untuk memperbarui biodata siswa yang sedang login. Membutuhkan autentikasi.
       security:
@@ -1335,7 +1401,7 @@ paths:
   /tutor/profile:
     put:
       tags:
-        - User Profile
+        - Tutor
       summary: Memperbarui biodata tutor
       description: Endpoint untuk memperbarui biodata tutor yang sedang login. Membutuhkan autentikasi dan role tutor.
       security:
@@ -1377,7 +1443,7 @@ paths:
   /meTutor:
     get:
       tags:
-        - User Profile
+        - Tutor
       summary: Mengambil biodata tutor
       description: Endpoint untuk mendapatkan biodata tutor yang sedang login (path `/meTutor`). Membutuhkan autentikasi dan role tutor.
       security:
@@ -1415,7 +1481,7 @@ paths:
   /getTutorById:
     get:
       tags:
-        - User Profile
+        - Tutor
       summary: Mengambil biodata tutor berdasarkan ID user login
       description: Endpoint untuk mendapatkan biodata tutor yang sedang login melalui alias /getTutorById. Membutuhkan autentikasi.
       security:
@@ -1494,7 +1560,7 @@ paths:
   /tutor/get-my-files:
     get:
       tags:
-        - User Profile
+        - Tutor
       summary: Mengambil file tutor milik user login
       description: Endpoint untuk mengambil daftar file yang diunggah oleh tutor yang sedang login melalui alias /tutor/get-my-files. Membutuhkan autentikasi.
       security:
@@ -1534,7 +1600,7 @@ paths:
   /updateProfilePhoto:
     patch:
       tags:
-        - User Profile
+        - User
       summary: Memperbarui foto profil pengguna
       description: Endpoint untuk mengunggah foto profil pengguna yang sedang login. Membutuhkan autentikasi.
       security:
@@ -3944,8 +4010,8 @@ components:
             status: error
             message: Terjadi kesalahan pada server
             debug_error: Exception error atau database error
-    ConflictError:
-      description: Data sudah ada atau terjadi konflik (duplikasi, status incompatible, dll)
+    BadRequest:
+      description: Permintaan tidak valid atau format salah
       content:
         application/json:
           schema:
@@ -3961,8 +4027,8 @@ components:
                 type: string
           example:
             status: error
-            message: Data sudah ada dalam sistem
-            debug_error: Email atau resource sudah terdaftar
+            message: Permintaan tidak valid
+            debug_error: Format data tidak sesuai dengan yang diharapkan
     UnauthorizedError:
       description: Token tidak valid, expired, atau tidak dikirim
       content:
@@ -3979,25 +4045,6 @@ components:
           example:
             message: Unauthorized
             status: error
-    ForbiddenError:
-      description: User tidak memiliki akses ke resource ini (role/permission denied)
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                enum:
-                  - error
-              message:
-                type: string
-              debug_error:
-                type: string
-          example:
-            status: error
-            message: Akses ditolak
-            debug_error: User harus memiliki role tertentu untuk mengakses resource ini
     NotFoundError:
       description: Resource tidak ditemukan
       content:
@@ -4017,6 +4064,44 @@ components:
             status: error
             message: Resource tidak ditemukan
             debug_error: Data dengan ID tersebut tidak ada dalam sistem
+    ConflictError:
+      description: Data sudah ada atau terjadi konflik (duplikasi, status incompatible, dll)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum:
+                  - error
+              message:
+                type: string
+              debug_error:
+                type: string
+          example:
+            status: error
+            message: Data sudah ada dalam sistem
+            debug_error: Email atau resource sudah terdaftar
+    ForbiddenError:
+      description: User tidak memiliki akses ke resource ini (role/permission denied)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum:
+                  - error
+              message:
+                type: string
+              debug_error:
+                type: string
+          example:
+            status: error
+            message: Akses ditolak
+            debug_error: User harus memiliki role tertentu untuk mengakses resource ini
   requestBodies:
     UpdateStudentBiodata:
       description: Payload untuk memperbarui biodata siswa
@@ -4781,6 +4866,31 @@ components:
           type: string
           format: date-time
           nullable: true
+        subjects:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                nullable: true
+              name:
+                type: string
+                nullable: true
+              class:
+                type: object
+                nullable: true
+                properties:
+                  id:
+                    type: integer
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
+                  level:
+                    type: string
+                    nullable: true
       example:
         id: '2'
         name: Demo Tutor
@@ -4810,6 +4920,13 @@ components:
         status: verified
         avgRate: null
         createdAt: '2026-05-08T06:32:58.000000Z'
+        subjects:
+          - id: 1
+            name: Matematika
+            class:
+              id: 1
+              name: Kelas 10
+              level: SMA
     UpdateFcmTokenRequest:
       type: object
       required:
@@ -5642,6 +5759,89 @@ components:
           example: 4.5
         data:
           $ref: '#/components/schemas/TutorReviewListPayload'
+    OrderItemEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        orderId:
+          type: integer
+          example: 1
+        packageId:
+          type: integer
+          example: 2
+        qty:
+          type: integer
+          example: 1
+        price:
+          type: number
+          format: float
+          example: 1500000
+        subTotal:
+          type: number
+          format: float
+          example: 1500000
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    OrderEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          nullable: true
+          example: 12
+        orderNumber:
+          type: string
+          nullable: true
+          example: ORD_PACKAGE_12_1710000000
+        totalAmount:
+          type: integer
+          nullable: true
+          example: 1500000
+        status:
+          type: string
+          nullable: true
+          example: pending
+        totalSessions:
+          type: integer
+          nullable: true
+          example: 12
+        checkoutUrl:
+          type: string
+          nullable: true
+          format: uri
+          example: https://xendit.co/web/invoices/...
+        items:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/OrderItemEntity'
+    OrderDetailResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/OrderEntity'
+    PackageDetailResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/PackageItem'
     UpdateTutorBiodataRequest:
       type: object
       required:

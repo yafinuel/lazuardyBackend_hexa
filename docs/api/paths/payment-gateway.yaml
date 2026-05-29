@@ -107,6 +107,39 @@ orderPackage:
               message: "Gagal melakukan checkout: Gagal membuat invoice: Invalid input data"
               exception: "Exception"
 
+getOrderById:
+  get:
+    tags:
+      - Payment Gateway
+    security:
+      - bearerAuth: []
+    summary: Mendapatkan detail order
+    description: Endpoint untuk mendapatkan detail order paket yang sedang dipilih user. Membutuhkan autentikasi.
+    operationId: getOrderById
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        description: ID order yang ingin diambil detailnya
+        schema:
+          type: integer
+          minimum: 1
+    responses:
+      '200':
+        description: Berhasil mendapatkan detail order
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/OrderDetailResponse'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
 payoutRequest:
   post:
     tags:

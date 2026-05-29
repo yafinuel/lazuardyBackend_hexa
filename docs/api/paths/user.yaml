@@ -1,0 +1,53 @@
+updateProfilePhoto:
+  patch:
+    tags:
+      - User
+    summary: Memperbarui foto profil pengguna
+    description: Endpoint untuk mengunggah foto profil pengguna yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: updateProfilePhoto
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - profile_picture
+            properties:
+              profile_picture:
+                type: string
+                format: binary
+                description: "File gambar untuk foto profil"
+    responses:
+      '200':
+        description: Foto profil berhasil diperbarui
+        content:
+          application/json:
+            example:
+              status: "success"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '422':
+        description: Validasi gagal
+        content:
+          application/json:
+            example:
+              message: "Data tidak valid"
+              errors:
+                profile_picture:
+                  - "File foto profil wajib diisi."
+      '500':
+        description: Gagal memperbarui foto profil
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal memperbarui foto profil"
+              debug_error: "Error message"
+

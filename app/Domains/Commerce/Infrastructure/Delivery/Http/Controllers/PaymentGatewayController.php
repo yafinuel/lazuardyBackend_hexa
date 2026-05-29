@@ -6,6 +6,7 @@ use App\Domains\Commerce\Actions\CallbackFailedHandlePayoutAction;
 use App\Domains\Commerce\Actions\CallbackSuccessHandlePayoutAction;
 use App\Domains\Commerce\Actions\CheckoutPackageAction;
 use App\Domains\Commerce\Actions\GetBankListAction;
+use App\Domains\Commerce\Actions\GetOrderByIdAction;
 use App\Domains\Commerce\Actions\GetPayoutHistoryAction;
 use App\Domains\Commerce\Actions\ProcessApprovedPayoutAction;
 use App\Domains\Commerce\Actions\ProcessPaymentExpiredAction;
@@ -178,6 +179,17 @@ class PaymentGatewayController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $payouts
+        ]);
+    }
+
+    public function getOrderById(Request $request, GetOrderByIdAction $action, int $orderId)
+    {
+        $userId = $request->user()->id;
+        $result = $action->execute($userId, $orderId);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $result
         ]);
     }
 }

@@ -1,0 +1,100 @@
+studentBiodata:
+  get:
+    tags:
+      - Student
+    summary: Mengambil biodata siswa
+    description: Endpoint untuk mendapatkan biodata siswa yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: studentBiodata
+    responses:
+      '200':
+        description: Berhasil mengambil biodata siswa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: "success"
+                data:
+                  $ref: '../components/schemas.yaml#/StudentEntity'
+            example:
+              status: "success"
+              data:
+                id: "1"
+                name: "Demo student"
+                email: "demo.student@example.com"
+                emailVerifiedAt: "2026-05-08 06:32:57"
+                telephoneNumber: "098766222"
+                telephoneVerifiedAt: null
+                profilePhotoUrl: null
+                dateOfBirth: "2000-05-15 00:00:00"
+                gender: "Laki-laki"
+                religion: null
+                homeAddress:
+                  regency: "Jakarta Pusat"
+                  district: "Tanah Abang"
+                  province: "DKI Jakarta"
+                  subdistrict: "Bendungan Hilir"
+                role: "Siswa"
+                warning: 0
+                sanction: null
+                latitude: null
+                longitude: null
+                session: "0"
+                classId: 1
+                className: "kelas 1"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '400':
+        description: Permintaan tidak valid
+      '500':
+        description: Gagal mengambil biodata siswa
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal mengambil biodata siswa"
+              debug_error: "Error message"
+
+updateStudentBiodata:
+  put:
+    tags:
+      - Student
+    summary: Memperbarui biodata siswa
+    description: Endpoint untuk memperbarui biodata siswa yang sedang login. Membutuhkan autentikasi.
+    security:
+      - bearerAuth: []
+    operationId: updateStudentBiodata
+    requestBody:
+      $ref: '../components/request-bodies.yaml#/UpdateStudentBiodata'
+    responses:
+      '200':
+        description: Berhasil memperbarui biodata siswa
+        content:
+          application/json:
+            example:
+              status: "success"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            example:
+              message: "Unauthenticated."
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        description: Gagal memperbarui biodata siswa
+        content:
+          application/json:
+            example:
+              status: "failed"
+              message: "Gagal memperbarui biodata siswa"
+              debug_error: "Error message"
+
