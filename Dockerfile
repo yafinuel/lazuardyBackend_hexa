@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.4-apache
 
 # 1. Install semua system dependencies dan ekstensi yang DIWAJIBKAN oleh Laravel & Composer
 RUN apt-get update && apt-get install -y \
