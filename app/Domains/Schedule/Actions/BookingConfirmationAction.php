@@ -12,8 +12,10 @@ class BookingConfirmationAction
 {
     public function __construct(protected ScheduleRepositoryInterface $repository, protected ScheduleServicePort $service) {}
 
-    public function execute(int $tutorId, int $schedule_id, string $decision): void
+    public function execute(int $tutorId, array $data): void
     {
+        $schedule_id = $data['schedule_id'];
+        $decision = $data['decision'];
         $schedule = $this->repository->getScheduleById($schedule_id);
 
         if ($schedule->tutorId !== $tutorId) {
@@ -25,6 +27,10 @@ class BookingConfirmationAction
         }
 
         if ($decision === 'accept') {
+            if ($schedule->learningMethod === 'online') {
+                $this->repository->updateSchedule($schedule_id, ['address' => $data['url_meeting']]);
+            }
+
             $this->repository->updateSchedule($schedule_id, ['status' => ScheduleStatusEnum::ACTIVE]);
 
             $notificationData = [

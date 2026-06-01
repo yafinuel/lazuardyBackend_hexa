@@ -106,9 +106,10 @@ class ScheduleController extends Controller
         $data = $request->validate([
             'schedule_id' => 'required|integer',
             'decision' => 'required|string|in:accept,reject',
+            'url_meeting' => 'nullable|string|max:255',
         ]);
 
-        $action->execute($request->user()->id, $data['schedule_id'], $data['decision']);
+        $action->execute($request->user()->id, $data);
 
         return response()->json([
             'status' => 'success',

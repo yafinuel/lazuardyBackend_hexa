@@ -22,12 +22,12 @@ class SubjectController extends Controller
 
     public function getSubjectByClass(Request $request, GetSubjectByClassAction $action)
     {
-        $classId = $request->input('classId');
+        $classId = $request->input('class_id');
         $subjects = $action->execute($classId);
 
         return response()->json([
             'success' => 'success',
-            'data' => $subjects
+            'subject' => $subjects
         ]);
     }
 

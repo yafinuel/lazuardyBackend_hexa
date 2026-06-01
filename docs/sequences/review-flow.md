@@ -20,6 +20,25 @@ sequenceDiagram
 	Client-->>User: tampilkan daftar ulasan yang pernah dilakukan
 ```
 
+## 2. Halaman Ulasan dari Siswa
+
+```mermaid
+sequenceDiagram
+	autonumber
+	actor Tutor as Tutor
+	participant Client as Frontend / Mobile App
+	participant Backend as Backend API
+	participant DB as Database
+
+	Tutor->>Client: buka halaman ulasan dari siswa
+	Client->>Backend: GET /tutor/review
+	Backend->>DB: ambil daftar review untuk tutor aktif
+	DB-->>Backend: data review tutor
+	Backend-->>Client: data review tutor
+	Client-->>Tutor: tampilkan daftar ulasan dari siswa
+```
+
 ## Catatan
 
 - Halaman daftar ulasan menggunakan endpoint [GET /student/review](../../routes/api.php).
+- Halaman ulasan dari siswa menggunakan endpoint [GET /tutor/review](../../routes/api.php).

@@ -89,7 +89,18 @@ sequenceDiagram
 	Backend->>DB: verifikasi OTP register
 	Backend-->>Client: 200 OTP valid
 
-	User->>Client: lengkapi biodata tutor + unggah berkas
+	User->>Client: isi nomor rekening
+	Client->>Backend: POST /validateBankAccount
+	Backend->>Backend: validasi nomor rekening
+	Backend-->>Client: 200 valid + account holder name
+
+	User->>Client: pilih kelas yang sesuai
+	Client->>Backend: GET /getSubjectByClass
+	Backend->>DB: ambil mata pelajaran berdasarkan kelas
+	DB-->>Backend: daftar subject
+	Backend-->>Client: 200 daftar subject
+
+	User->>Client: lengkapi biodata tutor + unggah berkas + account holder name
 	Client->>Backend: POST /tutorRegister (multipart)
 	Backend->>StorageApi: upload file pendukung
 	StorageApi-->>Backend: file path
@@ -195,8 +206,53 @@ sequenceDiagram
 	Backend-->>Client: 200 success
 ```
 
+## 7. Registrasi Orang Tua
+
+```mermaid
+sequenceDiagram
+	autonumber
+	actor Parent as Orang Tua
+	participant Client as Frontend / Mobile App
+	participant Backend as Backend API
+	participant EmailApi as Email API
+	participant DB as Database
+
+	Parent->>Client: isi email + password + confirm password
+	Client->>Backend: POST /registerOtpEmail
+	Backend->>DB: simpan OTP register
+	Backend->>EmailApi: kirim OTP ke email
+	EmailApi-->>Backend: success
+	Backend-->>Client: 201 OTP terkirim
+
+	Parent->>Client: isi kode OTP
+	Client->>Backend: POST /verifyOtpRegisterEmail
+	Backend->>DB: verifikasi OTP register
+	Backend-->>Client: 200 OTP valid
+
+	Parent->>Client: buka halaman tautkan akun anak
+	Parent->>Client: isi email anak
+	Client->>Backend: POST /register-otp/student-parents
+	Backend->>DB: simpan OTP tautkan akun anak
+	Backend->>EmailApi: kirim OTP ke email anak
+	EmailApi-->>Backend: success
+	Backend-->>Client: 201 OTP terkirim ke email anak
+
+	Parent->>Client: isi OTP dari email anak
+	Client->>Backend: POST /verify-otp/student-parents
+	Backend->>DB: verifikasi OTP tautkan akun anak
+	Backend-->>Client: 200 OTP valid
+
+	Parent->>Client: klik tautkan / verifikasi
+	Client->>Backend: POST /register/parent
+	Backend->>DB: simpan akun parent dan relasi akun anak
+	DB-->>Backend: registrasi parent berhasil
+	Backend-->>Client: 200 success + Bearer token
+	Client-->>Parent: registrasi orang tua berhasil
+```
+
 ## Catatan
 
 - Endpoint yang dilindungi Sanctum berada di grup `auth:sanctum` pada [routes/api.php](../../routes/api.php).
 - Flow OTP di level tinggi ditampilkan sebagai interaksi Backend, Database, Cache, dan Email API.
 - Flow OAuth di level tinggi ditampilkan sebagai interaksi Backend dengan OAuth Provider API dan Database.
+- Flow registrasi orang tua menggunakan endpoint OTP register email, OTP tautkan akun anak, verifikasi OTP anak, lalu registrasi parent.

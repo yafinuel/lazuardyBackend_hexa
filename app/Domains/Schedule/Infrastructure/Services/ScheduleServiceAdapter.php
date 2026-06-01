@@ -3,6 +3,8 @@
 namespace App\Domains\Schedule\Infrastructure\Services;
 
 use App\Domains\Notification\Ports\NotificationRepositoryInterface;
+use App\Domains\Parent\Actions\GetParentByIdAction;
+use App\Domains\Parent\Entities\ParentEntity;
 use App\Domains\Penalty\Actions\UserPenaltySetAction;
 use App\Domains\Schedule\Actions\GetSchedulesThisMonthByTutorIdAction;
 use App\Domains\Schedule\Ports\ScheduleServicePort;
@@ -26,6 +28,7 @@ class ScheduleServiceAdapter implements ScheduleServicePort
         protected NotificationRepositoryInterface $notificationRepository,
         protected UpdateTutorByIdAction $updateTutorByIdAction,
         protected GetTutorByIdAction $getTutorByIdAction,
+        protected GetParentByIdAction $getParentByIdAction
     ) {}
 
     public function userPenaltySet(int $userId)
@@ -41,6 +44,11 @@ class ScheduleServiceAdapter implements ScheduleServicePort
     public function getStudentById(int $studentId): StudentEntity
     {
         return $this->getStudentByIdAction->execute($studentId);
+    }
+
+    public function getParentById(int $parentId): ParentEntity
+    {
+        return $this->getParentByIdAction->execute($parentId);
     }
 
     public function updateStudent(int $studentId, array $data): void
