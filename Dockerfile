@@ -36,6 +36,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # 8. Jalankan Composer install
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# TAMBAHKAN BARIS INI UNTUK MEMBUAT SYMLINK STORAGE
+RUN php artisan storage:link
+
 # 9. Atur permission folder storage
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
