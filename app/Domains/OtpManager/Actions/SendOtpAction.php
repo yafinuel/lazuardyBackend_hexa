@@ -34,7 +34,7 @@ class SendOtpAction
             return $code;
         } catch (TransportExceptionInterface $e) {
             // Error koneksi ke Gmail (misal internet server mati atau diblokir Google)
-            throw new \Exception("Gagal mengirim email. Pastikan koneksi internet stabil.");
+            throw new \Exception("Gagal mengirim email. Detail: " . $e->getMessage());
         } catch (\Exception $e) {
             // Error umum lainnya (database error, dll)
             \Illuminate\Support\Facades\Log::error("OTP Error: " . $e->getMessage());
