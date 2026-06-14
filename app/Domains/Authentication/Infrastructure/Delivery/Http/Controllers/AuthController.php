@@ -67,8 +67,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => "Gagal mengirim OTP",
-                'debug_error' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ], $e->getCode()?: 500);
         }
     }
@@ -109,8 +108,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => "Gagal mengirim OTP",
-                'debug_error' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ], $e->getCode()?: 500);
         }
     }
@@ -153,8 +151,7 @@ class AuthController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => "Gagal memverifikasi OTP",
-                'debug_error' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ], $e->getCode()?: 500);
         }
     }

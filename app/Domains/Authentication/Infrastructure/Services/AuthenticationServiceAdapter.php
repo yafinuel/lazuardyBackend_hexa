@@ -12,7 +12,9 @@ use App\Domains\Subject\Actions\CreateTutorSubjectAction;
 use App\Domains\Tutor\Actions\CreateTutorAction;
 use App\Domains\Student\Actions\CreateStudentAction;
 use App\Domains\User\Actions\CreateUserAction;
+use App\Domains\User\Actions\GetUserByEmailAction;
 use App\Domains\User\Actions\ResetPasswordAction;
+use App\Domains\User\Entities\UserEntity;
 use App\Models\ParentModel;
 use App\Models\User;
 use App\Shared\Enums\FileTypeEnum;
@@ -34,6 +36,7 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
         protected SendOtpAction $sendOtpAction,
         protected VerifyOtpAction $verifyOtpAction,
         protected ResetPasswordAction $resetPasswordAction,
+        protected GetUserByEmailAction $getUserByEmailAction,
     ){}
 
     public function tutorRegister(array $userData, array $tutorData, int $subjectId, array $scheduleData, array $fileData): int
@@ -123,5 +126,9 @@ class AuthenticationServiceAdapter implements AuthenticationServicePort
     {
         $this->resetPasswordAction->execute($email, $resetToken, $newPassword);
     }
-
+    
+    public function getUserByEmail(string $email): ?UserEntity
+    {
+        return $this->getUserByEmailAction->execute($email);
+    }
 }
