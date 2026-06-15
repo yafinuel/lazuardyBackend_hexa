@@ -371,7 +371,6 @@ paths:
             application/json:
               example:
                 status: success
-                reset_token: abcd1234...
         '403':
           description: OTP tidak valid atau terlalu banyak percobaan
           content:
@@ -409,7 +408,7 @@ paths:
               required:
                 - email
                 - password
-                - student_id
+                - child_email
               properties:
                 email:
                   type: string
@@ -419,14 +418,14 @@ paths:
                   type: string
                   minLength: 8
                   example: password123
-                student_id:
-                  type: integer
-                  minimum: 1
-                  example: 1
+                child_email:
+                  type: string
+                  format: email
+                  example: child@example.com
             example:
               email: parent@example.com
               password: password123
-              student_id: 1
+              child_email: child@example.com
       responses:
         '201':
           description: Registrasi orang tua berhasil
@@ -445,8 +444,8 @@ paths:
                     - The email has already been taken.
                   password:
                     - The password must be at least 8 characters.
-                  student_id:
-                    - The selected student id is invalid.
+                  child_email:
+                    - Child email is not associated with a student account.
         '500':
           $ref: '#/components/responses/ServerError'
   /auth/{provider}/redirect:

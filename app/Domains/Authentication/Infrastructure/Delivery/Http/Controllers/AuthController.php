@@ -121,7 +121,7 @@ class AuthController extends Controller
         ]);
 
         try {
-            $resetToken = $action->execute($data);
+            $action->execute($data);
             
             return response()->json([
                 'status' => 'success',
@@ -291,7 +291,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
-            'student_id' => ['required', 'integer', 'exists:students,user_id'],
+            'child_email' => ['required', 'email', 'exists:users,email'],
         ]);
 
         $action->execute($data);
