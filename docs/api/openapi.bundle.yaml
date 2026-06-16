@@ -2813,6 +2813,181 @@ paths:
                 status: error
                 message: Terjadi kesalahan saat mengambil data homepage
                 debug_error: Database connection error
+  /parent/dashboard/profile-page:
+    get:
+      tags:
+        - Dashboard
+      summary: Mengambil data profil parent
+      description: Endpoint untuk mengambil data profil parent yang sedang login. Menampilkan informasi identitas parent dan data terkait siswa yang terhubung ke parent tersebut.
+      security:
+        - bearerAuth: []
+      operationId: parentProfilePage
+      responses:
+        '200':
+          description: Berhasil mengambil data profil parent
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - data
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - success
+                    example: success
+                  data:
+                    type: object
+                    description: Data profil parent beserta informasi siswa terkait
+                    required:
+                      - id
+                      - name
+                      - email
+                      - emailVerifiedAt
+                      - telephoneNumber
+                      - telephoneVerifiedAt
+                      - profilePhotoUrl
+                      - dateOfBirth
+                      - gender
+                      - religion
+                      - homeAddress
+                      - role
+                      - warning
+                      - sanction
+                      - latitude
+                      - longitude
+                      - session
+                      - classId
+                      - className
+                    properties:
+                      id:
+                        type: integer
+                        example: 3
+                      name:
+                        type: string
+                        example: Demo Parent
+                      email:
+                        type: string
+                        format: email
+                        example: demo.parent@example.com
+                      emailVerifiedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        example: '2026-04-30T12:00:00Z'
+                      telephoneNumber:
+                        type: string
+                        nullable: true
+                        example: '081234567890'
+                      telephoneVerifiedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        example: '2026-04-30T12:00:00Z'
+                      profilePhotoUrl:
+                        type: string
+                        format: uri
+                        nullable: true
+                        example: http://localhost:8000/storage/profile/parent.jpg
+                      dateOfBirth:
+                        type: string
+                        format: date
+                        nullable: true
+                        example: '1980-01-01'
+                      gender:
+                        type: string
+                        enum:
+                          - male
+                          - female
+                        nullable: true
+                        example: male
+                      religion:
+                        type: string
+                        enum:
+                          - islam
+                          - kristen
+                          - katolik
+                          - hindu
+                          - buddha
+                          - konghucu
+                        nullable: true
+                        example: islam
+                      homeAddresss:
+                        type: object
+                        required:
+                          - regency
+                          - district
+                          - province
+                          - subdistrict
+                        description: Alamat lengkap anak yang terhubung ke parent
+                        properties:
+                          regency:
+                            type: string
+                            example: Kabupaten Demo
+                          district:
+                            type: string
+                            example: Kecamatan Demo
+                          province:
+                            type: string
+                            example: Provinsi Demo
+                          subdistrict:
+                            type: string
+                            example: Kelurahan Demo
+                      role:
+                        type: string
+                        enum:
+                          - PARENT
+                        example: PARENT
+                      warning:
+                        type: integer
+                        minimum: 0
+                        example: 0
+                      sanction:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        example: null
+                      session:
+                        type: string
+                        nullable: true
+                        example: '0'
+                      classId:
+                        type: integer
+                        nullable: true
+                        example: 12
+                      className:
+                        type: string
+                        nullable: true
+                        example: kelas 12
+        '401':
+          description: Unauthorized - Token tidak valid atau tidak ada
+          content:
+            application/json:
+              example:
+                message: Unauthenticated.
+        '403':
+          description: Forbidden - User bukan parent atau belum memiliki siswa terdaftar
+          content:
+            application/json:
+              example:
+                status: failed
+                message: This page is Forbidden for {role}
+        '404':
+          description: Not Found - Data parent tidak ditemukan di database
+          content:
+            application/json:
+              example:
+                message: Parent data not found.
+        '500':
+          description: Internal Server Error - Kesalahan server saat memproses
+          content:
+            application/json:
+              example:
+                status: error
+                message: Terjadi kesalahan saat mengambil data profil parent
+                debug_error: Database connection error
   /schedule/getById:
     get:
       tags:
