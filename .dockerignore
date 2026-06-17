@@ -9,7 +9,6 @@ storage/framework/views/*
 bootstrap/cache/*.php
 .phpunit.result.cache
 Dockerfile
-supervisor.conf
 .github/
 .idea/
 .vscode/
