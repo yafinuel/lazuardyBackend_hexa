@@ -4,7 +4,7 @@ namespace App\Domains\Authentication\Infrastructure\Delivery\Http\Controllers;
 
 use App\Domains\Authentication\Actions\AuthenticateSocialAction;
 use App\Http\Controllers\Controller;
-// use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -17,11 +17,19 @@ class SocialiteController extends Controller
         ]);
     }
 
-    public function callback(string $provider,AuthenticateSocialAction $action)
+    public function callback(Request $request, string $provider, AuthenticateSocialAction $action)
     {
+        $request->validate([
+            'id_token' => 'required|string',
+        ]);
+        
         try {
-            $socialUser = Socialite::driver($provider)->stateless()->user();
+            $socialUser = Socialite::driver($provider)
+                ->stateless()
+                ->userFromToken($request->id_token);
+
             $data = $action->execute($socialUser, $provider);
+            
             return response()->json([
                 'status' => 'success',
                 'data' => $data

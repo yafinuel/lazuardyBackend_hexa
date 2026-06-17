@@ -21,12 +21,17 @@ class AuthenticateSocialAction
 
     public function execute(object $socialUser, string $provider)
     {
-        $user = $this->userRepository->getUserByEmail($socialUser->getEmail());
+        $userEmail = $socialUser->getEmail();
+        $socialiteId = $socialUser->getId();
+        $socialiteName = $socialUser->getName();
+
+        $user = $this->userRepository->getUserByEmail($userEmail);
 
         if ($user) {
-            if (!$user->$provider + '_id') {
+            $providerField = $provider . '_id';
+            if (!$user->$providerField) {
                 // provider without "_id".
-                $this->userRepository->updateSocialId($user->id, $provider, $socialUser->getId());
+                $this->userRepository->updateSocialId($user->id, $provider, $socialiteId);
             }
             $token = $this->service->getToken($user->id);
             return [
@@ -39,19 +44,19 @@ class AuthenticateSocialAction
         if ($provider == 'google'){
             return [
                 'message' => 'Unauthorized',
-                'name' => $socialUser->getName() ?? $socialUser->getNickname(),
-                'email' => $socialUser->getEmail(),
-                'google_id' => $socialUser->getId(),
+                'name' => $socialiteName,
+                'email' => $userEmail,
+                'google_id' => $socialiteId,
                 'facebook_id' => null,
                 'password' => Str::random(16),
             ];
         } else if ($provider == "facebook"){
             return [
                 'message' => 'Unauthorized',
-                'name' => $socialUser->getName() ?? $socialUser->getNickname(),
-                'email' => $socialUser->getEmail(),
+                'name' => $socialiteName,
+                'email' => $userEmail,
                 'google_id' => null,
-                'facebook_id' => $socialUser->getId(),
+                'facebook_id' => $socialiteId,
                 'password' => Str::random(16),
             ];
         }

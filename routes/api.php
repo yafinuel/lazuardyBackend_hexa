@@ -25,7 +25,7 @@ Route::get('/user', function (Request $request) {
 
 // Authentication
 Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect']);
-Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback']);
+Route::post('/auth/{provider}/callback', [SocialiteController::class, 'callback']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/registerOtpEmail', [AuthController::class, 'registerOtpEmail']);
 Route::post('/verifyOtpRegisterEmail', [AuthController::class, 'verifyOtpRegisterEmail']);

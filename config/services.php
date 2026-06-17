@@ -44,4 +44,10 @@ return [
         'project_id' => env('FCM_PROJECT_ID'),
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_WEB_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_WEB_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/api/auth/google/callback',
+    ],
+
 ];

@@ -394,7 +394,7 @@ authProviderRedirect:
       '400': { description: Provider tidak valid }
 
 authProviderCallback:
-  get:
+  post:
     tags: [Authentication]
     security: []
     summary: Callback dari OAuth
@@ -404,6 +404,19 @@ authProviderCallback:
         in: path
         required: true
         schema: { type: string }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id_token
+            properties:
+              id_token:
+                type: string
+                description: Token identitas OAuth dari sisi client (mobile/web SDK). id_token berlaku baik untuk oauth google maupun facebook
+                example: "eyJhbGciOiJSUzI1NiIsImtp..."
     responses:
       '200':
         description: Berhasil callback
@@ -415,6 +428,8 @@ authProviderCallback:
                 - $ref: '../components/schemas.yaml#/OAuthUserNew'
       '400':
         description: Provider tidak valid atau callback gagal
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
 
 login:
   post:
