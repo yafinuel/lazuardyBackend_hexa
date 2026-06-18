@@ -23,10 +23,10 @@ class ParentHomePageAction
 
         $notifications = $notificationData->through(function ($notifEntity) {
             return [
-                'id' => $notifEntity->id,
-                'title' => $notifEntity->title,
-                'body' => $notifEntity->body,
-                'data' => $notifEntity->data,
+                'id' => $notifEntity->getId(),
+                'title' => $notifEntity->getTitle(),
+                'body' => $notifEntity->getBody(),
+                'data' => $notifEntity->getData(),
             ];
         });
 
